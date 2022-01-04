@@ -18,7 +18,7 @@ export class UserDAO {
 
     async createUser(username: string, password: string): Promise<User> {
         let passwordHash = await bcrypt.hash(password, 10)
-        let r = await this.db.run("INSERT INTO utilizadores (username, passwordHash) VALUES (?, ?)", username, passwordHash)
+        let r = await this.db.run("INSERT INTO utilizadores (username, password_hash) VALUES (?, ?)", username, passwordHash)
         return {
             id: r.lastID,
             username,

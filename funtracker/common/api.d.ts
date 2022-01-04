@@ -1,4 +1,3 @@
-import { User } from '.prisma/client'
 import { ValidationError } from 'express-validator'
 
 export interface API {
@@ -22,7 +21,10 @@ export interface API {
       }
       response: {
         success: boolean
-        user?: User
+        user?: {
+          id: string,
+          username: string
+        }
       }
     }
   }
