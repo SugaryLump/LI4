@@ -1,0 +1,71 @@
+{
+  "name": "express-gen-ts",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev:backend": "nodemon",
+    "dev:frontend": "expo start",
+    "dev": "concurrently --kill-others -i --default-input-target 1 \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "docs": "typedoc --entryPointStrategy expand .",
+    "lint": "ts-standard",
+    "lint:fix": "ts-standard --fix"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "src"
+    ],
+    "ext": "ts, html",
+    "ignore": [
+      "src/public"
+    ],
+    "exec": "./node_modules/.bin/ts-node ./src"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@wesleytodd/openapi": "^0.1.0",
+    "bcrypt": "^5.0.1",
+    "command-line-args": "^5.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "expo": "^42.0.4",
+    "expo-constants": "^11.0.1",
+    "expo-status-bar": "^1.0.4",
+    "express": "^4.17.1",
+    "express-validator": "^6.13.0",
+    "ip": "^1.1.5",
+    "morgan": "^1.10.0",
+    "promised-sqlite3": "^1.2.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-native": "^0.66.4",
+    "react-native-elements": "^3.4.2",
+    "react-native-safe-area-context": "3.2.0",
+    "react-native-web": "^0.17.5",
+    "restyped-axios": "^2.0.0",
+    "restyped-express": "^0.8.0",
+    "sqlite3": "^5.0.2",
+    "typed-rest-client": "^1.8.6"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/command-line-args": "^5.2.0",
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/ip": "^1.1.0",
+    "@types/morgan": "^1.9.3",
+    "@types/node": "^16.11.0",
+    "@types/react": "~16.9.35",
+    "@types/react-native": "~0.63.2",
+    "@types/sqlite3": "^3.1.7",
+    "concurrently": "^6.3.0",
+    "nodemon": "^2.0.13",
+    "ts-node": "^10.3.0",
+    "ts-standard": "^10.0.0",
+    "typedoc": "^0.22.5",
+    "typescript": "^4.4.4"
+  },
+  "ts-standard": {
+    "project": "./tsconfig.json"
+  }
+}
