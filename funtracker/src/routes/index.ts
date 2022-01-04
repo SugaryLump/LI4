@@ -24,6 +24,7 @@ apiRouter.post('/users',
       return res.status(200).json({ success: true, user: { username: user.username, id: user.id } })
     } catch (error: any) {
       if (error.errno == 19) {
+        // Erro 19 é o erro de uma constraint falhada
         error = "This user already exists"
       }
       return res.status(400).json({
