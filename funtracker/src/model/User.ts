@@ -25,4 +25,8 @@ export class UserDAO {
             passwordHash
         }
     }
+
+    async login(username: string, password: string): Promise<User | null> {
+        return null
+    }
 }

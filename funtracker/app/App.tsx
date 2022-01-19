@@ -11,7 +11,7 @@ export default function App (): JSX.Element {
   const [message, setMessage] = useState('')
 
   const createUser = (): void => {
-    fetch(constants.serverUrl + '/api/v1/users', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ username, password })})
+    fetch(constants.serverUrl + '/api/v1/user', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ username, password })})
       .then(async res => setMessage(await res.text()))
       .catch(async error => console.error(error))
   }
