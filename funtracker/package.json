@@ -30,6 +30,7 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "expo": "^44",
+    "expo-cli": "^5.0.3",
     "expo-constants": "^13",
     "expo-status-bar": "^1.2.0",
     "express": "^4.17.1",
