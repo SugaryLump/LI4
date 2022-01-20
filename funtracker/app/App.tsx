@@ -6,6 +6,7 @@ import * as constants from './lib/constants'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { LoginMenu } from './Screens/Login'
+import { SignupMenu } from './Screens/Signup'
 
 const Stack = createNativeStackNavigator();
 
@@ -32,7 +33,14 @@ export default function App (): JSX.Element {
                 title: 'Login Menu',
               }}
             />
-            
+            <Stack.Screen
+              name='Signup'
+              component={SignupMenu}
+              options={{
+                title: 'Sign up',
+              }}
+            />
+
           </Stack.Navigator>
         </NavigationContainer>
       </ThemeProvider>

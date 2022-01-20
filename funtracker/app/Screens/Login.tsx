@@ -12,12 +12,6 @@ export const LoginMenu = ({ navigation }:any) => {
   const [passwordError, setPasswordError] = useState('')
   const [usernameError, setUsernameError] = useState('')
 
-  const createUser = (): void => {
-    fetch(constants.serverUrl + '/api/v1/user', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ username, password })})
-      .then(async res => setMessage(await res.text()))
-      .catch(async error => console.error(error))
-  }
-
   const login = (): void => {
     //Validate login with server and go to home screen
     navigation.navigate('Home') 
@@ -95,7 +89,7 @@ export const LoginMenu = ({ navigation }:any) => {
       />
       <View style={{justifyContent: 'center', alignItems: 'center'}}>
         <Button title='Login' onPress={login}/>
-        <Button title='Sign up' onPress={createUser} containerStyle={{paddingTop:30}}/>
+        <Button title='Sign up' onPress={() => navigation.navigate('Signup')} containerStyle={{paddingTop:30}}/>
       </View>
       <Text style={{alignSelf:'center'}}> Don't have an account yet? </Text>
       <View style={{paddingHorizontal: 10, paddingVertical: 40}}>
