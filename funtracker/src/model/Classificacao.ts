@@ -19,8 +19,11 @@ export class ClassificacaoDao {
 
         let id = await this.db.run("INSERT INTO avaliacoes (valor, comentarios, estabelecimento_id, user_id) VALUES (?, ?, ?, ?)", valor, comentario, estabelecimentoNoturnoId, utilizadorId)
         return {
-            id
-
+            id: id.lastID,
+            valor,
+            comentario,
+            estabelecimentoNoturnoId,
+            utilizadorId
         }
     }
 }
