@@ -20,23 +20,27 @@ export class UserDAO {
     }
 
     // FIXME falta verificar se o user nao foi criado
-    async createUser(username: string, password: string): Promise<Result<User,UserAlreadyExistsException>> {
+    async createUser(username: string, password: string): Promise<User> {
         let passwordHash = await bcrypt.hash(password, 10)
         let r = await this.db.run("INSERT INTO utilizadores (username, password_hash) VALUES (?, ?)", username, passwordHash)
-        return fail( ({success})=> {
-
-           return success ({
+        return {
             id: r.lastID,
             username,
             passwordHash
-           })
-        })
+        }
     }
 
     // TODO
-    async login(username: string, password: string): Promise<Result<User, InvalidCredentialsExceptions>> {
-        return fail( ({success, fail}) => {
-            return fail( new InvalidCredentialsExceptions(username) )
-        } )
+    async login(username: string, password: string): Promise<User> {
+        let {id, password_hash} = await this.db.get("SELECT id, password_hash FROM utilizadores WHERE `username` = ?", username)
+        if (await bcrypt.compare(password, password_hash)) {
+            return {
+                username,
+                id,
+                passwordHash: password_hash
+            }
+        } else {
+            throw "Credenciais inválidos"
+        }
     }
 }

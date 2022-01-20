@@ -18,6 +18,7 @@ export default async function (): Promise<Application> {
   await migrate(db)
 
   app.set('db', db)
+  app.set('secret', 'TODO gerar segredo random mas isto serve por agora')
 
   // Permite suportar requests com JSON
   app.use(express.json())

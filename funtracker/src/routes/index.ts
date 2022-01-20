@@ -1,6 +1,4 @@
 import { Router } from 'express'
-import { body, validationResult } from 'express-validator'
-import { UserDAO } from '../model/User'
 import sessionRouter from './session'
 import localNoturnoRouter from './localNoturno'
 import usersRouter from './users'
