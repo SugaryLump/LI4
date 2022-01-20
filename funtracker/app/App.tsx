@@ -36,7 +36,7 @@ export default function App (): JSX.Element {
         padding: 20
       },
       containerStyle: {
-        paddingHorizontal: 100
+        width: 150
       }
     }
   }
@@ -97,8 +97,10 @@ export default function App (): JSX.Element {
             paddingHorizontal:50
           }}
         />
-        <Button title='Login' onPress={() => {setMessage('Funcionalidade por implementar')}}/>
-        <Button title='Sign up' onPress={createUser} containerStyle={{paddingTop:30}}/>
+        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+          <Button title='Login' onPress={() => {setMessage('Funcionalidade por implementar')}}/>
+          <Button title='Sign up' onPress={createUser} containerStyle={{paddingTop:30}}/>
+        </View>
         <Text style={{alignSelf:'center'}}> Don't have an account yet? </Text>
         <View style={{flex:1, justifyContent: 'flex-end', paddingHorizontal: 10, paddingVertical: 20}}>
           <Text>

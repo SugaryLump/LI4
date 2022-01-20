@@ -25,7 +25,3 @@ hs_err_pid*
 #Visual Paradigm auxiliary files
 *.bak*
 *.vpp.lck*
-
-#npm packages files
-*/package.json
-*/package-lock.json
