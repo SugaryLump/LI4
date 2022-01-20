@@ -24,6 +24,7 @@
   "license": "ISC",
   "dependencies": {
     "@react-navigation/native": "^6.0.6",
+    "@react-navigation/native-stack": "^6.2.5",
     "@unimodules/core": "~7.2.0",
     "@wesleytodd/openapi": "^0.1.0",
     "bcrypt": "^5.0.1",
