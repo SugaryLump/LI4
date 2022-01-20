@@ -19,8 +19,14 @@ export class Local  {
     }
 }
 
+export enum Categoria {
+    Bar,
+    Discoteca
+}
+
 export enum GamaPreco {
     Low = "$",
     Medium = "$$",
     High = "$$$"
 }
+
