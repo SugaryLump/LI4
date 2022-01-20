@@ -1,15 +1,22 @@
 import React, { useState } from 'react'
 import { View } from 'react-native'
-import { Text, Button } from 'react-native-elements'
+import { ListItem, Text, Button } from 'react-native-elements'
 import { Input } from 'react-native-elements/dist/input/Input'
 import * as svg from 'react-native-svg'
 import * as constants from '../lib/constants'
 import * as Location from 'expo-location' 
 import { LocationEventEmitter } from 'expo-location/build/LocationEventEmitter'
 
-export const EstabelecimentosMenu = ({ router, navigation }:any) => {
+
+
+export const EstabelecimentosMenu = ({ navigation, route }:any) => {
     const [location, setLocation] = useState({})
     const [locationMessage, setLocationMessage] = useState('Obtaining location...')
+    const [debug, setDebug] = useState(0);
+    
+    const useEffect = () => {
+        setDebug(debug+1);
+    }
 
     const updateLocation= async () => {
         let permission = await Location.requestForegroundPermissionsAsync();
@@ -26,11 +33,12 @@ export const EstabelecimentosMenu = ({ router, navigation }:any) => {
 
     return (
         <View style={constants.styles.container}>
-            <Text>{locationMessage}</Text>
-            <View style={constants.styles.footer}>
-                <View style={{alignItems:'center', padding:20}}>
-                    <Button title='Refresh Location' onPress={() => updateLocation()}/>
-                </View>
+            <View style={constants.styles.centered}>
+                <Button title='Filtrar' onPress={() => navigation.navigate({name:'Filtros', params:route.params,})}/>
+                <ListItem></ListItem>
+                <Button title='Atualizar Localização' onPress={() => updateLocation()}/>
+                <Text>{locationMessage}</Text>
+                <Text>{debug}</Text> 
             </View>
         </View>
     )
