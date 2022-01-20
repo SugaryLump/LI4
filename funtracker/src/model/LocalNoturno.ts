@@ -1,24 +1,29 @@
+import {Coordinates} from './Coordinates'
+
+export class Local  {
+    constructor(
+        private id: number,
+        private nome: string,
+        private lotacao: number,
+        private rating: number,
+        private gamaPreco: GamaPreco,
+        private morada: string,
+        private coordenadas: Coordinates,
+        private horarioAbertura: Date,
+        private horarioFecho: Date,
+        private contacto: string,
+    ) {}
+
+    // caller must increment numberRatings
+    updateRating(newRating: number, numberRatings: number): void {
+        let sum : number = this.rating * numberRatings
+        this.rating = (sum + newRating)/(numberRatings + 1)
+    }
+}
+
 export enum GamaPreco {
     Low = "$",
     Medium = "$$",
-    High "$$$"
+    High = "$$$"
 }
 
-export type Local = {
-    id: number
-    nome: string
-    lotacao: number
-    rating: number
-    gamaPreco: GamaPreco
-    morada: string
-    coordenadas: Coordinates
-    horarioAbertura: Date
-    horarioFecho: Date
-    contacto: string
-}
-
-// caller must increment numberRatings
-function updateRating(newRating: number, numberRatings: number): void {
-    let sum : number = this.rating * numberRatings
-    this.rating = (sum + newRating)/(numberRatings + 1)
-}
