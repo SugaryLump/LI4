@@ -1,5 +1,3 @@
-import {Coordinates} from './Coordinates'
-
 export class Local  {
     constructor(
         private readonly id: number,
@@ -26,4 +24,3 @@ export enum GamaPreco {
     Medium = "$$",
     High = "$$$"
 }
-

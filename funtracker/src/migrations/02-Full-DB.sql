@@ -6,7 +6,7 @@ CREATE TABLE estabelecimentos (
   morada VARCHAR(100),
   coordenadas VARCHAR(50),
   precos INTEGER,
-  caracteristicas INTEGER, -- ????
+  categoria INTEGER, -- ????
   -- TODO: Horário abertura e fecho
   contacto CHAR(9)
 );
