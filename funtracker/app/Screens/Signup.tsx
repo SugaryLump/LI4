@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { View } from 'react-native'
 import { Text, Button } from 'react-native-elements'
 import { Input } from 'react-native-elements/dist/input/Input'
-import * as svg from 'react-native-svg'
 import * as constants from '../lib/constants'
 
 export const SignupMenu = ({ navigation }:any) => {
@@ -17,7 +16,8 @@ export const SignupMenu = ({ navigation }:any) => {
       .then(async res => setMessage(await res.text()))
       .catch(async error => console.error(error))
 
-    //go to home menu is successful
+    //go to home menu if successful
+    navigation.reset({index: 0, routes: [{ name: 'Estabelecimentos'}]});
   }
 
   //Components
@@ -69,7 +69,7 @@ export const SignupMenu = ({ navigation }:any) => {
         }}
       />
       <View style={{justifyContent: 'center', alignItems: 'center'}}>
-        <Button title='Sign up' onPress={createUser} containerStyle={{paddingTop:50, width:320}}/>
+        <Button title='Sign up' onPress={createUser} containerStyle={{paddingTop:50}}/>
       </View>
       <View style={{paddingHorizontal: 10, paddingVertical: 40}}>
         <Text>

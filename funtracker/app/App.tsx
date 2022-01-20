@@ -7,6 +7,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { LoginMenu } from './Screens/Login'
 import { SignupMenu } from './Screens/Signup'
+import { EstabelecimentosMenu } from './Screens/Estabelecimentos'
 
 const Stack = createNativeStackNavigator();
 
@@ -38,6 +39,16 @@ export default function App (): JSX.Element {
               component={SignupMenu}
               options={{
                 title: 'Sign up',
+              }}
+            />
+            <Stack.Screen
+              name='Estabelecimentos'
+              component={EstabelecimentosMenu}
+              initialParams={{
+                jwt:{}
+              }}
+              options={{
+                title: 'Estabelecimentos'
               }}
             />
 

@@ -3,7 +3,6 @@ import { View } from 'react-native'
 import { Text, Button } from 'react-native-elements'
 import { Input } from 'react-native-elements/dist/input/Input'
 import * as svg from 'react-native-svg'
-import * as constants from '../lib/constants'
 
 export const LoginMenu = ({ navigation }:any) => {
   const [username, setUsername] = useState('')
@@ -14,7 +13,7 @@ export const LoginMenu = ({ navigation }:any) => {
 
   const login = (): void => {
     //Validate login with server and go to home screen
-    navigation.navigate('Home') 
+    navigation.reset({index: 0, routes: [{ name: 'Estabelecimentos'}]});
   }
 
   //Components
