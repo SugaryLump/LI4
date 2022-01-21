@@ -1,9 +1,5 @@
-/// TODO!
-
 import * as bcrypt from 'bcrypt'
 import { PromisedDatabase } from 'promised-sqlite3'
-
-import {UserAlreadyExistsException, InvalidCredentialsExceptions, UserNotFoundException} from '../exceptions/index'
 
 export type User = {
     id: number
@@ -62,7 +58,7 @@ export class UserDAO {
         let {username} = await this.db.get("SELECT username FROM utilizadores WHERE `id` = ?", userId)
         let passwordHash = await bcrypt.hash(newPassword, 10)
         //TODO atualizar a nova password na base de dados (verificar se ta bem)
-        this.db.get("UPDATE utilizadores SET `password_hash` = ? WHERE `id` = ?", passwordHash, userId)
+        this.db.run("UPDATE utilizadores SET `password_hash` = ? WHERE `id` = ?", passwordHash, userId)
     }
 
     async changeUsername(userId: number, newUsername: string): Promise<void> {
@@ -71,7 +67,7 @@ export class UserDAO {
         // TODO verificar se o novo userName é unico
 
         // TODO atualizar o novo userName na base de dados (verificar se ta bem)
-        this.db.get("UPDATE utilizadores SET `username` = ? WHERE `id` = ?", newUsername, userId)
+        this.db.run("UPDATE utilizadores SET `username` = ? WHERE `id` = ?", newUsername, userId)
     }
 
     async isAdmin(userId: number): Promise<boolean> {

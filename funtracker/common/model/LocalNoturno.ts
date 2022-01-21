@@ -34,7 +34,7 @@ export enum GamaPreco {
     High = "$$$"
 }
 
-export class LocalNoturnoDao {
+export class LocalNoturnoDAO {
     constructor(
         private readonly db: PromisedDatabase
     ) {}
@@ -48,5 +48,26 @@ export class LocalNoturnoDao {
         // FIXME
         let numberRatings = 0
         return localNoturno.updateRating(valor, numberRatings)
+    }
+
+    async getByGamaPreco(gamaPreco: string): Promise<LocalNoturno[]> {
+        ////TODO a migrations nao tem o gamaPreco
+        //return (
+        //    await this.db.all('SELECT * FROM estabelecimentos WHERE gamaPreco = ?', gamaPreco)
+        //).map(c => ({
+        //    id: c.id,
+        //    lotacao: c.lotacao,
+        //    morada: c.morada,
+        //    rating: c.rating, // nao tem isto na base de dados
+        //    gamaPreco: c.gamaPreco, // nao tem isto na base de dados
+        //    precos: c.precos,
+        //    categoria: c.categoria,
+        //    pontuacao: c.pontuacao,
+        //    coordenadas: {c.coordenadas.latitude, c.coordenadas.longitude}, // coordenadas
+        //    horario_abertura: c.horario_abertura,
+        //    horario_fecho: c.horario_fecho,
+        //    contacto: c.contacto
+        //}));
+        return []
     }
 }
