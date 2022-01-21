@@ -39,13 +39,13 @@ export class LocalNoturnoDao {
     ) {}
 
     async avaliar(valor: number, estabelecimentoNoturnoId: number): Promise<number> {
-            // ir buscar o local Noturno
-            // verificar o any
-            let localNoturno: LocalNoturno | null = null as any
-            if (localNoturno == null)
-                throw new LocalNoturnoNotFound(estabelecimentoNoturnoId)
-            // FIXME
-            let numberRatings = 0
-            return localNoturno.updateRating(valor, numberRatings)
+        // ir buscar o local Noturno
+        // verificar o any
+        let localNoturno: LocalNoturno | null = null as any
+        if (localNoturno == null)
+            throw new LocalNoturnoNotFound(estabelecimentoNoturnoId)
+        // FIXME
+        let numberRatings = 0
+        return localNoturno.updateRating(valor, numberRatings)
     }
 }
