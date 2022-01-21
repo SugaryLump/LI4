@@ -7,7 +7,7 @@ import {UserJwt, getUser} from '../middleware/isLoggedIn'
 
 const estabelecimentoRouter = Router()
 
-estabelecimentoRouter.get('/all', isLoggedIn,async (req, res) => {
+estabelecimentoRouter.get('/', isLoggedIn,async (req, res) => {
     try {
         const estab : Estabelecimento[] = await FunTracker.getEstabelecimentos()
         return res.status(200).json(estab)
