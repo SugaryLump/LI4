@@ -3,6 +3,7 @@ import { Estabelecimento } from "../model/Estabelecimento";
 import { body, validationResult } from "express-validator";
 import isLoggedIn from '../middleware/isLoggedIn';
 import { FunTracker } from '../model/FunTracker'
+import {UserJwt, getUser} from '../middleware/isLoggedIn'
 
 const estabelecimentoRouter = Router()
 
@@ -54,5 +55,17 @@ estabelecimentoRouter.get('/:id/adicionarImagem', isLoggedIn,
         res.status(404).send("Não foi possível adicionar a imagem");
     }
 })
+
+estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, async (req, res) => {
+  const user: UserJwt = getUser(req);
+  if (user.id === +req.params.id || user.is_admin) {
+    return res.status(200).json(FunTracker.getClassificacoesByEstabelecimentoID(req.body.id));
+  } else {
+    return res.status(403).json({
+      success: false,
+      errors: ['Permission Denied'],
+    });
+  }
+});
 
 export default estabelecimentoRouter

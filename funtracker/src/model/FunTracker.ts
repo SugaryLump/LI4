@@ -35,16 +35,25 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
   }
 
   static async changePassword(userId: number, newPassword: string): Promise<void> {
-    return FunTracker.users.changePassword(userId, newPassword);
+    return FunTracker.users.changePassword(userId, newPassword).catch(e => {throw e});
   }
 
   static async changeUsername(userId: number, newUsername: string): Promise<void> {
-    return FunTracker.users.changeUsername(userId, newUsername);
+    return FunTracker.users.changeUsername(userId, newUsername).catch(e => {throw e});
   }
 
   static async checkIfIsAdmin(userId: number): Promise<boolean> {
     return FunTracker.users.isAdmin(userId);
   }
+
+  static async getAllUsers(): Promise<User[]> {
+    return FunTracker.users.allUsers()
+  }
+
+  static async getUserById(userId: number): Promise<User> {
+    return FunTracker.users.getById(userId)
+  }
+
 
   /* Estabelecimentos */
   // TODO
@@ -76,8 +85,12 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
     );
   }
 
-  static async getClassificacoesByID(userID: number) {
-    return FunTracker.classificacaoDAO.getClassificacoesByID(userID);
+  static async getClassificacoesByUserID(userID: number) {
+    return FunTracker.classificacaoDAO.getClassificacoesByUserID(userID);
+  }
+
+  static async getClassificacoesByEstabelecimentoID(estabelecimentoId: number) {
+    return FunTracker.classificacaoDAO.getClassificacoesByEstabelecimentoId(estabelecimentoId);
   }
 
     /* Imagens */
