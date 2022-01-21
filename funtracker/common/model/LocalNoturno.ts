@@ -1,5 +1,4 @@
 import { PromisedDatabase } from "promised-sqlite3"
-import {LocalNoturnoNotFound} from '../../src/exceptions/index'
 
 export class LocalNoturno  {
     constructor(
@@ -44,7 +43,7 @@ export class LocalNoturnoDAO {
         // verificar o any
         let localNoturno: LocalNoturno | null = null as any
         if (localNoturno == null)
-            throw new LocalNoturnoNotFound(estabelecimentoNoturnoId)
+            throw "Local Não Encontrado"
         // FIXME
         let numberRatings = 0
         return localNoturno.updateRating(valor, numberRatings)
