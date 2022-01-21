@@ -8,6 +8,7 @@ export class LocalNoturno  {
         private lotacao: number,
         private rating: number,
         private gamaPreco: GamaPreco,
+        private categoria: Categoria,
         private morada: string,
         private coordenadas: {latitude: number, longitude: number },
         private horarioAbertura: Date,
