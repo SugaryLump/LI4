@@ -9,9 +9,7 @@ export class FunTracker {
         private static users: UserDAO
         private static classificacaoDAO: ClassificacaoDAO
         private static localNoturnoDAO: LocalNoturnoDAO
-
-        constructor(db: PromisedDatabase) {
-            FunTracker.db = db;
+constructor(db: PromisedDatabase) {FunTracker.db = db;
             FunTracker.users = new UserDAO(db);
             FunTracker.classificacaoDAO = new ClassificacaoDAO(db);
             FunTracker.localNoturnoDAO = new LocalNoturnoDAO(db);
@@ -43,6 +41,15 @@ export class FunTracker {
     }
 
     /* Estabelecimentos */
+    // TODO
+    async criarEstabelecimento(): Promise<null> {
+        return null
+    }
+
+    async allEstabelecimentos(): Promise<null> {
+        return null
+    }
+
     async avaliar(valor: number, comentario: string | null, estabelecimentoNoturnoId: number, utilizadorId: number):
     Promise<Classificacao> {
         // atualizar o rating do local Noturno
@@ -50,9 +57,6 @@ export class FunTracker {
         return FunTracker.classificacaoDAO.createClassificacao(valor,comentario, estabelecimentoNoturnoId, utilizadorId);
     }
 
-    //async criarEstabelecimento(): Promise<LocalNoturno> {
-    //    return null
-    //}
 
     // TODO faz sequer sentido??
     async atualizarLocalizacao(userId: number): Promise<boolean> {
