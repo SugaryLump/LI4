@@ -1,6 +1,6 @@
 import {UserDAO, User}  from './User'
 import {Classificacao, ClassificacaoDao}  from './Classificacao'
-import {LocalNoturnoDao}  from '../../common/model/LocalNoturno'
+import {LocalNoturnoDao}  from './LocalNoturno'
 
 import {PromisedDatabase } from 'promised-sqlite3'
 

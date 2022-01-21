@@ -7,8 +7,6 @@ import * as constants from '../lib/constants'
 import * as Location from 'expo-location' 
 import { LocationEventEmitter } from 'expo-location/build/LocationEventEmitter'
 
-
-
 export const FiltrosMenu = ({ navigation, route }:any) => {
     const [bar,setBar] = useState(route.params?.bar)
     const [disco,setDisco] = useState(route.params?.disco)
@@ -28,8 +26,10 @@ export const FiltrosMenu = ({ navigation, route }:any) => {
                             disco:disco,
                             aberto:aberto,
                             ordem:ordem,
-                            nome:null
+                            nome:null,
+                            searched:false,
                         },
+                        merge:true,
                     })}
                 />
             </View>
@@ -68,8 +68,9 @@ export const FiltrosMenu = ({ navigation, route }:any) => {
                             aberto:aberto,
                             ordem:ordem,
                             nome:nome,
-                            estabelecimentos:[]
-                        }})}
+                        },
+                        merge:true})
+                    }
                 />
             </View>
         </View>

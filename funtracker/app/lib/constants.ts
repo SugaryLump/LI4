@@ -7,11 +7,19 @@ export const serverUrl: string = extra.serverUrl
 
 export const styles= StyleSheet.create({
     container: {
-        padding:20,
+        flex:1
+    },
+    contentContainer: {
+        flex:1
     },
     centered: {
         alignItems:'center',
     },
+    footer: {
+        flex:0.5,
+        alignItems:'center',
+        justifyContent:'flex-end'
+    }
 })
 
 export const appTheme={
@@ -31,7 +39,7 @@ export const appTheme={
             padding: 20
         },
         containerStyle: {
-            width: 320
+            width: 320,
         }
     },
     CheckBox: {

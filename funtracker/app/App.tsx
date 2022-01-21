@@ -51,7 +51,7 @@ export default function App (): JSX.Element {
                 aberto:false,
                 ordem:0,
                 nome:null,
-                estabelecimentos:[]
+                searched:false,
               }}
               options={{
                 title: 'Estabelecimentos'

@@ -1,5 +1,5 @@
 import { PromisedDatabase } from "promised-sqlite3"
-import {LocalNoturnoNotFound} from '../../src/exceptions/index'
+import {LocalNoturnoNotFound} from '../exceptions/index'
 
 export class LocalNoturno  {
     constructor(
