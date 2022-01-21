@@ -1,5 +1,4 @@
 // Este módulo gere as migrations, ou seja, alterações à base de dados
-
 import { PromisedDatabase } from "promised-sqlite3";
 
 export default async function migrate(db: PromisedDatabase) {
@@ -16,11 +15,17 @@ export default async function migrate(db: PromisedDatabase) {
         'morada VARCHAR(100)',
         'coordenadas VARCHAR(50)',
         'precos INTEGER',
-        'categoria STRING',
         'pontuacao FLOAT',
         'horario_abertura TIME',
         'horario_fecho TIME',
         'contacto CHAR(9)'
+    )
+
+    await db.createTable('categorias', true,
+        'estabelecimento_id INTEGER NOT NULL',
+        'categoria STRING NOT NULL',
+        'FOREIGN KEY(estabelecimento_id) REFERENCES estabelecimentos(id)',
+        'PRIMARY KEY (estabelecimento_id, categoria)'
     )
 
     await db.createTable('avaliacoes', true,
