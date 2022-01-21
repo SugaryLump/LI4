@@ -26,4 +26,28 @@ estabelecimentoRouter.get('/:id', isLoggedIn, async (req, res) => {
     }
 })
 
+estabelecimentoRouter.get('/:id/allImagens', isLoggedIn, async (req, res) => {
+    let allImagens = await FunTracker.getAllImagensByEstabelecimentoID(req.body.id)
+    if(allImagens) {
+        return res.status(200).json(allImagens)
+    }
+    else {
+        res.status(404).send("Não existem imagens associadas");
+    }
+})
+
+// Maybe mandar mesmo a imagem, fazer dowload dela e devolver o filepath
+estabelecimentoRouter.get('/:id/adicionarImagem', isLoggedIn,
+  body('filepath')
+      .exists(),
+  async (req, res) => {
+    let newImagen = FunTracker.adicionarImagen(req.body.id,req.body.filepath)
+    if(newImagen) {
+        return res.status(200).json(newImagen)
+    }
+    else {
+        res.status(404).send("Não foi possível adicionar a imagem");
+    }
+})
+
 export default estabelecimentoRouter

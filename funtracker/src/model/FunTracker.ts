@@ -1,52 +1,54 @@
-import {UserDAO, User} from './User';
-import {Classificacao, ClassificacaoDAO} from './Classificacao';
-import {EstabelecimentoDAO, Estabelecimento} from './Estabelecimento';
+import {UserDAO, User}  from './User'
+import {Classificacao, ClassificacaoDAO}  from './Classificacao'
+import {Estabelecimento, EstabelecimentoDAO}  from './Estabelecimento'
+import {Imagem, ImagensDAO} from './Imagem'
 
 import {PromisedDatabase} from 'promised-sqlite3';
 
 export class FunTracker {
-  private static db: PromisedDatabase;
-  private static users: UserDAO;
-  private static classificacaoDAO: ClassificacaoDAO;
-  private static estabelecimentoDAO: EstabelecimentoDAO;
-  constructor(db: PromisedDatabase) {
-    FunTracker.db = db;
-    FunTracker.users = new UserDAO(db);
-    FunTracker.classificacaoDAO = new ClassificacaoDAO(db);
-    FunTracker.estabelecimentoDAO = new EstabelecimentoDAO(db);
-  }
+        private static db: PromisedDatabase
+        private static users: UserDAO
+        private static classificacaoDAO: ClassificacaoDAO
+        private static estabelecimentoDAO: EstabelecimentoDAO
+        private static imagemDAO: ImagensDAO
+constructor(db: PromisedDatabase) {FunTracker.db = db;
+            FunTracker.users = new UserDAO(db);
+            FunTracker.classificacaoDAO = new ClassificacaoDAO(db);
+            FunTracker.estabelecimentoDAO = new EstabelecimentoDAO(db);
+            FunTracker.imagemDAO = new ImagensDAO(db);
+        }
 
   /* USERS */
-  async iniciarSessao(username: string, password: string): Promise<User> {
+  static async iniciarSessao(username: string, password: string): Promise<User> {
     return FunTracker.users.login(username, password);
   }
 
-  async criarContaUtilizador(
+  static async criarContaUtilizador(
     username: string,
     password: string,
   ): Promise<User> {
     return FunTracker.users.createUser(username, password);
   }
 
-  async criarContaAdmin(username: string, password: string): Promise<User> {
+  static async criarContaAdmin(username: string, password: string): Promise<User> {
     return FunTracker.users.createAdmin(username, password);
   }
 
-  async changePassword(userId: number, newPassword: string): Promise<void> {
+  static async changePassword(userId: number, newPassword: string): Promise<void> {
     return FunTracker.users.changePassword(userId, newPassword);
   }
 
-  async changeUsername(userId: number, newUsername: string): Promise<void> {
+  static async changeUsername(userId: number, newUsername: string): Promise<void> {
     return FunTracker.users.changeUsername(userId, newUsername);
   }
 
-  async checkIfIsAdmin(userId: number): Promise<boolean> {
+  static async checkIfIsAdmin(userId: number): Promise<boolean> {
     return FunTracker.users.isAdmin(userId);
   }
 
   /* Estabelecimentos */
   // TODO
-  async criarEstabelecimento(): Promise<null> {
+  static async criarEstabelecimento(): Promise<null> {
     return null;
   }
 
@@ -58,7 +60,7 @@ export class FunTracker {
       return await FunTracker.estabelecimentoDAO.getAll();
   }
 
-  async avaliar(
+  static async avaliar(
     valor: number,
     comentario: string | null,
     estabelecimentoNoturnoId: number,
@@ -74,12 +76,16 @@ export class FunTracker {
     );
   }
 
-  // TODO faz sequer sentido??
-  async atualizarLocalizacao(userId: number): Promise<boolean> {
-    return true;
-  }
-
   static async getClassificacoesByID(userID: number) {
     return FunTracker.classificacaoDAO.getClassificacoesByID(userID);
+  }
+
+    /* Imagens */
+  static async adicionarImagen(estabelecimentoId: number, filepath: string): Promise<Imagem> {
+      return FunTracker.imagemDAO.addImagem(estabelecimentoId, filepath)
+  }
+
+  static async getAllImagensByEstabelecimentoID(estabelecimetoId: number): Promise<Imagem[]> {
+      return FunTracker.imagemDAO.getAllByEstabelecimentoID(estabelecimetoId)
   }
 }

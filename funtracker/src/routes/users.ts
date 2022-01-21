@@ -25,9 +25,8 @@ usersRouter.post(
     next();
   },
   async (req, res) => {
-    let funtracker: FunTracker = new FunTracker(req.app.get('db'));
     try {
-      let user = await funtracker.criarContaUtilizador(req.body.username, req.body.password);
+      let user = await FunTracker.criarContaUtilizador(req.body.username, req.body.password);
       return res
         .status(200)
         .json({success: true, user: {username: user.username, id: user.id}});
@@ -65,9 +64,8 @@ usersRouter.post(
     //FIXME
     if ( //user.id === +req.params.id &&
       user.is_admin) {
-      let funtracker: FunTracker = new FunTracker(req.app.get('db'));
       try {
-        let user = await funtracker.criarContaAdmin(req.body.username, req.body.password);
+        let user = await FunTracker.criarContaAdmin(req.body.username, req.body.password);
         return res
           .status(200)
           .json({success: true, user: {username: user.username, id: user.id}});
@@ -111,10 +109,8 @@ usersRouter.post(
     //FIXME
     if (// user.id === +req.params.id ||
       user.is_admin) {
-      let funTracker: FunTracker = new FunTracker(req.app.get('db'));
-
       try {
-        funTracker.changePassword(req.body.id, req.body.password);
+        await FunTracker.changePassword(req.body.id, req.body.password);
         return res.status(200).json({success: true});
       } catch (error: any) {
         if (error.errno == 19) {
@@ -154,9 +150,8 @@ usersRouter.post(
     //FIXME
     if ( // user.id === +req.params.id ||
       user.is_admin) {
-      let funTracker: FunTracker = new FunTracker(req.app.get('db'));
       try {
-        funTracker.changeUsername(req.body.id, req.body.username);
+        FunTracker.changeUsername(req.body.id, req.body.username);
         return res.status(200).json({success: true});
       } catch (error: any) {
         if (error.errno == 19) {
