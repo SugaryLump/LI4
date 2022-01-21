@@ -7,22 +7,27 @@ import { FunTracker } from '../model/FunTracker'
 const estabelecimentoRouter = Router()
 
 estabelecimentoRouter.get('/all', isLoggedIn,async (req, res) => {
-    const estab : Estabelecimento[] = await FunTracker.getEstabelecimentos()
-    if(estab) {
+    try {
+        const estab : Estabelecimento[] = await FunTracker.getEstabelecimentos()
         return res.status(200).json(estab)
     }
-    else {
-        res.status(404).send("Database Error");
+    catch(e) {
+        res.status(500).send(e);
     }
 })
 
-estabelecimentoRouter.get('/:id', isLoggedIn, async (req, res) => {
-    let info_local = await FunTracker.getEstabelecimentoByID(parseInt(req.params.id))
-    if(info_local) {
-        return res.status(200).json(info_local)
+estabelecimentoRouter.get('/:id', /*isLoggedIn, */async (req, res) => {
+    try {
+        let infoLocal = await FunTracker.getEstabelecimentoByID(+req.params.id)
+        if(infoLocal) {
+            return res.status(200).json(infoLocal)
+        }
+        else {
+             return res.status(404).send("Estabelecimento Não Existe")
+        }
     }
-    else {
-        res.status(404).send("Bar não existe");
+    catch(e) {
+        res.status(500).send(e)
     }
 })
 

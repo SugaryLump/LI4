@@ -71,7 +71,7 @@ export class EstabelecimentoDAO {
   }
 
   async getByID(id: number): Promise<Estabelecimento> {
-    return await this.db.get('SELECT * from estabelecimentos where id = ?', id);
+        return await this.db.get('SELECT * from estabelecimentos where id = ?', id);
   }
   async getAll(): Promise<Estabelecimento[]> {
     return await this.db.all('SELECT * from estabelecimentos');

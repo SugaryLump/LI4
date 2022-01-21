@@ -61,7 +61,7 @@ usersRouter.post(
   async (req, res) => {
 
     const user: UserJwt = getUser(req);
-    //FIXME
+    //FIXMkjE
     if ( //user.id === +req.params.id &&
       user.is_admin) {
       try {
@@ -107,10 +107,10 @@ usersRouter.post(
   async (req, res) => {
     const user: UserJwt = getUser(req);
     //FIXME
-    if (// user.id === +req.params.id ||
+    if ( user.id === +req.params?.id ||
       user.is_admin) {
       try {
-        await FunTracker.changePassword(req.body.id, req.body.password);
+        FunTracker.changePassword(req.body.id, req.body.password);
         return res.status(200).json({success: true});
       } catch (error: any) {
         if (error.errno == 19) {
@@ -148,7 +148,7 @@ usersRouter.post(
 
     const user: UserJwt = getUser(req);
     //FIXME
-    if ( // user.id === +req.params.id ||
+    if (  user.id === +req.params?.id ||
       user.is_admin) {
       try {
         FunTracker.changeUsername(req.body.id, req.body.username);

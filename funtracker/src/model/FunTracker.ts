@@ -52,7 +52,7 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
     return null;
   }
 
-  static async getEstabelecimentoByID(id: number): Promise<Estabelecimento | null> {
+  static async getEstabelecimentoByID(id: number): Promise<Estabelecimento> {
       return FunTracker.estabelecimentoDAO.getByID(id)
   }
 
