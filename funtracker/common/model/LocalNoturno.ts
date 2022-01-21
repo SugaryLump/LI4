@@ -1,4 +1,7 @@
-export class Local  {
+import { PromisedDatabase } from "promised-sqlite3"
+import {LocalNoturnoNotFound} from '../../src/exceptions/index'
+
+export class LocalNoturno  {
     constructor(
         private readonly id: number,
         private nome: string,
@@ -13,9 +16,9 @@ export class Local  {
     ) {}
 
     // caller must increment numberRatings
-    updateRating(newRating: number, numberRatings: number): void {
+    updateRating(newRating: number, numberRatings: number): number {
         const sum : number = this.rating * numberRatings
-        this.rating = (sum + newRating)/(numberRatings + 1)
+        return this.rating = (sum + newRating)/(numberRatings + 1)
     }
 }
 
@@ -30,3 +33,19 @@ export enum GamaPreco {
     High = "$$$"
 }
 
+export class LocalNoturnoDao {
+    constructor(
+        private readonly db: PromisedDatabase
+    ) {}
+
+    async avaliar(valor: number, estabelecimentoNoturnoId: number): Promise<number> {
+            // ir buscar o local Noturno
+            // verificar o any
+            let localNoturno: LocalNoturno | null = null as any
+            if (localNoturno == null)
+                throw new LocalNoturnoNotFound(estabelecimentoNoturnoId)
+            // FIXME
+            let numberRatings = 0
+            return localNoturno.updateRating(valor, numberRatings)
+    }
+}
