@@ -12,12 +12,29 @@ export class FunTracker {
         private localNoturnoDao: LocalNoturnoDao
     ) {}
 
+    /* USERS */
     async iniciarSessao(username: string, password: string): Promise<User> {
         return this.users.login(username,password)
     }
 
-    async criarConta(username: string, password: string): Promise<User> {
+    async criarContaUtilizador(username: string, password: string): Promise<User> {
         return this.users.createUser(username, password)
+    }
+
+    async criarContaAdmin(username: string, password: string): Promise<User> {
+        return this.users.createAdmin(username, password)
+    }
+
+    async changePassword(userId: number, newPassword: string): Promise<void> {
+        return this.users.changePassword(userId, newPassword);
+    }
+
+    async changeUsername(userId: number, newUsername: string): Promise<void> {
+        return this.users.changeUsername(userId, newUsername);
+    }
+
+    async checkIfIsAdmin(userId: number): Promise<boolean> {
+        return this.users.isAdmin(userId)
     }
 
     async avaliar(valor: number, comentario: string | null, estabelecimentoNoturnoId: number, utilizadorId: number):
@@ -25,11 +42,6 @@ export class FunTracker {
         // atualizar o rating do local Noturno
         this.localNoturnoDao.avaliar(valor, estabelecimentoNoturnoId)
         return this.classificacaoDao.createClassificacao(valor,comentario, estabelecimentoNoturnoId, utilizadorId);
-    }
-
-    // TODO, Ver os argumentos
-    async alterarDadosDaConta(userId: number): Promise<boolean> {
-        return true
     }
 
     // TODO faz sequer sentido??

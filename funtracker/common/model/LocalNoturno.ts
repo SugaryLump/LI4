@@ -8,6 +8,7 @@ export class LocalNoturno  {
         private lotacao: number,
         private rating: number,
         private gamaPreco: GamaPreco,
+        private categoria: Categoria,
         private morada: string,
         private coordenadas: {latitude: number, longitude: number },
         private horarioAbertura: Date,
@@ -39,13 +40,13 @@ export class LocalNoturnoDao {
     ) {}
 
     async avaliar(valor: number, estabelecimentoNoturnoId: number): Promise<number> {
-            // ir buscar o local Noturno
-            // verificar o any
-            let localNoturno: LocalNoturno | null = null as any
-            if (localNoturno == null)
-                throw new LocalNoturnoNotFound(estabelecimentoNoturnoId)
-            // FIXME
-            let numberRatings = 0
-            return localNoturno.updateRating(valor, numberRatings)
+        // ir buscar o local Noturno
+        // verificar o any
+        let localNoturno: LocalNoturno | null = null as any
+        if (localNoturno == null)
+            throw new LocalNoturnoNotFound(estabelecimentoNoturnoId)
+        // FIXME
+        let numberRatings = 0
+        return localNoturno.updateRating(valor, numberRatings)
     }
 }
