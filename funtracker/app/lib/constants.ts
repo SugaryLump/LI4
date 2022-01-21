@@ -1,11 +1,12 @@
 import Constants from 'expo-constants'
 import { StyleSheet } from 'react-native'
+import { FullTheme } from 'react-native-elements'
 
 const extra = Constants.manifest?.extra! // eslint-disable-line
 
 export const serverUrl: string = extra.serverUrl
 
-export const styles= StyleSheet.create({
+export const styles = StyleSheet.create({
     container: {
         flex:1
     },
@@ -25,25 +26,30 @@ export const styles= StyleSheet.create({
     }
 })
 
-export const appTheme={
+export const colors = {
+    lightGray: '#d0d0d0',
+    lightBlue: '#2582ff'
+}
+
+export const appTheme = {
     Header: {
         placement: 'left',
         backgroundColor:'#f6f7f8'
     },
     Button: {
         titleStyle: {
-            color: '#2582ff'
+            color: colors.lightBlue,
+            fontWeight: 'bold'
         },
         buttonStyle: {
             backgroundColor: 'transparent',
             borderWidth: 1,
-            borderColor: '#d0d0d0',
+            borderColor: colors.lightGray,
             borderRadius: 10,
-            padding: 20
+            width: '100%',
+            alignContent: 'center',
+            padding: 15
         },
-        containerStyle: {
-            width: 320,
-        }
     },
     CheckBox: {
         containerStyle: {

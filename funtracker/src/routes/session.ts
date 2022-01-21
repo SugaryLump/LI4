@@ -36,7 +36,7 @@ sessionRouter.post('/',
         } catch (e) {
             res.json({
                 success: false,
-                errors: [e]
+                errors: ["Username/password combination invalid"]
             })
         }
     })
