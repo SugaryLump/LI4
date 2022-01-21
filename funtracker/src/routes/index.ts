@@ -1,12 +1,12 @@
 import { Router } from 'express'
 import sessionRouter from './session'
-import localNoturnoRouter from './localNoturno'
+import estabelecimentoRouter from './estabelecimento'
 import usersRouter from './users'
 
 const apiRouter = Router()
 
 apiRouter.use('/user', usersRouter)
-apiRouter.use('/local', localNoturnoRouter)
+apiRouter.use('/estabelecimento', estabelecimentoRouter)
 apiRouter.use('/session', sessionRouter)
 
 const baseRouter = Router()
