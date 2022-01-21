@@ -2,8 +2,9 @@
 
 import { Router } from "express";
 import { body, validationResult } from "express-validator";
-import { UserDAO } from "../model/User";
+import { User, UserDAO} from "../model/User";
 import { FunTracker } from "../model/FunTracker";
+import isLoggedIn from '../middleware/isLoggedIn'
 import { ClassificacaoDAO } from "../model/Classificacao";
 
 const usersRouter = Router()
@@ -39,10 +40,15 @@ usersRouter.post('/',
   })
 
 
-usersRouter.get('/:id/historico', async (req, res) => {
-    return res
-        .status(200)
-        .json(FunTracker.getClassificacoesByID(req.body.id))
+usersRouter.get('/:id/historico', isLoggedIn, async (req: any, res) => {
+    if(req.user.id === req.params.id || req.user.isAdmin) {
+        return res
+            .status(200)
+            .json(FunTracker.getClassificacoesByID(req.body.id))
+    }
+    else {
+        return res.status(403)
+    }
 })
 
 export default usersRouter
