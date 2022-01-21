@@ -3,26 +3,32 @@ import { Estabelecimento } from "../model/Estabelecimento";
 import { body, validationResult } from "express-validator";
 import isLoggedIn from '../middleware/isLoggedIn';
 import { FunTracker } from '../model/FunTracker'
+import {UserJwt, getUser} from '../middleware/isLoggedIn'
 
 const estabelecimentoRouter = Router()
 
 estabelecimentoRouter.get('/all', isLoggedIn,async (req, res) => {
-    const estab : Estabelecimento[] = await FunTracker.getEstabelecimentos()
-    if(estab) {
+    try {
+        const estab : Estabelecimento[] = await FunTracker.getEstabelecimentos()
         return res.status(200).json(estab)
     }
-    else {
-        res.status(404).send("Database Error");
+    catch(e) {
+        res.status(500).send(e);
     }
 })
 
-estabelecimentoRouter.get('/:id', isLoggedIn, async (req, res) => {
-    let info_local = await FunTracker.getEstabelecimentoByID(parseInt(req.params.id))
-    if(info_local) {
-        return res.status(200).json(info_local)
+estabelecimentoRouter.get('/:id', /*isLoggedIn, */async (req, res) => {
+    try {
+        let infoLocal = await FunTracker.getEstabelecimentoByID(+req.params.id)
+        if(infoLocal) {
+            return res.status(200).json(infoLocal)
+        }
+        else {
+             return res.status(404).send("Estabelecimento Não Existe")
+        }
     }
-    else {
-        res.status(404).send("Bar não existe");
+    catch(e) {
+        res.status(500).send(e)
     }
 })
 
@@ -49,5 +55,17 @@ estabelecimentoRouter.get('/:id/adicionarImagem', isLoggedIn,
         res.status(404).send("Não foi possível adicionar a imagem");
     }
 })
+
+estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, async (req, res) => {
+  const user: UserJwt = getUser(req);
+  if (user.id === +req.params.id || user.is_admin) {
+    return res.status(200).json(FunTracker.getClassificacoesByEstabelecimentoID(req.body.id));
+  } else {
+    return res.status(403).json({
+      success: false,
+      errors: ['Permission Denied'],
+    });
+  }
+});
 
 export default estabelecimentoRouter

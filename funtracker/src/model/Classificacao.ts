@@ -36,9 +36,22 @@ export class ClassificacaoDAO {
       utilizadorId,
     };
   }
-  async getClassificacoesByID(userID: number): Promise<Classificacao[]> {
+
+  async getClassificacoesByUserID(userID: number): Promise<Classificacao[]> {
     return (
       await this.db.all('SELECT * FROM avaliacoes WHERE user_id = ?', userID)
+    ).map(c => ({
+      id: c.id,
+      valor: c.valor,
+      comentario: c.comentario,
+      estabelecimentoNoturnoId: c.estabelecimento_id,
+      utilizadorId: c.user_id,
+    }));
+  }
+
+  async getClassificacoesByEstabelecimentoId(estabelecimentoID: number): Promise<Classificacao[]> {
+    return (
+      await this.db.all('SELECT * FROM avaliacoes WHERE estabelecimento_id = ?', estabelecimentoID)
     ).map(c => ({
       id: c.id,
       valor: c.valor,

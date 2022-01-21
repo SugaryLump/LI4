@@ -61,7 +61,7 @@ usersRouter.post(
   async (req, res) => {
 
     const user: UserJwt = getUser(req);
-    //FIXME
+    //FIXMkjE
     if ( //user.id === +req.params.id &&
       user.is_admin) {
       try {
@@ -105,12 +105,8 @@ usersRouter.post(
     next();
   },
   async (req, res) => {
-    const user: UserJwt = getUser(req);
-    //FIXME
-    if (// user.id === +req.params.id ||
-      user.is_admin) {
       try {
-        await FunTracker.changePassword(req.body.id, req.body.password);
+        await FunTracker.changePassword(req.params?.id, req.body.password);
         return res.status(200).json({success: true});
       } catch (error: any) {
         if (error.errno == 19) {
@@ -122,13 +118,6 @@ usersRouter.post(
           errors: [error],
         });
       }
-
-     } else {
-       return res.status(403).json({
-         success: false,
-         errors: ['Permission Denied'],
-       });
-     }
   },
 );
 
@@ -145,14 +134,9 @@ usersRouter.post(
     next();
   },
   async (req, res) => {
-
-    const user: UserJwt = getUser(req);
-    //FIXME
-    if ( // user.id === +req.params.id ||
-      user.is_admin) {
       try {
-        FunTracker.changeUsername(req.body.id, req.body.username);
-        return res.status(200).json({success: true});
+        await FunTracker.changeUsername(req.params?.id, req.body.username);
+        return res.status(200).json({success: true, username: req.body.username});
       } catch (error: any) {
         if (error.errno == 19) {
           // Erro 19 é o erro de uma constraint falhada
@@ -163,20 +147,40 @@ usersRouter.post(
           errors: [error],
         });
       }
-    } else {
-      return res.status(403).json({
-        success: false,
-        errors: ['Permission Denied'],
-      });
-    }
   },
 );
+
+usersRouter.get('/all', isLoggedIn, async (req, res) => {
+  const user: UserJwt = getUser(req);
+  if (// user.id === +req.params.id &&
+    user.is_admin) {
+    return res.status(200).json(FunTracker.getAllUsers())
+  } else {
+    return res.status(403).json({
+      success: false,
+      errors: ['Permission Denied'],
+    });
+  }
+});
+
+//usersRouter.get('/:id', isLoggedIn, async (req, res) => {
+//  const user: UserJwt = getUser(req);
+//  if ( //user.id === +req.params.id &&
+//     user.is_admin ) {
+//    return res.status(200).json(FunTracker.getUserById(req.params?.id))
+//  } else {
+//    return res.status(403).json({
+//      success: false,
+//      errors: ['Permission Denied'],
+//    });
+//  }
+//});
 
 /* Ver histórico */
 usersRouter.get('/:id/historico', isLoggedIn, async (req, res) => {
   const user: UserJwt = getUser(req);
   if (user.id === +req.params.id || user.is_admin) {
-    return res.status(200).json(FunTracker.getClassificacoesByID(req.body.id));
+    return res.status(200).json(FunTracker.getClassificacoesByUserID(req.body.id));
   } else {
     return res.status(403).json({
       success: false,

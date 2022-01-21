@@ -72,7 +72,7 @@ export class UserDAO {
         if ( !await this.db.exists("utilizadores", "id = ?", userId) ) {
             throw "Utilizador não existe"
         }
-        if ( !await this.db.exists("utilizadores", "username = ?", newUsername) ) {
+        if ( await this.db.exists("utilizadores", "username = ?", newUsername) ) {
             throw "Utilizador com esse username já existe"
         }
         // TODO atualizar o novo userName na base de dados (verificar se ta bem)
@@ -85,5 +85,27 @@ export class UserDAO {
         }
         let {isAdmin} = await this.db.get("SELECT is_admin FROM utilizadores WHERE `id` = ?", userId)
         return isAdmin;
+    }
+
+    async allUsers(): Promise<User[]> {
+        return (
+            await this.db.all('SELECT * FROM utilizadores')
+        ).map(c => ({
+            id: c.id,
+            username: c.username,
+            passwordHash: c.password_hash,
+            isAdmin: c.is_admin
+        }));
+    }
+
+
+    async getById(userId: number): Promise<User> {
+        let {username, isAdmin, passwordHash} = await this.db.get("SELECT username, is_admin, password_hash FROM utilizadores WHERE `id` = ?", userId)
+        return{
+            id: userId,
+            username,
+            passwordHash,
+            isAdmin
+        }
     }
 }
