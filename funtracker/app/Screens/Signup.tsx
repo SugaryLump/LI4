@@ -1,81 +1,67 @@
 import React, { useState } from 'react'
-import { View } from 'react-native'
-import { Text, Button } from 'react-native-elements'
-import { Input } from 'react-native-elements/dist/input/Input'
+import { ScrollView, TextInput, View } from 'react-native'
+import { Text, Button, Input } from 'react-native-elements'
 import * as constants from '../lib/constants'
 
-export const SignupMenu = ({ navigation }:any) => {
+export const SignupMenu = ({ navigation }: any) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
   const [passwordError, setPasswordError] = useState('')
   const [usernameError, setUsernameError] = useState('')
 
+  const usernameRef = React.createRef<TextInput>()
+  const passwordRef = React.createRef<TextInput>()
+
   const createUser = (): void => {
-    fetch(constants.serverUrl + '/api/v1/user', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ username, password })})
+    fetch(constants.serverUrl + '/api/v1/user', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) })
       .then(async res => setMessage(await res.text()))
       .catch(async error => console.error(error))
 
     //go to home menu if successful
-    navigation.reset({index: 0, routes: [{ name: 'Estabelecimentos'}]});
+    navigation.reset({ index: 0, routes: [{ name: 'Estabelecimentos' }] });
   }
 
   //Components
 
   return (
-    <View>
-      <Input 
+    <ScrollView contentContainerStyle={{
+      flexDirection: 'column',
+      justifyContent: 'center',
+      top: 0,
+      bottom: 0,
+      right: 0,
+      left: 0,
+      position: 'absolute',
+      flex: 1,
+      paddingHorizontal: 20
+    }}>
+      <Input
         placeholder='Username'
-        onChangeText={(username)=>{
+        onChangeText={(username) => {
           setUsername(username)
           setUsernameError('')
         }}
-        inputContainerStyle={{
-          borderWidth: 1,
-          borderColor: '#c5cad4',
-          padding: 5,
-        }}
-        containerStyle={{
-          paddingTop:150,
-          paddingHorizontal:50
-        }}
         errorMessage={usernameError}
-        errorStyle={{
-          color: '#e33d3d',
-          borderBottomWidth: usernameError===''? 0:1,
-          borderBottomColor: '#e33d3d',
-        }}
+        returnKeyType='next'
+        autoCapitalize='none'
+        autoCompleteType='username'
+        ref={usernameRef}
+        onSubmitEditing={() => passwordRef.current?.focus()}
+        blurOnSubmit={false}
       />
       <Input
         placeholder='Password'
         secureTextEntry
-        onChangeText={(password)=>{
+        onChangeText={(password) => {
           setPassword(password)
           setPasswordError('')
         }}
-        inputContainerStyle={{
-          borderWidth: 1,
-          borderColor: '#c5cad4',
-          padding: 5
-        }}
-        containerStyle={{
-          paddingHorizontal:50
-        }}
         errorMessage={passwordError}
-        errorStyle={{
-          color: '#e33d3d',
-          borderBottomWidth: usernameError===''? 0:1,
-          borderBottomColor: '#e33d3d',
-        }}
+        ref={passwordRef}
+        onSubmitEditing={createUser}
       />
-      <View style={{justifyContent: 'center', alignItems: 'center'}}>
-        <Button title='Sign up' onPress={createUser} containerStyle={{paddingTop:50}}/>
-      </View>
-      <View style={{paddingHorizontal: 10, paddingVertical: 40}}>
-        <Text>
-          Debug: {message}
-        </Text>
-      </View>
-    </View>
+      <Button title='Sign up' onPress={createUser} />
+    </ScrollView>
   )
 }

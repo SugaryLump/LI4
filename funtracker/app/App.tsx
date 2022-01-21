@@ -24,7 +24,7 @@ export default function App (): JSX.Element {
                 backgroundColor: '#f6f7f8',
               },
               headerTitleStyle: {
-                fontSize: 35,
+                fontSize: 24,
               },
             }}>
 
@@ -33,7 +33,7 @@ export default function App (): JSX.Element {
               name='Login'
               component={LoginMenu}
               options={{
-                title: 'Login Menu',
+                title: 'Login',
               }}
             />
             <Stack.Screen
