@@ -1,39 +1,47 @@
 // Este módulo gere as migrations, ou seja, alterações à base de dados
-
-import { readdir, readFile } from "fs/promises";
-import path from "path";
 import { PromisedDatabase } from "promised-sqlite3";
 
-const migrationsDir = './src/migrations/'
-
-async function createMigrationsTable(db: PromisedDatabase) {
-    await db.run(`
-        CREATE TABLE IF NOT EXISTS migrations (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name VARCHAR(255) UNIQUE
-        );
-    `)
-}
-
-async function isMigrationDone(db: PromisedDatabase, migration: string): Promise<boolean> {
-    return await db.get("SELECT 1 FROM migrations WHERE name = ?;", migration) !== undefined
-}
-
 export default async function migrate(db: PromisedDatabase) {
-    // 1. Listar ficheiros de migrations 
-    let results = await readdir(migrationsDir)
-    let migrations = results.sort()
+    await db.createTable('utilizadores', true,
+        'id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT NOT NULL',
+        'username VARCHAR(45) UNIQUE NOT NULL',
+        'password_hash VARCHAR(60) NOT NULL',
+        'is_admin INTEGER DEFAULT FALSE'
+    )
 
-    await createMigrationsTable(db)
+    await db.createTable('estabelecimentos', true,
+        'id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT NOT NULL',
+        'lotacao INTEGER',
+        'morada VARCHAR(100)',
+        'coordenadas VARCHAR(50)',
+        'precos INTEGER',
+        'pontuacao FLOAT',
+        'horario_abertura TIME',
+        'horario_fecho TIME',
+        'contacto CHAR(9)'
+    )
 
-    for (let migration of migrations) {
-        if (!await isMigrationDone(db, migration)) {
-            console.log("Correndo migração: " + migration);
-            let migrationSql = await readFile(path.join(migrationsDir, migration))
+    await db.createTable('categorias', true,
+        'estabelecimento_id INTEGER NOT NULL',
+        'categoria STRING NOT NULL',
+        'FOREIGN KEY(estabelecimento_id) REFERENCES estabelecimentos(id)',
+        'PRIMARY KEY (estabelecimento_id, categoria)'
+    )
 
-            // TODO: Isto devia estar numa transaction, mas esta biblioteca não as suporta...
-            await db.run(migrationSql.toString());
-            await db.run("INSERT INTO migrations(name) VALUES(?)", migration)
-        }
-    }
+    await db.createTable('avaliacoes', true,
+        'valor INTEGER NOT NULL',
+        'comentarios VARCHAR(1024)',
+        'estabelecimento_id INTEGER NOT NULL',
+        'user_id INTEGER NOT NULL',
+        'FOREIGN KEY(estabelecimento_id) REFERENCES estabelecimentos(id)',
+        'FOREIGN KEY(user_id) REFERENCES utilizadores(id)',
+        'PRIMARY KEY (estabelecimento_id, user_id)'
+    )
+
+    await db.createTable('imagens', true,
+        'id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT NOT NULL',
+        'estabelecimento_id INTEGER NOT NULL',
+        'filepath VARCHAR(1024) NOT NULL',
+        'FOREIGN KEY (estabelecimento_id) REFERENCES estabelecimentos(id)',
+    )
 }

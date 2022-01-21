@@ -28,7 +28,7 @@ sessionRouter.post('/',
                 username: user.username,
                 id: user.id,
                 jwt: jwt.sign({
-                    user_id: user.id,
+                    id: user.id,
                     username: user.username,
                     is_admin: false // TODO
                 }, req.app.get('secret'))
