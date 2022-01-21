@@ -93,7 +93,7 @@ usersRouter.post(
 
 /* mudar a password */
 usersRouter.post(
-  '/:id/changePassword',
+  '/:id/changePassword', isLoggedIn,
   body('password')
     .exists()
     .isLength({min: 8})
