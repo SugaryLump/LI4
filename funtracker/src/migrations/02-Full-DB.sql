@@ -14,7 +14,7 @@ CREATE TABLE estabelecimentos (
 CREATE TABLE avaliacoes (
   id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT NOT NULL,
   valor INTEGER,
-  comentarios VARCHAR(1024),
+  comentario VARCHAR(1024),
   FOREIGN KEY(estabelecimento_id) REFERENCES estabelecimentos(id),
   FOREIGN KEY(user_id) REFERENCES utilizadores(id)
 );
