@@ -63,7 +63,8 @@ usersRouter.post(
 
     const user: UserJwt = getUser(req);
     //FIXME
-    if (/*user.id === +req.params.id &&*/ user.is_admin) {
+    if ( //user.id === +req.params.id &&
+      user.is_admin) {
       let funtracker: FunTracker = new FunTracker(req.app.get('db'));
       try {
         let user = await funtracker.criarContaAdmin(req.body.username, req.body.password);
@@ -106,9 +107,10 @@ usersRouter.post(
     next();
   },
   async (req, res) => {
-    // const user: UserJwt = getUser(req);
+    const user: UserJwt = getUser(req);
     //FIXME
-    //if (user.id === +req.params.id || user.is_admin) {
+    if (// user.id === +req.params.id ||
+      user.is_admin) {
       let funTracker: FunTracker = new FunTracker(req.app.get('db'));
 
       try {
@@ -125,12 +127,12 @@ usersRouter.post(
         });
       }
 
-    // } else {
-    //   return res.status(403).json({
-    //     success: false,
-    //     errors: ['Permission Denied'],
-    //   });
-    // }
+     } else {
+       return res.status(403).json({
+         success: false,
+         errors: ['Permission Denied'],
+       });
+     }
   },
 );
 
@@ -148,10 +150,10 @@ usersRouter.post(
   },
   async (req, res) => {
 
-    //const user: UserJwt = getUser(req);
+    const user: UserJwt = getUser(req);
     //FIXME
-    //If ( user.id === +req.params.id ||
-    //  user.is_admin) {
+    if ( // user.id === +req.params.id ||
+      user.is_admin) {
       let funTracker: FunTracker = new FunTracker(req.app.get('db'));
       try {
         funTracker.changeUsername(req.body.id, req.body.username);
@@ -166,12 +168,12 @@ usersRouter.post(
           errors: [error],
         });
       }
-    //} else {
-    //  return res.status(403).json({
-    //    success: false,
-    //    errors: ['Permission Denied'],
-    //  });
-    //}
+    } else {
+      return res.status(403).json({
+        success: false,
+        errors: ['Permission Denied'],
+      });
+    }
   },
 );
 

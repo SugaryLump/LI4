@@ -15,8 +15,11 @@ export class UserDAO {
         this.db = db
     }
 
-    // FIXME falta verificar se o user nao foi criado
     async createUser(username: string, password: string): Promise<User> {
+        if ( await this.db.exists("utilizadores", "username = ?", username) ) {
+            throw "Utilizador já existe"
+        }
+
         let passwordHash = await bcrypt.hash(password, 10)
         let r = await this.db.run("INSERT INTO utilizadores (username, password_hash) VALUES (?, ?)", username, passwordHash)
         return {
@@ -27,8 +30,11 @@ export class UserDAO {
         }
     }
 
-    // FIXME falta verificar se o user nao foi criado
     async createAdmin(username: string, password: string): Promise<User> {
+        if ( await this.db.exists("utilizadores", "username = ?", username) ) {
+            throw "Utilizador já existe"
+        }
+
         let passwordHash = await bcrypt.hash(password, 10)
         let r = await this.db.run("INSERT INTO utilizadores (username, password_hash) VALUES (?, ?)", username, passwordHash)
         return {
@@ -54,23 +60,29 @@ export class UserDAO {
     }
 
     async changePassword(userId: number, newPassword: string): Promise<void> {
-        // verificar se realmente existe
-        let {username} = await this.db.get("SELECT username FROM utilizadores WHERE `id` = ?", userId)
+        if ( !await this.db.exists("utilizadores", "id = ?", userId) ) {
+            throw "Utilizador não existe"
+        }
         let passwordHash = await bcrypt.hash(newPassword, 10)
         //TODO atualizar a nova password na base de dados (verificar se ta bem)
         this.db.run("UPDATE utilizadores SET `password_hash` = ? WHERE `id` = ?", passwordHash, userId)
     }
 
     async changeUsername(userId: number, newUsername: string): Promise<void> {
-        // verificar se existe
-        let {password_hash} = await this.db.get("SELECT password_hash FROM utilizadores WHERE `id` = ?", userId)
-        // TODO verificar se o novo userName é unico
-
+        if ( !await this.db.exists("utilizadores", "id = ?", userId) ) {
+            throw "Utilizador não existe"
+        }
+        if ( !await this.db.exists("utilizadores", "username = ?", newUsername) ) {
+            throw "Utilizador com esse username já existe"
+        }
         // TODO atualizar o novo userName na base de dados (verificar se ta bem)
         this.db.run("UPDATE utilizadores SET `username` = ? WHERE `id` = ?", newUsername, userId)
     }
 
     async isAdmin(userId: number): Promise<boolean> {
+        if ( !await this.db.exists("utilizadores", "id = ?", userId) ) {
+            throw "Utilizador não existe"
+        }
         let {isAdmin} = await this.db.get("SELECT is_admin FROM utilizadores WHERE `id` = ?", userId)
         return isAdmin;
     }
