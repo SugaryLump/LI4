@@ -13,3 +13,13 @@ export default function (req: any, res: Response, next: NextFunction) {
         }
     }
 }
+
+export type UserJwt = {
+    username: string
+    id: number
+    is_admin: boolean
+}
+
+export function getUser(req: any): UserJwt {
+    return req.user
+}
