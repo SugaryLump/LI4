@@ -1,10 +1,8 @@
 import {UserDAO, User}  from './User'
 import {Classificacao, ClassificacaoDao}  from './Classificacao'
-import {LocalNoturno, LocalNoturnoDao}  from './LocalNoturno'
+import {LocalNoturnoDao}  from '../../common/model/LocalNoturno'
 
-import {Result, fail} from './Result'
 import {PromisedDatabase } from 'promised-sqlite3'
-import { LocalNoturnoNotFound } from 'src/exceptions'
 
 export class FunTracker {
     constructor(
@@ -14,27 +12,19 @@ export class FunTracker {
         private localNoturnoDao: LocalNoturnoDao
     ) {}
 
-    async iniciarSessao(username: string, password: string): Promise<Result<User, Error>> {
+    async iniciarSessao(username: string, password: string): Promise<User> {
         return this.users.login(username,password)
     }
 
-    async criarConta(username: string, password: string): Promise<Result<User,Error>> {
+    async criarConta(username: string, password: string): Promise<User> {
         return this.users.createUser(username, password)
     }
 
     async avaliar(valor: number, comentario: string | null, estabelecimentoNoturnoId: number, utilizadorId: number):
-    Promise<Result<Classificacao,Error>> {
-        // Verificar se existe estabelecimento e ir busca lo
-        const avaliar = this.localNoturnoDao.avaliar(valor, estabelecimentoNoturnoId)
-        const r = !(await avaliar).ok
-        return fail(({fail, success})=> {
-            if (r)
-              return fail(new LocalNoturnoNotFound(estabelecimentoNoturnoId))
-            // ver melhor o any
-            const newRating = this.classificacaoDao.createClassificacao(valor,comentario, estabelecimentoNoturnoId, utilizadorId) as any;
-            return  success(newRating)
-        })
+    Promise<Classificacao> {
         // atualizar o rating do local Noturno
+        this.localNoturnoDao.avaliar(valor, estabelecimentoNoturnoId)
+        return this.classificacaoDao.createClassificacao(valor,comentario, estabelecimentoNoturnoId, utilizadorId);
     }
 
     // TODO, Ver os argumentos

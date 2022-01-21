@@ -1,6 +1,5 @@
 import { PromisedDatabase } from "promised-sqlite3"
-import {LocalNoturnoNotFound} from '../exceptions/index'
-import {Result, fail} from '../model/Result'
+import {LocalNoturnoNotFound} from '../../src/exceptions/index'
 
 export class LocalNoturno  {
     constructor(
@@ -39,17 +38,14 @@ export class LocalNoturnoDao {
         private readonly db: PromisedDatabase
     ) {}
 
-    async avaliar(valor: number, estabelecimentoNoturnoId: number): Promise<Result<number, LocalNoturnoNotFound>> {
+    async avaliar(valor: number, estabelecimentoNoturnoId: number): Promise<number> {
             // ir buscar o local Noturno
-        return fail(({fail, success})=> {
             // verificar o any
             let localNoturno: LocalNoturno | null = null as any
-            if (localNoturno == null) {
-                return fail(new LocalNoturnoNotFound(estabelecimentoNoturnoId))
-            }
+            if (localNoturno == null)
+                throw new LocalNoturnoNotFound(estabelecimentoNoturnoId)
             // FIXME
             let numberRatings = 0
-            return success(localNoturno.updateRating(valor, numberRatings))
-        })
+            return localNoturno.updateRating(valor, numberRatings)
     }
 }

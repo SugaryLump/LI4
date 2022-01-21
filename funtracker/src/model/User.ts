@@ -4,7 +4,6 @@ import * as bcrypt from 'bcrypt'
 import { PromisedDatabase } from 'promised-sqlite3'
 
 import {UserAlreadyExistsException, InvalidCredentialsExceptions, UserNotFoundException} from '../exceptions/index'
-import {Result, fail} from './Result'
 
 export type User = {
     id: number
@@ -30,7 +29,6 @@ export class UserDAO {
         }
     }
 
-    // TODO
     async login(username: string, password: string): Promise<User> {
         let {id, password_hash} = await this.db.get("SELECT id, password_hash FROM utilizadores WHERE `username` = ?", username)
         if (await bcrypt.compare(password, password_hash)) {
