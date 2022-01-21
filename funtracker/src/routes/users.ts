@@ -154,7 +154,21 @@ usersRouter.get('/all', isLoggedIn, async (req, res) => {
   const user: UserJwt = getUser(req);
   if (// user.id === +req.params.id &&
     user.is_admin) {
-    return res.status(200).json(FunTracker.getAllUsers())
+    try {
+      let users = await FunTracker.getAllUsers()
+      let allSimpleUsers = users.map(c => {
+        id: c.id
+        username: c.username
+        isAdmin: c.isAdmin
+      })
+      return res.status(200).json({success: true, users: allSimpleUsers})
+    } catch(error: any) {
+      return res.status(400).json({
+        success: false,
+        errors: [error],
+      });
+    }
+
   } else {
     return res.status(403).json({
       success: false,
@@ -165,9 +179,12 @@ usersRouter.get('/all', isLoggedIn, async (req, res) => {
 
 //usersRouter.get('/:id', isLoggedIn, async (req, res) => {
 //  const user: UserJwt = getUser(req);
-//  if ( //user.id === +req.params.id &&
-//     user.is_admin ) {
-//    return res.status(200).json(FunTracker.getUserById(req.params?.id))
+//  if ( user.is_admin ) {
+//      let user = await FunTracker.getUserById(req.params.id);
+//      return res
+//        .status(200)
+//        .json({success: true, user: {username: user.username, id: user.id}});
+//
 //  } else {
 //    return res.status(403).json({
 //      success: false,

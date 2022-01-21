@@ -17,7 +17,7 @@ estabelecimentoRouter.get('/all', isLoggedIn,async (req, res) => {
     }
 })
 
-estabelecimentoRouter.get('/:id', /*isLoggedIn, */async (req, res) => {
+estabelecimentoRouter.get('/:id', isLoggedIn, async (req, res) => {
     try {
         let infoLocal = await FunTracker.getEstabelecimentoByID(+req.params.id)
         if(infoLocal) {
