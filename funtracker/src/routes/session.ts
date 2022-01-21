@@ -30,11 +30,11 @@ sessionRouter.post('/',
                 jwt: jwt.sign({
                     id: user.id,
                     username: user.username,
-                    is_admin: false // TODO
+                    is_admin: user.isAdmin
                 }, req.app.get('secret'))
             })
         } catch (e) {
-            res.json({
+            res.status(400).json({
                 success: false,
                 errors: ["Username/password combination invalid"]
             })
