@@ -19,6 +19,8 @@ class LocalNoturno {
         public criticas:string[][],
         public abertura:string,
         public fecho:string,
+        public latitude:number,
+        public longitude:number,
     ) {}
 }
 
@@ -34,7 +36,7 @@ export const EstabelecimentoMenu = ({ navigation, route }: any) => {
                         0, 'Taberna Linda', 4, '€', 32, ['Bar'],
                         'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg',
                         [0.07,0.13,0.20,0.45,0.15],'934669512', [["Joberto","épico"],["Mauricio", "gostoso"], ["Josefina","não poggers"]],
-                        "14:00", "23h00");
+                        "14:00", "23h00", 41.6889, -8.8366);
         return local;
     }
 
