@@ -1,6 +1,6 @@
 import {UserDAO, User}  from './User'
 import {Classificacao, ClassificacaoDAO}  from './Classificacao'
-import {LocalNoturnoDAO}  from '../../common/model/LocalNoturno'
+import {LocalNoturnoDAO, LocalNoturno}  from '../../common/model/LocalNoturno'
 
 import {PromisedDatabase } from 'promised-sqlite3'
 
@@ -42,12 +42,17 @@ export class FunTracker {
         return FunTracker.users.isAdmin(userId)
     }
 
+    /* Estabelecimentos */
     async avaliar(valor: number, comentario: string | null, estabelecimentoNoturnoId: number, utilizadorId: number):
     Promise<Classificacao> {
         // atualizar o rating do local Noturno
         FunTracker.localNoturnoDAO.avaliar(valor, estabelecimentoNoturnoId)
         return FunTracker.classificacaoDAO.createClassificacao(valor,comentario, estabelecimentoNoturnoId, utilizadorId);
     }
+
+    //async criarEstabelecimento(): Promise<LocalNoturno> {
+    //    return null
+    //}
 
     // TODO faz sequer sentido??
     async atualizarLocalizacao(userId: number): Promise<boolean> {
@@ -57,8 +62,4 @@ export class FunTracker {
     static async getClassificacoesByID(userID: number) {
             return FunTracker.classificacaoDAO.getClassificacoesByID(userID)
     }
-
-
-
-
 }

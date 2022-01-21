@@ -1,4 +1,6 @@
 import { Router } from "express";
+import { body, validationResult } from "express-validator";
+import { FunTracker } from '../model/FunTracker'
 
 const localNoturnoRouter = Router()
 
@@ -15,6 +17,17 @@ localNoturnoRouter.get('/:id', async (req, res) => {
     }
     else {
         res.status(404).send("Bar não existe");
+    }
+})
+
+// TODO
+localNoturnoRouter.get('/all', async (req, res) => {
+    let allLocais = null
+    if(allLocais) {
+        return res.status(200).json(allLocais)
+    }
+    else {
+        res.status(404).send("Não existem bares");
     }
 })
 
