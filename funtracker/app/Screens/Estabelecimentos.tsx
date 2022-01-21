@@ -10,7 +10,7 @@ import { ListItem } from 'react-native-elements/dist/list/ListItem'
 
 class LocalNoturno {
     constructor(
-        public id:number,
+        public key:number,
         public nome:string,
         public rating:number,
         public gamaPreco:string,
@@ -85,7 +85,7 @@ export const EstabelecimentosMenu = ({ navigation, route }:any) => {
         }
         return (
             //Something is padding these cards and I don't know what
-            <TouchableOpacity onPress={() => navigation.navigate({name:'Estabelecimento', params:{id:item.id}})} activeOpacity={0.7}>
+            <TouchableOpacity onPress={() => navigation.navigate({name:'Estabelecimento', params:{key:item.key}})} activeOpacity={0.7}>
                 <View>
                     <Card 
                         containerStyle={{
