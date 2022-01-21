@@ -168,6 +168,21 @@ usersRouter.get('/all', isLoggedIn, async (req, res) => {
         errors: [error],
       });
     }
+  } else {
+    return res.status(403).json({
+      success: false,
+      errors: ['Permission Denied'],
+    });
+  }
+});
+
+usersRouter.get('/:id', isLoggedIn, async (req, res) => {
+  const user: UserJwt = getUser(req);
+  if ( user.is_admin ) {
+      let user = await FunTracker.getUserById(+req.params.id);
+      return res
+        .status(200)
+        .json({success: true, user: {username: user.username, id: user.id}});
 
   } else {
     return res.status(403).json({
@@ -177,27 +192,11 @@ usersRouter.get('/all', isLoggedIn, async (req, res) => {
   }
 });
 
-//usersRouter.get('/:id', isLoggedIn, async (req, res) => {
-//  const user: UserJwt = getUser(req);
-//  if ( user.is_admin ) {
-//      let user = await FunTracker.getUserById(req.params.id);
-//      return res
-//        .status(200)
-//        .json({success: true, user: {username: user.username, id: user.id}});
-//
-//  } else {
-//    return res.status(403).json({
-//      success: false,
-//      errors: ['Permission Denied'],
-//    });
-//  }
-//});
-
 /* Ver histórico */
 usersRouter.get('/:id/historico', isLoggedIn, async (req, res) => {
   const user: UserJwt = getUser(req);
   if (user.id === +req.params.id || user.is_admin) {
-    return res.status(200).json(FunTracker.getClassificacoesByUserID(req.body.id));
+    return res.status(200).json(FunTracker.getClassificacoesByUserID(+req.params.id));
   } else {
     return res.status(403).json({
       success: false,
