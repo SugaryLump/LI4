@@ -9,6 +9,7 @@ import { LoginMenu } from './Screens/Login'
 import { SignupMenu } from './Screens/Signup'
 import { EstabelecimentosMenu } from './Screens/Estabelecimentos'
 import { FiltrosMenu } from './Screens/Filtros'
+import { EstabelecimentoMenu } from './Screens/Estabelecimento'
 
 const Stack = createNativeStackNavigator();
 
@@ -66,6 +67,11 @@ export default function App (): JSX.Element {
                 aberto:false,
                 ordem:0
               }}
+            />
+            <Stack.Screen
+              name='Estabelecimento'
+              component={EstabelecimentoMenu}
+              options={{title:' '}}
             />
 
           </Stack.Navigator>

@@ -10,13 +10,16 @@ export const styles= StyleSheet.create({
         flex:1
     },
     contentContainer: {
-        flex:1
+        flex:1,
+        paddingVertical:10
     },
     centered: {
+        flex:1,
         alignItems:'center',
+
     },
     footer: {
-        flex:0.5,
+        flex:0.2,
         alignItems:'center',
         justifyContent:'flex-end'
     }

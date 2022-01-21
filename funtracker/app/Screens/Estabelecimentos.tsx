@@ -85,7 +85,7 @@ export const EstabelecimentosMenu = ({ navigation, route }:any) => {
         }
         return (
             //Something is padding these cards and I don't know what
-            <TouchableOpacity onPress={() => setDebug(1)} activeOpacity={0.7}>
+            <TouchableOpacity onPress={() => navigation.navigate({name:'Estabelecimento', params:{id:item.id}})} activeOpacity={0.7}>
                 <View>
                     <Card 
                         containerStyle={{
@@ -111,6 +111,7 @@ export const EstabelecimentosMenu = ({ navigation, route }:any) => {
                                         showRating={false}
                                         size={10}
                                         starContainerStyle={{transform:[{ translateY:0 }], paddingRight:5}}
+                                        selectedColor='#ffd500'
                                     />
                                     <CardText text='•'/>
                                     <CardText text={JSON.stringify(item.totalRatings).concat(' críticas')}/>
