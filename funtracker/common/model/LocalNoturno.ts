@@ -34,7 +34,7 @@ export enum GamaPreco {
     High = "$$$"
 }
 
-export class LocalNoturnoDao {
+export class LocalNoturnoDAO {
     constructor(
         private readonly db: PromisedDatabase
     ) {}

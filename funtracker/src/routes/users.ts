@@ -3,6 +3,7 @@
 import { Router } from "express";
 import { body, validationResult } from "express-validator";
 import { UserDAO } from "../model/User";
+import { FunTracker } from "../model/FunTracker";
 import { ClassificacaoDAO } from "../model/Classificacao";
 
 const usersRouter = Router()
@@ -39,11 +40,9 @@ usersRouter.post('/',
 
 
 usersRouter.get('/:id/historico', async (req, res) => {
-    let classificacaoDAO: ClassificacaoDAO =
-        new ClassificacaoDAO(req.app.get('db'))
     return res
         .status(200)
-        .json(classificacaoDAO.getClassificacoesByID(req.body.id))
+        .json(FunTracker.getClassificacoesByID(req.body.id))
 })
 
 export default usersRouter

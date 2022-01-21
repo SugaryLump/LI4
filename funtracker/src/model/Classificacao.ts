@@ -36,7 +36,7 @@ export class ClassificacaoDAO {
       utilizadorId,
     };
   }
-  async getClassificacoesByID(userID: string): Promise<Classificacao[]> {
+  async getClassificacoesByID(userID: number): Promise<Classificacao[]> {
     return (
       await this.db.all('SELECT * FROM avaliacoes WHERE user_id = ?', userID)
     ).map(c => ({
