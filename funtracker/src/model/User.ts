@@ -72,7 +72,7 @@ export class UserDAO {
         if ( !await this.db.exists("utilizadores", "id = ?", userId) ) {
             throw "Utilizador não existe"
         }
-        if ( !await this.db.exists("utilizadores", "username = ?", newUsername) ) {
+        if ( await this.db.exists("utilizadores", "username = ?", newUsername) ) {
             throw "Utilizador com esse username já existe"
         }
         // TODO atualizar o novo userName na base de dados (verificar se ta bem)
