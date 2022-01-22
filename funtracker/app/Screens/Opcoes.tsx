@@ -5,68 +5,26 @@ import { AuthContext } from '../auth'
 import { useAuthContext } from '../hooks'
 
 export default function OpcoesMenu({ navigation, route }:any) {
-    const [newUsername, setNewUsername] = useState('')
-    const [usernameError, setUsernameError] = useState('')
-
-    const [oldPassword, setOldPassword] = useState('')
-    const [oldPasswordError, setOldPasswordError] = useState('')
-
-    const [newPassword1, setNewPassword1] = useState('')
-    const [newPassword1Error, setNewPassword1Error] = useState('')
-    const [newPassword2, setNewPassword2] = useState('')
-    const [newPassword2Error, setNewPassword2Error] = useState('')
+    const [password, setPassword] = useState('')
+    const [passwordError, setPasswordError] = useState('')
 
     const authContext = useAuthContext()
 
     return (
         <View style={{flex:1}}>
-            <View style={{flex:0.2, marginVertical:10, marginHorizontal:15}}>
-            <Input
-                placeholder='Username'
-                onChangeText={(username) => {
-                    setNewUsername(username)
-                    setUsernameError('')
-                }}
-                errorMessage={usernameError}
-                returnKeyType='next'
-                autoCapitalize='none'
-                autoCompleteType='username'
-                blurOnSubmit={false}
-            />
-            <Button title='Alterar Username'/>
-            </View>
-            <Divider/>
-            <View style={{flex:0.4, marginHorizontal:15}}>
+            <View style={{flex:0.9, marginHorizontal:15, marginVertical:15}}>
                 <Input
                     placeholder='Password atual'
                     secureTextEntry
                     onChangeText={(password) => {
-                        setOldPassword(password)
-                        setOldPasswordError('')
+                        setPassword(password)
+                        setPasswordError('')
                     }}
-                    errorMessage={oldPasswordError}
+                    errorMessage={passwordError}
                 />
-                <Input
-                    placeholder='Password nova'
-                    secureTextEntry
-                    onChangeText={(password) => {
-                        setOldPassword(password)
-                        setOldPasswordError('')
-                    }}
-                    errorMessage={newPassword1Error}
-                />
-                <Input
-                    placeholder='Repetir password nova'
-                    secureTextEntry
-                    onChangeText={(password) => {
-                        setOldPassword(password)
-                        setOldPasswordError('')
-                    }}
-                    errorMessage={newPassword2Error}
-                />
-                <Button title='Alterar Password'/>
+                <Button title='Alterar Credenciais' onPress={() => {navigation.navigate({name:'Credenciais'})}}/>
             </View>
-            <View style={{flex:0.4, justifyContent:'flex-end', marginVertical:10, marginHorizontal:15}}>
+            <View style={{flex:0.1, justifyContent:'flex-end', marginVertical:10, marginHorizontal:15,}}>
                 <Button title='Logout' titleStyle={{color:'red'}} buttonStyle={{borderColor:'red'}} onPress={authContext.signOut}/>
             </View>
         </View>

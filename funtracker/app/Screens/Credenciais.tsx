@@ -28,7 +28,6 @@ export default function CredenciaisMenu({ navigation, route }:any) {
             />
             <Button title='Alterar Username'/>
             </View>
-            <Divider/>
             <View style={{flex:0.4, marginHorizontal:15}}>
                 <Input
                     placeholder='Password nova'
