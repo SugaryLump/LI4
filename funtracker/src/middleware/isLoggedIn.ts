@@ -4,7 +4,11 @@ import jwt from 'jsonwebtoken';
 /// Middleware que verifica se um utilizador está autenticado
 export default function (req: any, res: Response, next: NextFunction) {
     try {
-        let res: any = jwt.verify(req.headers.authorization, req.app.get('secret'));
+        let auth: string = req.headers.authorization
+        if (auth.startsWith("Bearer ")) {
+            auth = auth.substring(7)
+        }
+        let res: any = jwt.verify(auth, req.app.get('secret'));
         req.user = res
         next()
     } catch (e) {
