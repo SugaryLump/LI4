@@ -1,3 +1,3 @@
 export {getUser} from './isLoggedIn'
 
-export {isAdmin, isUser} from './isUser'
+export {isAdmin, hasPermission} from './hasPermission'

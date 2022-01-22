@@ -2,13 +2,13 @@ import { Router } from "express";
 import { Estabelecimento } from "../model/Estabelecimento";
 import { body } from "express-validator";
 import isLoggedIn from '../middleware/isLoggedIn';
-import {isUser, isAdmin} from '../middleware/index'
+import {hasPermission,isAdmin} from '../middleware/hasPermission';
 import { FunTracker } from '../model/FunTracker'
 import {UserJwt, getUser} from '../middleware/isLoggedIn'
 
 const estabelecimentoRouter = Router()
 
-estabelecimentoRouter.get('/', isLoggedIn,async (req, res) => {
+estabelecimentoRouter.get('/', isLoggedIn, async (req, res) => {
     try {
         const estab : Estabelecimento[] = await FunTracker.getEstabelecimentos()
         return res.status(200).json(estab)
@@ -18,14 +18,14 @@ estabelecimentoRouter.get('/', isLoggedIn,async (req, res) => {
     }
 })
 
-estabelecimentoRouter.get('/:id', isLoggedIn, isUser, async (req, res) => {
+estabelecimentoRouter.get('/:id', isLoggedIn, hasPermission, async (req, res) => {
     try {
         let infoLocal = await FunTracker.getEstabelecimentoByID(+req.params.id)
         if(infoLocal) {
             return res.status(200).json(infoLocal)
         }
         else {
-             return res.status(404).send("Estabelecimento Não Existe")
+             return res.status(404).send("Não Existe Nenhum Estabelecimento")
         }
     }
     catch(e) {
@@ -33,7 +33,7 @@ estabelecimentoRouter.get('/:id', isLoggedIn, isUser, async (req, res) => {
     }
 })
 
-estabelecimentoRouter.get('/:id/allImagens', isLoggedIn, isUser, async (req, res) => {
+estabelecimentoRouter.get('/:id/allImagens', isLoggedIn, hasPermission, async (req, res) => {
     let allImagens = await FunTracker.getAllImagensByEstabelecimentoID(req.body.id)
 
     if(allImagens) {
@@ -58,11 +58,11 @@ estabelecimentoRouter.post('/:id/adicionarImagem', isLoggedIn, isAdmin,
     }
 })
 
-estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, isUser, async (req, res) => {
+estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, isAdmin, async (req, res) => {
     return res.status(200).json(FunTracker.getClassificacoesByEstabelecimentoID(req.body.id));
 });
 
-estabelecimentoRouter.post('/:id/avaliar', isLoggedIn, isUser,
+estabelecimentoRouter.post('/:id/avaliar', isLoggedIn, hasPermission,
   body('valor').exists(),
   body('comentario').exists(),
   async (req, res) => {

@@ -4,7 +4,8 @@ import {Request, Router} from 'express';
 import {body, validationResult} from 'express-validator';
 import {FunTracker} from '../model/FunTracker';
 import isLoggedIn from '../middleware/isLoggedIn';
-import {isUser,isAdmin} from '../middleware/index'
+import {hasPermission, isAdmin} from '../middleware/hasPermission';
+import {UserJwt, getUser} from '../middleware/isLoggedIn'
 
 const usersRouter = Router();
 
@@ -79,7 +80,7 @@ usersRouter.post(
 
 /* mudar a password */
 usersRouter.post(
-  '/:id/changePassword', isLoggedIn, isUser,
+  '/:id/changePassword', isLoggedIn, hasPermission,
   body('password')
     .exists()
     .isLength({min: 8})
@@ -111,7 +112,7 @@ usersRouter.post(
 
 /* mudar o username */
 usersRouter.post(
-  '/:id/changeUsername', isLoggedIn, isUser,
+  '/:id/changeUsername', isLoggedIn, hasPermission ,
   body('username').exists(),
   (req, res, next) => {
     const errors = validationResult(req);
@@ -139,6 +140,7 @@ usersRouter.post(
 );
 
 usersRouter.get('/all', isLoggedIn, isAdmin, async (req, res) => {
+  const user: UserJwt = getUser(req);
     try {
       let users = await FunTracker.getAllUsers()
       let allSimpleUsers = users.map(c => ({
@@ -155,15 +157,14 @@ usersRouter.get('/all', isLoggedIn, isAdmin, async (req, res) => {
     }
 });
 
-usersRouter.get('/:id', isLoggedIn, isUser, async (req, res) => {
+usersRouter.get('/:id', isLoggedIn, hasPermission, async (req, res) => {
       let user = await FunTracker.getUserById(+req.params.id);
       return res
         .status(200)
         .json({success: true, user: {username: user.username, id: user.id}});
 });
 
-/* Ver histórico */
-usersRouter.get('/:id/historico', isLoggedIn, isUser, async (req, res) => {
+usersRouter.get('/:id/historico', isLoggedIn, hasPermission, async (req, res) => {
     return res.status(200).json(FunTracker.getClassificacoesByUserID(+req.params.id));
 });
 
