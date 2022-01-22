@@ -4,6 +4,7 @@ import { Text, Button, Input } from 'react-native-elements'
 // import { Input } from 'react-native-elements/dist/input/Input'
 import * as svg from 'react-native-svg'
 import { AuthContext } from '../auth'
+import { useAuthContext } from '../hooks'
 import { colors, serverUrl } from '../lib/constants'
 
 const LoginCircle = () => (
@@ -38,7 +39,7 @@ export const LoginMenu = ({ navigation }: any) => {
   const usernameRef = React.createRef<TextInput>()
   const passwordRef = React.createRef<TextInput>()
 
-  const authContext = useContext(AuthContext)
+  const authContext = useAuthContext()
 
   const login = async () => {
     try {

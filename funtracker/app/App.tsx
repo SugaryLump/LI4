@@ -7,7 +7,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { LoginMenu } from './Screens/Login'
 import { SignupMenu } from './Screens/Signup'
-import { getJwt, setJwt, AuthContext, AuthContextT, JWT, AuthState, AuthAction } from './auth'
+import { getJwt, setJwt, AuthContext, AuthContextT, JWT, AuthState, AuthAction, newAuthContext } from './auth'
 import { EstabelecimentosMenu } from './Screens/Estabelecimentos'
 import { FiltrosMenu } from './Screens/Filtros'
 import { EstabelecimentoMenu } from './Screens/Estabelecimento'
@@ -59,9 +59,10 @@ export default function App(): JSX.Element {
     bootstrapAsync()
   }, [])
 
+  // Muito muito hacky mas assim deve funcionar
   const authContext = React.useMemo<AuthContextT>(
-    () => new AuthContextT(dispatch),
-    []
+    () => newAuthContext(dispatch, state),
+    [state]
   )
 
   return (

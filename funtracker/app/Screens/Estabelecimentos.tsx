@@ -50,8 +50,6 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
     const [estabelecimentos, setEstabelecimentos] = useState([] as LocalNoturno[])
     const [debug, setDebug] = useState(0)
 
-    const authContext = useContext(AuthContext)
-    
     //Search
     useEffect (() => {
         if (!route.params?.searched) {
@@ -98,11 +96,7 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
 
         // TODO: Colocar o value no seu próprio tipo
         const onSelect = (value: any) => {
-            if (value.menu === 'signout') {
-                authContext.signOut()
-            } else {
-                navigation.navigate(value.menu, value.params)
-            }
+            navigation.navigate(value.menu, value.params)
         }
 
         navigation.setOptions({
