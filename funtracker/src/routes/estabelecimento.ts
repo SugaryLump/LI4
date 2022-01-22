@@ -7,7 +7,7 @@ import {UserJwt, getUser} from '../middleware/isLoggedIn'
 
 const estabelecimentoRouter = Router()
 
-estabelecimentoRouter.get('/all', isLoggedIn,async (req, res) => {
+estabelecimentoRouter.get('/', isLoggedIn,async (req, res) => {
     try {
         const estab : Estabelecimento[] = await FunTracker.getEstabelecimentos()
         return res.status(200).json(estab)
@@ -17,7 +17,7 @@ estabelecimentoRouter.get('/all', isLoggedIn,async (req, res) => {
     }
 })
 
-estabelecimentoRouter.get('/:id', /*isLoggedIn, */async (req, res) => {
+estabelecimentoRouter.get('/:id', isLoggedIn, async (req, res) => {
     try {
         let infoLocal = await FunTracker.getEstabelecimentoByID(+req.params.id)
         if(infoLocal) {
@@ -43,7 +43,7 @@ estabelecimentoRouter.get('/:id/allImagens', isLoggedIn, async (req, res) => {
 })
 
 // Maybe mandar mesmo a imagem, fazer dowload dela e devolver o filepath
-estabelecimentoRouter.get('/:id/adicionarImagem', isLoggedIn,
+estabelecimentoRouter.post('/:id/adicionarImagem', isLoggedIn,
   body('filepath')
       .exists(),
   async (req, res) => {
@@ -67,5 +67,19 @@ estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, async (req, res) =>
     });
   }
 });
+
+estabelecimentoRouter.post('/:id/avaliar', isLoggedIn,
+  body('valor').exists(),
+  body('comentario').exists(),
+  async (req, res) => {
+    const user: UserJwt = getUser(req);
+    let newClassificacao = FunTracker.avaliar(+req.body.valor, req.body.comentario, +req.params?.id,user.id)
+    if(newClassificacao) {
+        return res.status(200).json(newClassificacao)
+    }
+    else {
+        res.status(404).send("Não foi possível classificar o estabelecimento");
+    }
+})
 
 export default estabelecimentoRouter

@@ -1,6 +1,6 @@
 import { registerRootComponent } from 'expo'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ThemeProvider } from 'react-native-elements'
 import * as constants from './lib/constants'
 import { NavigationContainer } from '@react-navigation/native'
@@ -9,10 +9,23 @@ import { LoginMenu } from './Screens/Login'
 import { SignupMenu } from './Screens/Signup'
 import MainDrawerNavigator from './Screens/MainDrawer'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { getJwt } from './storage'
 
 const Stack = createNativeStackNavigator();
 
 export default function App (): JSX.Element {
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  useEffect(() => {
+    getJwt().then(r => {
+      if (r) {
+        setIsLoggedIn(true)
+      } else {
+        setIsLoggedIn(false)
+      }
+    })
+  }, [])
+
   return (
     <SafeAreaProvider>
       <ThemeProvider theme={constants.appTheme}>

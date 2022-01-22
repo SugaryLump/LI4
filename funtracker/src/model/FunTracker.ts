@@ -35,11 +35,11 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
   }
 
   static async changePassword(userId: number, newPassword: string): Promise<void> {
-    return FunTracker.users.changePassword(userId, newPassword).catch(e => {throw e});
+      return FunTracker.users.changePassword(userId, newPassword)
   }
 
   static async changeUsername(userId: number, newUsername: string): Promise<void> {
-    return FunTracker.users.changeUsername(userId, newUsername).catch(e => {throw e});
+    return FunTracker.users.changeUsername(userId, newUsername)
   }
 
   static async checkIfIsAdmin(userId: number): Promise<boolean> {

@@ -21,7 +21,7 @@ export class UserDAO {
         }
 
         let passwordHash = await bcrypt.hash(password, 10)
-        let r = await this.db.run("INSERT INTO utilizadores (username, password_hash) VALUES (?, ?)", username, passwordHash)
+        let r = await this.db.run("INSERT INTO utilizadores (username, password_hash, is_admin) VALUES (?, ?, ?)", username, passwordHash, false)
         return {
             id: r.lastID,
             username,
@@ -36,7 +36,7 @@ export class UserDAO {
         }
 
         let passwordHash = await bcrypt.hash(password, 10)
-        let r = await this.db.run("INSERT INTO utilizadores (username, password_hash) VALUES (?, ?)", username, passwordHash)
+        let r = await this.db.run("INSERT INTO utilizadores (username, password_hash,is_admin) VALUES (?, ?,?)", username, passwordHash,true)
         return {
             id: r.lastID,
             username,
@@ -46,13 +46,13 @@ export class UserDAO {
     }
 
     async login(username: string, password: string): Promise<User> {
-        let {id, password_hash, isAdmin} = await this.db.get("SELECT id, password_hash, is_admin FROM utilizadores WHERE `username` = ?", username)
+        let {id, password_hash, is_admin} = await this.db.get("SELECT id, password_hash, is_admin FROM utilizadores WHERE `username` = ?", username)
         if (await bcrypt.compare(password, password_hash)) {
             return {
                 username,
                 id,
                 passwordHash: password_hash,
-                isAdmin
+                isAdmin: is_admin
             }
         } else {
             throw "Credenciais inválidos"

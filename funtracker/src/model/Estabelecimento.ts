@@ -50,7 +50,6 @@ export class EstabelecimentoDAO {
   }
 
   async getByGamaPreco(gamaPreco: string): Promise<Estabelecimento[]> {
-    ////TODO a migrations nao tem o gamaPreco
     //return (
     //    await this.db.all('SELECT * FROM estabelecimentos WHERE gamaPreco = ?', gamaPreco)
     //).map(c => ({
@@ -73,6 +72,7 @@ export class EstabelecimentoDAO {
   async getByID(id: number): Promise<Estabelecimento> {
         return await this.db.get('SELECT * from estabelecimentos where id = ?', id);
   }
+
   async getAll(): Promise<Estabelecimento[]> {
     return await this.db.all('SELECT * from estabelecimentos');
   }
