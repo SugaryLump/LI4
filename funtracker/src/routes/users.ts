@@ -5,6 +5,7 @@ import { body, query, validationResult} from 'express-validator';
 import {FunTracker} from '../model/FunTracker';
 import isLoggedIn from '../middleware/isLoggedIn';
 import {hasPermission, isAdmin, isSpecial} from '../middleware/hasPermission';
+import jwt from 'jsonwebtoken'
 
 const usersRouter = Router();
 
@@ -87,7 +88,7 @@ usersRouter.patch(
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({success: false, errors: errors.array()});
+      return res.status(400).json({success: false, errors: errors.array().map(err => err.msg)});
     }
 
     next();
@@ -124,13 +125,16 @@ usersRouter.patch(
   async (req: Request, res) => {
       try {
           await FunTracker.changeUsername(+req.params.id, req.body.username);
-          return res.status(200).json({success: true, username: req.body.username});
+          return res.status(200).json({
+            success: true,
+            username: req.body.username,
+          });
       } catch (error: any) {
         if (error.errno == 19) {
           // Erro 19 é o erro de uma constraint falhada
           error = 'Username already exists';
         }
-        return res.status(404).json({
+        return res.status(403).json({
           success: false,
           errors: [error],
         });

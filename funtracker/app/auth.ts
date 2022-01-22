@@ -33,9 +33,14 @@ export async function setJwt(jwt: JWT | null) {
     }
 }
 
-export interface AuthAction {
-    type: 'SIGN_IN' | 'RESTORE_TOKEN' | 'SIGN_OUT',
-    token?: JWT | null
+export type AuthAction = {
+    type: 'SIGN_IN' | 'RESTORE_TOKEN'
+    token: JWT | null
+} | {
+    type: 'SIGN_OUT'
+} | {
+    type: 'NEW_USERNAME',
+    username: string
 }
 
 export type AuthState = {
@@ -52,6 +57,7 @@ export interface AuthContextT {
 
     signIn: (token: JWT) => Promise<void>
     signOut: () => Promise<void>
+    newUsername: (username: string) => void
 
     fetchWithJwt: <Path extends keyof API, Method extends Extract<keyof API[Path], string>, Body extends API[Path][Method]["req"], Reply extends API[Path][Method]["res"]>(
         url: Extract<Path, string>, method: Method, body?: Body, params?: { [s: string]: number | string }, token?: string
@@ -75,11 +81,15 @@ export function newAuthContext(dispatch: React.Dispatch<AuthAction>, state: Auth
             dispatch({ type: 'SIGN_OUT' })
         },
 
+        newUsername: (username: string) => {
+            dispatch({ type: 'NEW_USERNAME', username })
+        },
+
         fetchWithJwt: async (url, method, body, params, token) => {
             let realUrl = url as string
             if (params !== undefined) {
                 for (let [key, val] of Object.entries(params)) {
-                    realUrl = realUrl.replaceAll(":" + key, params[key].toString())
+                    realUrl = realUrl.replace(":" + key, params[key].toString())
                 }
             }
             let res = await fetch(serverUrl + "/api/v1" + realUrl, {

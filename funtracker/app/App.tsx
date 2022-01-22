@@ -44,6 +44,18 @@ export default function App(): JSX.Element {
             isSignout: true,
             userToken: null
           }
+        case 'NEW_USERNAME':
+          if (prevState.userToken) {
+            return {
+              ...prevState,
+              userToken: {
+                ...prevState.userToken,
+                username: action.username
+              }
+            }
+          } else {
+            return prevState
+          }
       }
     },
     {
