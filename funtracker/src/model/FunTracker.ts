@@ -115,6 +115,16 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
     );
   }
 
+  static async adicionarCategoria(estabelecimento_id: number, nome_categoria: (keyof typeof Categoria) ,
+): Promise<{categoria: Categoria, estabelecimento_id: number}> {
+      let categoria: (Categoria|undefined) = Categoria[nome_categoria]
+      if (categoria == undefined)
+          throw "Categoria não existe"
+      else {
+          return await FunTracker.estabelecimentoDAO.adicionarCategoria(categoria,estabelecimento_id)
+      }
+  }
+
   static async getClassificacoesByUserID(userID: number) {
     return FunTracker.classificacaoDAO.getClassificacoesByUserID(userID);
   }

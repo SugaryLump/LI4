@@ -48,14 +48,6 @@ export class EstabelecimentoDAO {
     return await this.db.get('SELECT COUNT(*) from avaliacoes where estabelecimento_id = ?', estabelecimentoId);
   }
 
-  async getByID(id: number): Promise<Estabelecimento> {
-    return await this.db.get('SELECT * from estabelecimentos where id = ?', id);
-  }
-
-  async getAll(): Promise<Estabelecimento[]> {
-    return await this.db.all('SELECT * from estabelecimentos');
-  }
-
   async cria(
     nome: string,
     lotacao: number,
@@ -121,41 +113,91 @@ export class EstabelecimentoDAO {
     );
   }
 
-  private async getByGamaPreco(gamaPreco: string): Promise<Estabelecimento[]> {
-    //return (
-    //    await this.db.all('SELECT * FROM estabelecimentos WHERE gamaPreco = ?', gamaPreco)
-    //).map(c => ({
-    //    id: c.id,
-    //    lotacao: c.lotacao,
-    //    morada: c.morada,
-    //    rating: c.rating, // nao tem isto na base de dados
-    //    gamaPreco: c.gamaPreco, // nao tem isto na base de dados
-    //    precos: c.precos,
-    //    categoria: c.categoria,
-    //    pontuacao: c.pontuacao,
-    //    coordenadas: {c.coordenadas.latitude, c.coordenadas.longitude}, // coordenadas
-    //    horario_abertura: c.horario_abertura,
-    //    horario_fecho: c.horario_fecho,
-    //    contacto: c.contacto
-    //}));
-    return [];
+  public async adicionarCategoria(categoria: Categoria, estabelecimento_id: number): Promise<{categoria: Categoria, estabelecimento_id: number}> {
+    if ( await this.db.exists("categorias", "categoria = ? AND estabelecimento_id = ?", categoria, estabelecimento_id) ) {
+        throw "Categoria já existe"
+    }
+    await this.db.run("INSERT INTO categorias (estabelecimento_id, categoria) VALUES (?,?)", estabelecimento_id, categoria)
+    return {
+      categoria: categoria,
+      estabelecimento_id: estabelecimento_id
+    }
   }
 
-  //TODO
-  private async getByLocalizacao(localizacao: {latitude: string; longitude: string}
+  async getByID(id: number): Promise<Estabelecimento> {
+    return await this.db.get('SELECT * from estabelecimentos where id = ?', id);
+  }
+
+  async getAll(): Promise<Estabelecimento[]> {
+    return await this.db.all('SELECT * from estabelecimentos');
+  }
+
+  //TODO dar fix
+  private async getByGamaPreco(gamaPreco: string): Promise<Estabelecimento[]> {
+    return (
+      await this.db.all('SELECT * FROM estabelecimentos where precos=?', gamaPreco)
+    //    await this.db.all('SELECT * FROM estabelecimentos WHERE gamaPreco = ?', gamaPreco)
+    )
+    //  .map(c => (
+    //  {
+    //    id: +c.id,
+    //    nome: c.nome,
+    //    lotacao: +c.lotacao,
+    //    rating: +c.pontuacao,
+    //    gamaPreco: c.precos,
+    //  // TODO mudar
+    //    categorias: [],
+    //    morada: c.morada,
+    //    coordenadas: {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
+    //    horarioAbertura: c.horario_abertura,
+    //    horarioFecho: c.horario_fecho,
+    //    contacto: c.contacto
+    //}))
+  }
+
+  async getSortByPrecos(): Promise<Estabelecimento[]> {
+    return await this.db.all('SELECT * FROM estabelecimentos ORDER BY precos DESC')
+  }
+
+  //TODO ordenado do mais perto para o mais longe
+  public async getBySortLocalizacao(localizacao: {latitude: string; longitude: string}
                         ): Promise<Estabelecimento[]> {
     return [];
   }
 
-  //TODO
-  private async getByCategorias(categorias: Categoria[]): Promise<Estabelecimento[]> {
-    return [];
+  // TODO verificar
+    // prob falta converter
+  async getSortByPontuacao(): Promise<Estabelecimento[]> {
+    return await this.db.all('SELECT * FROM estabelecimentos ORDER BY pontuacao DESC')
   }
 
-  //TODOk
+  // TODO verificar
+    // prob falta converter
+  async getSortByCategorias(): Promise<Estabelecimento[]> {
+    return await this.db.all('SELECT estabelecimentos.* , categorias.categoria FROM estabelecimentos LEFT JOIN categorias ON categorias.estabelecimento_id = categorias.estabelecimento_id')
+  }
+
+  //TODO verificar
+    // prob falta converter
+  private async getByCategorias(categorias: Categoria[]): Promise<Estabelecimento[]> {
+    return await this.db.all('SELECT estabelecimentos.* FROM estabelecimentos WHERE EXISTS (SELECT estabelecimento_id FROM categorias WHERE categorias.categoria IN ?)',
+                            categorias)
+  }
+
+
+  //TODO
+    // localizacao -> se for dado vao ser ordenados pela localizacao mais perta
+    // gama Preco -> ordenar pelo mais baixo
+    // melhor avaliados -> ordenar
+    // abertos -> so da os q estao abertos
+    // categorias -> a filtrar , se null entao nao ha categorias
   async getByFiltros(localizacao: {latitude: string; longitude: string}| null ,
-                     gamaPreco: string | null, categorias: Categoria[] | null):
+                     gamaPreco: boolean | null, melhorAvaliados: boolean | null,
+                     apenasAbertos: boolean |null, categorias: Categoria[] | null):
   Promise<Estabelecimento[]> {
+    if (localizacao == null && gamaPreco == null && categorias == null && melhorAvaliados == null && apenasAbertos == null)
+      throw "Não foram dados filtros"
+
     return [];
   }
 }

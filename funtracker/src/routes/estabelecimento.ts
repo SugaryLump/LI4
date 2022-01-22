@@ -113,9 +113,35 @@ estabelecimentoRouter.post(
   },
 );
 
+estabelecimentoRouter.post(
+  '/:id/addCategoria',
+  isLoggedIn,
+  // isAdmin,
+  body('categoria').exists(),
+  async (req, res) => {
+    try {
+      let newCategoria = await FunTracker.adicionarCategoria( +req.params?.id,req.body.categoria)
+      //if(newCategoria) {
+        return res.status(200).json(newCategoria)
+      //}
+      //else {
+      //  return res.status(400).json({
+      //    success: false,
+      //    errors: ["Não foi possível adicionar a uma nova categoria"],
+      //  });
+      //}
+    } catch (e: any) {
+      return res.status(400).json({
+        success: false,
+        errors: [e],
+      });
+    }
+  },
+);
+
 estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, isAdmin, async (req, res) => {
     try{
-        return res.status(200).json(FunTracker.getClassificacoesByEstabelecimentoID(req.body.id));
+        return res.status(200).json(await FunTracker.getClassificacoesByEstabelecimentoID(req.body.id));
     } catch {
       return res.status(404).json({
         success: false,
@@ -130,12 +156,11 @@ estabelecimentoRouter.post(
   body('valor').exists(),
   body('comentario').exists(),
   async (req, res) => {
-    const user: UserJwt = getUser(req);
-    let newClassificacao = FunTracker.avaliar(+req.body.valor, req.body.comentario, +req.params?.id,user.id)
-    if(newClassificacao) {
-        return res.status(200).json(newClassificacao)
-    }
-    else {
+    try {
+      const user: UserJwt = getUser(req);
+      let newClassificacao = await FunTracker.avaliar(+req.body.valor, req.body.comentario, +req.params?.id,user.id)
+      return res.status(200).json(newClassificacao)
+    } catch {
       return res.status(500).json({
         success: false,
         errors: ["Não foi possível classificar o estabelecimento"],
