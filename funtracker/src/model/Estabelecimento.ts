@@ -132,31 +132,48 @@ export class EstabelecimentoDAO {
     return await this.db.all('SELECT * from estabelecimentos');
   }
 
-  //TODO dar fix
-  private async getByGamaPreco(gamaPreco: string): Promise<Estabelecimento[]> {
+  //TODO verificar
+  async getByGamaPreco(gamaPreco: string): Promise<Estabelecimento[]> {
     return (
       await this.db.all('SELECT * FROM estabelecimentos where precos=?', gamaPreco)
-    //    await this.db.all('SELECT * FROM estabelecimentos WHERE gamaPreco = ?', gamaPreco)
     )
-    //  .map(c => (
-    //  {
-    //    id: +c.id,
-    //    nome: c.nome,
-    //    lotacao: +c.lotacao,
-    //    rating: +c.pontuacao,
-    //    gamaPreco: c.precos,
-    //  // TODO mudar
-    //    categorias: [],
-    //    morada: c.morada,
-    //    coordenadas: {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
-    //    horarioAbertura: c.horario_abertura,
-    //    horarioFecho: c.horario_fecho,
-    //    contacto: c.contacto
-    //}))
+      .map(c => (
+        new Estabelecimento(
+         c.id,
+         c.nome,
+         c.lotacao,
+         c.pontuacao,
+         c.precos,
+      // TODO mudar
+         [],
+         c.morada,
+         {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
+         c.horario_abertura,
+         c.horario_fecho,
+         c.contacto)
+    ))
   }
 
+  //TODO verificar
   async getSortByPrecos(): Promise<Estabelecimento[]> {
-    return await this.db.all('SELECT * FROM estabelecimentos ORDER BY precos DESC')
+    return (
+      await this.db.all('SELECT * FROM estabelecimentos ORDER BY precos DESC')
+    )
+      .map(c => (
+        new Estabelecimento(
+         c.id,
+         c.nome,
+         c.lotacao,
+         c.pontuacao,
+         c.precos,
+      // TODO mudar
+         [],
+         c.morada,
+         {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
+         c.horario_abertura,
+         c.horario_fecho,
+         c.contacto)
+    ))
   }
 
   //TODO ordenado do mais perto para o mais longe
@@ -166,22 +183,70 @@ export class EstabelecimentoDAO {
   }
 
   // TODO verificar
-    // prob falta converter
   async getSortByPontuacao(): Promise<Estabelecimento[]> {
-    return await this.db.all('SELECT * FROM estabelecimentos ORDER BY pontuacao DESC')
+    return (
+      await this.db.all('SELECT * FROM estabelecimentos ORDER BY pontuacao DESC')
+    )
+      .map(c => (
+        new Estabelecimento(
+         c.id,
+         c.nome,
+         c.lotacao,
+         c.pontuacao,
+         c.precos,
+      // TODO mudar
+         [],
+         c.morada,
+         {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
+         c.horario_abertura,
+         c.horario_fecho,
+         c.contacto)
+    ))
   }
 
   // TODO verificar
-    // prob falta converter
   async getSortByCategorias(): Promise<Estabelecimento[]> {
-    return await this.db.all('SELECT estabelecimentos.* , categorias.categoria FROM estabelecimentos LEFT JOIN categorias ON categorias.estabelecimento_id = categorias.estabelecimento_id')
+    return (
+      await this.db.all('SELECT estabelecimentos.* , categorias.categoria FROM estabelecimentos LEFT JOIN categorias ON categorias.estabelecimento_id = categorias.estabelecimento_id')
+    )
+      .map(c => (
+        new Estabelecimento(
+         c.id,
+         c.nome,
+         c.lotacao,
+         c.pontuacao,
+         c.precos,
+      // TODO mudar
+         [],
+         c.morada,
+         {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
+         c.horario_abertura,
+         c.horario_fecho,
+         c.contacto)
+    ))
   }
 
   //TODO verificar
-    // prob falta converter
   private async getByCategorias(categorias: Categoria[]): Promise<Estabelecimento[]> {
-    return await this.db.all('SELECT estabelecimentos.* FROM estabelecimentos WHERE EXISTS (SELECT estabelecimento_id FROM categorias WHERE categorias.categoria IN ?)',
+    return (
+      await this.db.all('SELECT estabelecimentos.* FROM estabelecimentos WHERE EXISTS (SELECT estabelecimento_id FROM categorias WHERE categorias.categoria IN ?)',
                             categorias)
+    )
+      .map(c => (
+        new Estabelecimento(
+         c.id,
+         c.nome,
+         c.lotacao,
+         c.pontuacao,
+         c.precos,
+      // TODO mudar
+         [],
+         c.morada,
+         {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
+         c.horario_abertura,
+         c.horario_fecho,
+         c.contacto)
+    ))
   }
 
 
