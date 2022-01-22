@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { Button, Input, Divider } from 'react-native-elements'
+import { AuthContext } from '../auth'
+import { useAuthContext } from '../hooks'
 
 export default function OpcoesMenu({ navigation, route }:any) {
     const [newUsername, setNewUsername] = useState('')
@@ -13,6 +15,8 @@ export default function OpcoesMenu({ navigation, route }:any) {
     const [newPassword1Error, setNewPassword1Error] = useState('')
     const [newPassword2, setNewPassword2] = useState('')
     const [newPassword2Error, setNewPassword2Error] = useState('')
+
+    const authContext = useAuthContext()
 
     return (
         <View style={{flex:1}}>
@@ -63,7 +67,7 @@ export default function OpcoesMenu({ navigation, route }:any) {
                 <Button title='Alterar Password'/>
             </View>
             <View style={{flex:0.4, justifyContent:'flex-end', marginVertical:10, marginHorizontal:15}}>
-                <Button title='Logout' titleStyle={{color:'red'}} buttonStyle={{borderColor:'red'}}/>
+                <Button title='Logout' titleStyle={{color:'red'}} buttonStyle={{borderColor:'red'}} onPress={authContext.signOut}/>
             </View>
         </View>
     )
