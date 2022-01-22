@@ -34,14 +34,14 @@ export async function setJwt(jwt: JWT | null) {
 }
 
 export interface AuthAction {
-  type: 'SIGN_IN' | 'RESTORE_TOKEN' | 'SIGN_OUT',
-  token?: JWT | null
+    type: 'SIGN_IN' | 'RESTORE_TOKEN' | 'SIGN_OUT',
+    token?: JWT | null
 }
 
 export type AuthState = {
-  userToken?: JWT | null,
-  isLoading: boolean,
-  isSignout: boolean
+    userToken?: JWT | null,
+    isLoading: boolean,
+    isSignout: boolean
 }
 
 export interface AuthContextT {

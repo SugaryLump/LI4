@@ -143,14 +143,14 @@ export default function App(): JSX.Element {
                         name='Opcoes'
                         component={OpcoesMenu}
                         options={{
-                          headerTitle:'Opções'
+                          headerTitle: 'Opções'
                         }}
                       />
                       <Stack.Screen
                         name='Historico'
                         component={HistoricoMenu}
                         options={{
-                          headerTitle:'Histórico de Avaliações'
+                          headerTitle: 'Histórico de Avaliações'
                         }}
                       />
                       <Stack.Screen

@@ -1,5 +1,6 @@
 // Este módulo gere as migrations, ou seja, alterações à base de dados
 import { PromisedDatabase } from "promised-sqlite3";
+import { FunTracker } from "./FunTracker";
 
 export default async function migrate(db: PromisedDatabase) {
     await db.createTable('utilizadores', true,
@@ -45,4 +46,8 @@ export default async function migrate(db: PromisedDatabase) {
         'filepath VARCHAR(1024) NOT NULL',
         'FOREIGN KEY (estabelecimento_id) REFERENCES estabelecimentos(id)',
     )
+
+    if ((await db.get("SELECT COUNT(*) FROM utilizadores WHERE is_admin = 1"))['COUNT(*)'] == 0) {
+        FunTracker.criarContaAdmin("admin", "admin")
+    }
 }
