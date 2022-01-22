@@ -17,8 +17,9 @@ import { LoadingMenu } from './Screens/LoadingMenu'
 import OpcoesMenu from './Screens/Opcoes'
 import HistoricoMenu from './Screens/Historico'
 import CredenciaisMenu from './Screens/Credenciais'
+import { AppParamList } from './routeTypes'
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<AppParamList>();
 
 export default function App(): JSX.Element {
   const [state, dispatch] = React.useReducer<Reducer<AuthState, AuthAction>>(
@@ -117,7 +118,7 @@ export default function App(): JSX.Element {
                           disco: false,
                           aberto: false,
                           ordem: 0,
-                          nome: null,
+                          nome: undefined,
                           searched: false,
                         }}
                       />

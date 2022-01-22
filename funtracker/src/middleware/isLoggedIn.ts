@@ -20,6 +20,7 @@ export type UserJwt = {
     username: string
     id: number
     is_admin: boolean
+    special?: boolean
 }
 
 export function getUser(req: any): UserJwt {

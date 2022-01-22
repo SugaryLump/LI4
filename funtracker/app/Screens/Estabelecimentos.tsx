@@ -30,17 +30,17 @@ export function fetchEstabelecimentos(aberto:boolean, disco:boolean, bar:boolean
     //local com esse nome)
 
     //Resultado false temporário
-    let locais = [(new LocalNoturno(0,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-                (new LocalNoturno(1,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-                (new LocalNoturno(2,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-                (new LocalNoturno(3,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-                (new LocalNoturno(4,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-                (new LocalNoturno(5,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-                (new LocalNoturno(6,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-                (new LocalNoturno(7,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-                (new LocalNoturno(8,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-                (new LocalNoturno(9,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-                (new LocalNoturno(10,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg'))]
+    let locais = [(new LocalNoturno(0,'Taberna Linda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
+                (new LocalNoturno(1,'Taberna Linda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
+                (new LocalNoturno(2,'Taberna Linda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
+                (new LocalNoturno(3,'Taberna Linda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
+                (new LocalNoturno(4,'Taberna Linda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
+                (new LocalNoturno(5,'Taberna Linda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
+                (new LocalNoturno(6,'Taberna Linda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
+                (new LocalNoturno(7,'Taberna Linda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
+                (new LocalNoturno(8,'Taberna Linda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
+                (new LocalNoturno(9,'Taberna Linda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
+                (new LocalNoturno(10,'Taberna Linda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg'))]
     return locais;
 }
 
@@ -145,17 +145,17 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
                 <View
                     key={index}
                     style={{
-                        height:Dimensions.get('window').height/6,
-                        marginHorizontal:10,
-                        marginVertical:5,
-                        flexDirection:'row',
+                        height: 130,
+                        marginVertical: 5,
+                        flexDirection: 'row',
                     }}
                 >
                     <Image
                         source={{uri:item.imagem}}
-                        containerStyle={{aspectRatio:1/1,flex:0.8,alignSelf:'stretch'}}
+                        containerStyle={{aspectRatio:1/1, alignSelf:'stretch'}}
                     />
-                    <View style={{marginHorizontal:10, marginVertical:15}}>
+                    <View style={{paddingHorizontal:10}}>
+                        <Text style={{fontSize: 16}}>{item.nome}</Text>
                         <View style={{flexDirection:'row'}}>
                             <CardText text={item.rating}/>
                             <AirbnbRating 
@@ -179,31 +179,31 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
     }
 
     return (
-        <View style={{flex:1}}>
-            <View style={{flex:0.08, marginHorizontal:15, marginVertical:10}}>
+        <View style={{
+            alignItems: 'center',
+            flex: 1,
+            padding: 15
+        }}>
+            <View style={{
+                width: '100%',
+                maxWidth: 800,
+                flex: 1,
+            }}>
                 <Button
                     title='Filtrar'
-                    onPress={() => navigation.navigate({name:'Filtros', params:route.params,})}
+                    onPress={() => navigation.navigate({ name: 'Filtros', params: route.params, })}
                 />
-            </View>
-            <Divider/>
-            <View style={{flex:0.72}}>
+                <Divider style={{marginVertical: 15}} />
                 <FlatList
                     data={estabelecimentos}
                     renderItem={renderLocalTile}
                 />
-            </View>
-            <Divider/>
-            <View 
-                style={{
-                    flex:0.16,
-                    marginHorizontal:15,
-                    marginVertical:5,
-                }}
-            >
-                <Button title='Atualizar Localização' onPress={() => updateLocation()}/>
+
+                <Divider style={{marginVertical: 15}} />
+
+                <Button title='Atualizar Localização' onPress={() => updateLocation()} />
                 <Text>{locationMessage}</Text>
-                <Text>DEBUG: {debug}</Text> 
+                <Text>DEBUG: {debug}</Text>
             </View>
         </View>
     )

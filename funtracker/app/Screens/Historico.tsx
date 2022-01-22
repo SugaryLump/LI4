@@ -1,6 +1,8 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useEffect, useState } from 'react'
 import { View, FlatList, Dimensions } from 'react-native'
 import { Card, AirbnbRating, Text, Image } from 'react-native-elements'
+import { AppParamList } from '../routeTypes'
 
 class Critica {
     constructor(
@@ -11,7 +13,7 @@ class Critica {
     ){}
 }
 
-export default function HistoricoMenu({navigation, route}:any) {
+export default function HistoricoMenu({ navigation, route }: NativeStackScreenProps<AppParamList, 'Historico'>) {
     const[criticas, setCriticas] = useState(fetchCriticas())
 
     function fetchCriticas () {

@@ -23,6 +23,7 @@ export interface API extends APIDef {
             req: {
                 username: string
                 password: string
+                special?: boolean
             },
             res: APIResponse<{
                 jwt: string

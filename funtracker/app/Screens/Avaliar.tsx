@@ -1,14 +1,16 @@
 import { NavigationHelpersContext } from '@react-navigation/native'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useState, useEffect } from 'react'
 import { View, Text } from 'react-native'
 import { AirbnbRating, Input, Button } from 'react-native-elements'
+import { AppParamList } from '../routeTypes'
 
 const submeterAvaliacao = () => {
     //sumbeter a avaliação e lidar com a resposta
     
 }
 
-export const AvaliarMenu = ({ navigation, route }: any) => {
+export const AvaliarMenu = ({ navigation, route }: NativeStackScreenProps<AppParamList, 'Avaliar'>) => {
     const [rating, setRating] = useState(1)
     const [texto, setTexto] = useState('')
 

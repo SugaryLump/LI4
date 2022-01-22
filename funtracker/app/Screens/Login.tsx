@@ -1,3 +1,4 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useContext, useEffect, useState } from 'react'
 import { ScrollView, TextInput, View } from 'react-native'
 import { Text, Button, Input } from 'react-native-elements'
@@ -6,6 +7,7 @@ import * as svg from 'react-native-svg'
 import { AuthContext } from '../auth'
 import { useAuthContext } from '../hooks'
 import { colors, serverUrl } from '../lib/constants'
+import { AppParamList } from '../routeTypes'
 
 const LoginCircle = () => (
   <View style={{ justifyContent: 'center', alignItems: 'center', paddingTop: 20, paddingBottom: 50 }}>
@@ -28,10 +30,9 @@ const LoginCircle = () => (
   </View>
 )
 
-export const LoginMenu = ({ navigation }: any) => {
+export const LoginMenu = ({ navigation }: NativeStackScreenProps<AppParamList, 'Login'>) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [message, setMessage] = useState('')
   const [passwordError, setPasswordError] = useState('')
   const [usernameError, setUsernameError] = useState('')
   const loginDisabled = username === "" || password === ""
@@ -77,37 +78,43 @@ export const LoginMenu = ({ navigation }: any) => {
       justifyContent: 'center',
       minHeight: '100%',
       flex: 1,
-      paddingHorizontal: 20
+      paddingHorizontal: 20,
+      alignItems: 'center',
     }}>
-      <LoginCircle />
-      <Input
-        placeholder='Username'
-        onChangeText={(username) => {
-          setUsername(username)
-          setUsernameError('')
-        }}
-        errorMessage={usernameError}
-        returnKeyType='next'
-        autoCapitalize='none'
-        autoCompleteType='username'
-        ref={usernameRef}
-        onSubmitEditing={() => passwordRef.current?.focus()}
-        blurOnSubmit={false}
-      />
-      <Input
-        placeholder='Password'
-        secureTextEntry
-        onChangeText={(password) => {
-          setPassword(password)
-          setPasswordError('')
-        }}
-        errorMessage={passwordError}
-        ref={passwordRef}
-        onSubmitEditing={login}
-      />
-      <Button title='Login' onPress={login} disabled={loginDisabled} containerStyle={{ backgroundColor: colors.lightBlue, borderRadius: 10, borderWidth: 0 }} titleStyle={{ color: '#fff' }} />
-      <Text style={{ alignSelf: 'center', marginTop: 20, marginBottom: 10 }}> Don't have an account yet? </Text>
-      <Button title='Sign up' onPress={() => navigation.navigate('Signup')} />
+      <View style={{
+        maxWidth: 800,
+        width: '100%'
+      }}>
+        <LoginCircle />
+        <Input
+          placeholder='Username'
+          onChangeText={(username) => {
+            setUsername(username)
+            setUsernameError('')
+          }}
+          errorMessage={usernameError}
+          returnKeyType='next'
+          autoCapitalize='none'
+          autoCompleteType='username'
+          ref={usernameRef}
+          onSubmitEditing={() => passwordRef.current?.focus()}
+          blurOnSubmit={false}
+        />
+        <Input
+          placeholder='Password'
+          secureTextEntry
+          onChangeText={(password) => {
+            setPassword(password)
+            setPasswordError('')
+          }}
+          errorMessage={passwordError}
+          ref={passwordRef}
+          onSubmitEditing={login}
+        />
+        <Button title='Login' onPress={login} disabled={loginDisabled} containerStyle={{ backgroundColor: colors.lightBlue, borderRadius: 10, borderWidth: 0 }} titleStyle={{ color: '#fff' }} />
+        <Text style={{ alignSelf: 'center', marginTop: 20, marginBottom: 10 }}> Don't have an account yet? </Text>
+        <Button title='Sign up' onPress={() => navigation.navigate('Signup')} />
+      </View>
     </View>
   )
 }

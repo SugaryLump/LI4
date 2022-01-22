@@ -4,7 +4,7 @@ import {Request, Router} from 'express';
 import { body, query, validationResult} from 'express-validator';
 import {FunTracker} from '../model/FunTracker';
 import isLoggedIn from '../middleware/isLoggedIn';
-import {hasPermission, isAdmin} from '../middleware/hasPermission';
+import {hasPermission, isAdmin, isSpecial} from '../middleware/hasPermission';
 
 const usersRouter = Router();
 
@@ -79,7 +79,7 @@ usersRouter.post(
 
 /* mudar a password */
 usersRouter.patch(
-  '/:id/password', isLoggedIn, hasPermission,
+  '/:id/password', isLoggedIn, hasPermission, isSpecial,
   body('password')
     .exists()
     .isLength({min: 8})
@@ -94,7 +94,7 @@ usersRouter.patch(
   },
   async (req, res) => {
       try {
-        await FunTracker.changePassword(req.params?.id, req.body.password);
+        await FunTracker.changePassword(+req.params?.id, req.body.password);
         return res.status(200).json({success: true});
       } catch (error: any) {
         if (error.errno == 19) {
@@ -111,7 +111,7 @@ usersRouter.patch(
 
 /* mudar o username */
 usersRouter.patch(
-  '/:id/username', isLoggedIn, hasPermission ,
+  '/:id/username', isLoggedIn, hasPermission, isSpecial,
   body('username').exists(),
   (req, res, next) => {
     const errors = validationResult(req);
@@ -160,48 +160,48 @@ usersRouter.get('/',
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({success: false, errors: errors.array()});
+      return res.status(400).json({ success: false, errors: errors.array() });
     }
 
     next();
   }
-                , isLoggedIn, hasPermission, async (req , res) => {
-  try{
+  , isLoggedIn, hasPermission, async (req, res) => {
+    try {
       let user = await FunTracker.getUserById(+req.query?.id);
       return res
         .status(200)
-        .json({success: true, user: {username: user.username, id: user.id}});
+        .json({ success: true, user: { username: user.username, id: user.id } });
     } catch {
       return res.status(404).json({
         success: false,
         errors: ["User não existe"],
       });
     }
-});
+  });
 
 
 usersRouter.get('/:id', isLoggedIn, hasPermission, async (req, res) => {
-  try{
-      let user = await FunTracker.getUserById(+req.params.id);
-      return res
-        .status(200)
-        .json({success: true, user: {username: user.username, id: user.id}});
-    } catch {
-      return res.status(404).json({
-        success: false,
-        errors: ["User não existe"],
-      });
-    }
+  try {
+    let user = await FunTracker.getUserById(+req.params.id);
+    return res
+      .status(200)
+      .json({ success: true, user: { username: user.username, id: user.id } });
+  } catch {
+    return res.status(404).json({
+      success: false,
+      errors: ["User não existe"],
+    });
+  }
 });
 
 usersRouter.get('/:id/historico', isLoggedIn, hasPermission, async (req, res) => {
   try {
     return res.status(200).json(FunTracker.getClassificacoesByUserID(+req.params.id));
   } catch {
-      return res.status(404).json({
-        success: false,
-        errors: ["Utilizador ainda não tem histórico"],
-      });
+    return res.status(404).json({
+      success: false,
+      errors: ["Utilizador ainda não tem histórico"],
+    });
   }
 });
 

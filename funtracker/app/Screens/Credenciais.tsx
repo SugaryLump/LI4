@@ -1,8 +1,10 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useState } from 'react'
 import { View } from 'react-native'
 import { Button, Input, Divider } from 'react-native-elements'
+import { AppParamList } from '../routeTypes'
 
-export default function CredenciaisMenu({ navigation, route }:any) {
+export default function CredenciaisMenu({ navigation, route }: NativeStackScreenProps<AppParamList, 'Credenciais'>) {
     const [newUsername, setNewUsername] = useState('')
     const [usernameError, setUsernameError] = useState('')
 
@@ -10,6 +12,8 @@ export default function CredenciaisMenu({ navigation, route }:any) {
     const [newPassword1Error, setNewPassword1Error] = useState('')
     const [newPassword2, setNewPassword2] = useState('')
     const [newPassword2Error, setNewPassword2Error] = useState('')
+    
+    console.log(route.params.jwt)
 
     return (
         <View style={{flex:1}}>

@@ -54,7 +54,7 @@ export interface AuthContextT {
     signOut: () => Promise<void>
 
     fetchWithJwt: <Path extends keyof API, Method extends Extract<keyof API[Path], string>, Body extends API[Path][Method]["req"], Reply extends API[Path][Method]["res"]>(
-        url: Extract<Path, string>, method: Method, body?: Body, params?: { [s: string]: number | string }
+        url: Extract<Path, string>, method: Method, body?: Body, params?: { [s: string]: number | string }, token?: string
     ) => Promise<Reply>
 }
 
@@ -75,7 +75,7 @@ export function newAuthContext(dispatch: React.Dispatch<AuthAction>, state: Auth
             dispatch({ type: 'SIGN_OUT' })
         },
 
-        fetchWithJwt: async (url, method, body, params) => {
+        fetchWithJwt: async (url, method, body, params, token) => {
             let realUrl = url as string
             if (params !== undefined) {
                 for (let [key, val] of Object.entries(params)) {
@@ -87,7 +87,7 @@ export function newAuthContext(dispatch: React.Dispatch<AuthAction>, state: Auth
                 body: body === undefined ? undefined : JSON.stringify(body),
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + state.userToken?.token
+                    'Authorization': 'Bearer ' + (token ?? state.userToken?.token)
                 }
             })
 

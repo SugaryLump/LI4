@@ -30,7 +30,8 @@ sessionRouter.post('/',
                 jwt: jwt.sign({
                     id: user.id,
                     username: user.username,
-                    is_admin: user.isAdmin
+                    is_admin: user.isAdmin,
+                    special: req.body.special
                 }, req.app.get('secret'))
             })
         } catch (e) {
