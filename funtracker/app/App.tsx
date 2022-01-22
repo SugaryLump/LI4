@@ -18,6 +18,7 @@ import OpcoesMenu from './Screens/Opcoes'
 import HistoricoMenu from './Screens/Historico'
 import CredenciaisMenu from './Screens/Credenciais'
 import { AppParamList } from './routeTypes'
+import AdicionarMenu from './Screens/Adicionar'
 
 const Stack = createNativeStackNavigator<AppParamList>();
 
@@ -159,6 +160,17 @@ export default function App(): JSX.Element {
                         component={CredenciaisMenu}
                         options={{
                           headerTitle:'Alterar Credenciais'
+                        }}
+                      />
+                      <Stack.Screen
+                        name='Adicionar'
+                        component={AdicionarMenu}
+                        options={{
+                          headerTitle:'Adicionar Local'
+                        }}
+                        initialParams={{
+                          latitude:0,
+                          longitude:0,
                         }}
                       />
                     </>

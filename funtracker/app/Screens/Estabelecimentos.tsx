@@ -11,6 +11,7 @@ import * as Popup from 'react-native-popup-menu'
 import { NavigationProp } from '@react-navigation/native'
 import { AuthContext } from '../auth'
 import { Divider } from 'react-native-elements/dist/divider/Divider'
+import { Coordinate } from 'react-native-maps'
 
 class LocalNoturno {
     constructor(
@@ -45,7 +46,7 @@ export function fetchEstabelecimentos(aberto:boolean, disco:boolean, bar:boolean
 }
 
 export const EstabelecimentosMenu = ({ navigation, route }: any) => {
-    const [location, setLocation] = useState({})
+    const [location, setLocation] = useState({} as Location.LocationObject)
     const [locationMessage, setLocationMessage] = useState('A obter localização')
     const [estabelecimentos, setEstabelecimentos] = useState([] as LocalNoturno[])
     const [debug, setDebug] = useState(0)
@@ -53,6 +54,7 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
     //Search
     useEffect (() => {
         if (!route.params?.searched) {
+            updateLocation()
             navigation.setParams({
                 searched:true
             })
@@ -84,8 +86,11 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
             if (isAdmin) {
                 return (
                     <MyMenuOption
-                        text='Adicionar localização'
-                        value={{menu:'placeholder1', params:{}}}
+                        text='Adicionar local'
+                        value={{menu:'Adicionar', params:{
+                            latitude:location.coords.latitude,
+                            longitude:location.coords.longitude
+                        }}}
                     />
                 )
             }
