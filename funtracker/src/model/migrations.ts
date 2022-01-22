@@ -11,6 +11,7 @@ export default async function migrate(db: PromisedDatabase) {
 
     await db.createTable('estabelecimentos', true,
         'id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT NOT NULL',
+        'nome VARCHAR(100)',
         'lotacao INTEGER',
         'morada VARCHAR(100)',
         'categoria VARCHAR(50)',
