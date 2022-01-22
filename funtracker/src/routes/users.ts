@@ -4,7 +4,7 @@ import {Request, Router} from 'express';
 import {body, validationResult} from 'express-validator';
 import {FunTracker} from '../model/FunTracker';
 import isLoggedIn from '../middleware/isLoggedIn';
-import {UserJwt, getUser} from '../middleware/isLoggedIn'
+import {isUser,isAdmin} from '../middleware/index'
 
 const usersRouter = Router();
 
@@ -45,7 +45,7 @@ usersRouter.post(
 
 /* registar um admin */
 usersRouter.post(
-  '/createAdmin', isLoggedIn,
+  '/createAdmin', isLoggedIn, isAdmin,
   body('password')
     .exists()
     .isLength({min: 8})
@@ -59,39 +59,27 @@ usersRouter.post(
     next();
   },
   async (req, res) => {
-
-    const user: UserJwt = getUser(req);
-    if ( //user.id === +req.params.id &&
-       user.is_admin
-    ) {
-      try {
-        let user = await FunTracker.criarContaAdmin(req.body.username, req.body.password);
-        return res
-          .status(200)
-          .json({success: true, user: {username: user.username, id: user.id}});
-      } catch (error:  any) {
-        if (error.errno == 19) {
-          // Erro 19 é o erro de uma constraint falhada
-          error = 'This user already exists';
-        }
-        return res.status(400).json({
-          success: false,
-          errors: [error],
-        });
+    try {
+      let user = await FunTracker.criarContaAdmin(req.body.username, req.body.password);
+      return res
+        .status(200)
+        .json({success: true, user: {username: user.username, id: user.id}});
+    } catch (error:  any) {
+      if (error.errno == 19) {
+        // Erro 19 é o erro de uma constraint falhada
+        error = 'This user already exists';
       }
-    } else {
-      return res.status(403).json({
+      return res.status(400).json({
         success: false,
-        errors: ['Permission Denied'],
+        errors: [error],
       });
     }
-
   },
 );
 
 /* mudar a password */
 usersRouter.post(
-  '/:id/changePassword', isLoggedIn,
+  '/:id/changePassword', isLoggedIn, isUser,
   body('password')
     .exists()
     .isLength({min: 8})
@@ -123,7 +111,7 @@ usersRouter.post(
 
 /* mudar o username */
 usersRouter.post(
-  '/:id/changeUsername', isLoggedIn,
+  '/:id/changeUsername', isLoggedIn, isUser,
   body('username').exists(),
   (req, res, next) => {
     const errors = validationResult(req);
@@ -135,17 +123,8 @@ usersRouter.post(
   },
   async (req: Request, res) => {
       try {
-        const user = getUser(req)
-
-        if (user.id === +req.params.id || user.is_admin) {
           await FunTracker.changeUsername(+req.params.id, req.body.username);
           return res.status(200).json({success: true, username: req.body.username});
-        } else {
-          res.status(403).json({
-            success: false,
-            errors: ["Not authorized"]
-          })
-        }
       } catch (error: any) {
         if (error.errno == 19) {
           // Erro 19 é o erro de uma constraint falhada
@@ -159,9 +138,7 @@ usersRouter.post(
   },
 );
 
-usersRouter.get('/all', isLoggedIn, async (req, res) => {
-  const user: UserJwt = getUser(req);
-  if (user.is_admin) {
+usersRouter.get('/all', isLoggedIn, isAdmin, async (req, res) => {
     try {
       let users = await FunTracker.getAllUsers()
       let allSimpleUsers = users.map(c => ({
@@ -176,41 +153,18 @@ usersRouter.get('/all', isLoggedIn, async (req, res) => {
         errors: [error],
       });
     }
-  } else {
-    return res.status(403).json({
-      success: false,
-      errors: ['Permission Denied'],
-    });
-  }
 });
 
-usersRouter.get('/:id', isLoggedIn, async (req, res) => {
-  const user: UserJwt = getUser(req);
-  if (user.is_admin || user.id === +req.params.id) {
+usersRouter.get('/:id', isLoggedIn, isUser, async (req, res) => {
       let user = await FunTracker.getUserById(+req.params.id);
       return res
         .status(200)
         .json({success: true, user: {username: user.username, id: user.id}});
-
-  } else {
-    return res.status(403).json({
-      success: false,
-      errors: ['Permission Denied'],
-    });
-  }
 });
 
 /* Ver histórico */
-usersRouter.get('/:id/historico', isLoggedIn, async (req, res) => {
-  const user: UserJwt = getUser(req);
-  if (user.id === +req.params.id || user.is_admin) {
+usersRouter.get('/:id/historico', isLoggedIn, isUser, async (req, res) => {
     return res.status(200).json(FunTracker.getClassificacoesByUserID(+req.params.id));
-  } else {
-    return res.status(403).json({
-      success: false,
-      errors: ['Permission Denied'],
-    });
-  }
 });
 
 export default usersRouter;
