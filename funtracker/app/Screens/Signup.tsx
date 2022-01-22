@@ -34,7 +34,7 @@ export const SignupMenu = ({ navigation }: any) => {
     }
 
     //go to home menu if successful
-    navigation.reset({ index: 0, routes: [{ name: 'MainDrawer' }] });
+    navigation.reset({ index: 0, routes: [{ name: 'Estabelecimentos' }] });
   }
 
   //Components

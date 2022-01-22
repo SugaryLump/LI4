@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useLayoutEffect } from 'react'
 import { View, FlatList, TouchableOpacity, StyleSheet } from 'react-native'
 import { AirbnbRating, Card, Text, Button } from 'react-native-elements'
 import { Input } from 'react-native-elements/dist/input/Input'
@@ -7,6 +7,7 @@ import * as constants from '../lib/constants'
 import * as Location from 'expo-location' 
 import { LocationEventEmitter } from 'expo-location/build/LocationEventEmitter'
 import { ListItem } from 'react-native-elements/dist/list/ListItem'
+import * as Popup from 'react-native-popup-menu'
 
 class LocalNoturno {
     constructor(
@@ -62,6 +63,51 @@ export const EstabelecimentosMenu = ({ navigation, route }:any) => {
         }
     });
 
+    useLayoutEffect(() => {
+        const MyMenuOption = (props: any) => {
+            return (
+                <Popup.MenuOption
+                    style={{borderTopWidth:1, borderColor:'#eeeeee'}}
+                    value={props.value}
+                >
+                    <Text style={{fontSize:15, padding:10}}>{props.text}</Text>
+                </Popup.MenuOption>
+            )
+        }
+        const AdminOption = () => {
+            //check if admin
+            let isAdmin=true
+            if (isAdmin) {
+                return (
+                    <MyMenuOption
+                        text='Adicionar localização'
+                        value={{menu:'placeholder1', params:{}}}
+                    />
+                )
+            }
+            else {
+                return (<></>)
+            }
+        }
+        navigation.setOptions({
+            headerRight: () => (
+                <Popup.Menu onSelect={value => {navigation.navigate({name:value.menu, params:value.params})}}>
+                    <Popup.MenuTrigger>
+                        <View style={{paddingVertical:10, paddingHorizontal:20}}>
+                        <Text style={{fontSize:25, fontWeight:'bold'}}>⋮</Text>
+                        </View>
+                    </Popup.MenuTrigger>
+
+                    <Popup.MenuOptions>
+                        <AdminOption/>
+                        <MyMenuOption text='Histórico de Avaliações' value={{menu:'placeholder2', params:{}}}/>
+                        <MyMenuOption text='Opções...' value={{menu:'placeholder3', params:{}}}/>
+                    </Popup.MenuOptions>
+                </Popup.Menu>
+              )
+        })
+    })
+
     const updateLocation= async () => {
         let permission = await Location.requestForegroundPermissionsAsync();
         if (permission.granted) {
@@ -75,7 +121,7 @@ export const EstabelecimentosMenu = ({ navigation, route }:any) => {
         }
     }
 
-    const renderLocalTile = ({ item }:{item:LocalNoturno}) => {
+    const renderLocalTile = ({ item, index }:{item:LocalNoturno, index:number}) => {
         const CardText = (props:any) => {
             return (
                 <Text style={{paddingRight:5, color:'#a0a0a0'}}>
@@ -85,7 +131,7 @@ export const EstabelecimentosMenu = ({ navigation, route }:any) => {
         }
         return (
             //Something is padding these cards and I don't know what
-            <TouchableOpacity onPress={() => navigation.navigate({name:'Estabelecimento', params:{key:item.key}})} activeOpacity={0.7}>
+            <TouchableOpacity key={index} onPress={() => navigation.navigate({name:'Estabelecimento', params:{key:item.key}})} activeOpacity={0.7}>
                 <View>
                     <Card 
                         containerStyle={{
