@@ -45,7 +45,7 @@ usersRouter.post(
 
 /* registar um admin */
 usersRouter.post(
-  '/createAdmin',
+  '/criarAdmin',
   body('password')
     .exists()
     .isLength({min: 8})

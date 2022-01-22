@@ -83,7 +83,7 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
       let categorias : (Categoria|undefined)[] = nomes_categorias.map(c => Categoria[c])
       const preco: GamaPreco = GamaPreco[gamaPreco]
       if(preco == undefined ||  categorias.includes(undefined) ) {
-          throw 400
+          throw "Dados introduzidos são inválidos"
       }
       else {
           return await FunTracker
@@ -141,4 +141,27 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
   static async getAllImagensByEstabelecimentoID(estabelecimetoId: number): Promise<Imagem[]> {
       return FunTracker.imagemDAO.getAllByEstabelecimentoID(estabelecimetoId)
   }
+
+    /* Filtros */
+    static async getEstabelecimentosBySortedCategorias(): Promise<Estabelecimento[]> {
+        return await FunTracker.estabelecimentoDAO.getSortByCategorias()
+    }
+
+    static async getEstabelecimentosBySortedPontuacao(): Promise<Estabelecimento[]> {
+        return await FunTracker.estabelecimentoDAO.getSortByPontuacao()
+    }
+
+    static async getEstabelecimentosBySortedPreco(): Promise<Estabelecimento[]> {
+        return await FunTracker.estabelecimentoDAO.getSortByPrecos()
+    }
+
+    static async getEstabelecimentosByGamaPreco(gamaPreco: keyof typeof GamaPreco): Promise<Estabelecimento[]> {
+      const preco: GamaPreco = GamaPreco[gamaPreco]
+      if(preco == undefined ) {
+          throw "Gama de Preco inválida"
+      }
+        return await FunTracker.estabelecimentoDAO.getByGamaPreco(preco)
+    }
+
+    //nomes_categorias: (keyof typeof Categoria) [],
 }

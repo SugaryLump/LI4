@@ -1,6 +1,6 @@
-import {Router} from 'express';
+import { Router} from 'express';
 import {Estabelecimento} from '../model/Estabelecimento';
-import {body} from 'express-validator';
+import {body, query} from 'express-validator';
 import isLoggedIn from '../middleware/isLoggedIn';
 import {hasPermission, isAdmin} from '../middleware/hasPermission';
 import {FunTracker} from '../model/FunTracker';
@@ -168,5 +168,75 @@ estabelecimentoRouter.post(
     }
   },
 );
+
+// FILTROS
+estabelecimentoRouter.get(
+  '/sort/categorias',
+  isLoggedIn, hasPermission,
+  async (req, res) => {
+    try {
+      //TODO Retirar os repetidos
+      let estabelecimentos = await FunTracker.getEstabelecimentosBySortedCategorias()
+        return res.status(200).json({success: true, estabelecimentos: estabelecimentos})
+    } catch (e: any) {
+      return res.status(400).json({
+        success: false,
+        errors: [e],
+      });
+    }
+  },
+);
+
+// do mais pequeno para o maior
+estabelecimentoRouter.get(
+  '/sort/preco',
+  isLoggedIn, hasPermission,
+  async (req, res) => {
+    try {
+      let estabelecimentos = await FunTracker.getEstabelecimentosBySortedPreco()
+        return res.status(200).json({success: true, estabelecimentos: estabelecimentos})
+    } catch (e: any) {
+      return res.status(400).json({
+        success: false,
+        errors: [e],
+      });
+    }
+  },
+);
+
+// Do melhor para o pior
+estabelecimentoRouter.get(
+  '/sort/pontuacao',
+  isLoggedIn, hasPermission,
+  async (req, res) => {
+    try {
+      let estabelecimentos = await FunTracker.getEstabelecimentosBySortedPontuacao()
+        return res.status(200).json({success: true, estabelecimentos: estabelecimentos})
+    } catch (e: any) {
+      return res.status(400).json({
+        success: false,
+        errors: [e],
+      });
+    }
+  },
+);
+
+//estabelecimentoRouter.get(
+//  '/filtro/gamaPreco',
+//  isLoggedIn, hasPermission,
+//  query('preco').exists(),
+//  async (req, res) => {
+//    try {
+//      console.log(req.body.preco)
+//      let estabelecimentos = await FunTracker.getEstabelecimentosByGamaPreco(req.body.preco)
+//        return res.status(200).json({success: true, estabelecimentos: estabelecimentos})
+//    } catch (e: any) {
+//      return res.status(400).json({
+//        success: false,
+//        errors: [e],
+//      });
+//    }
+//  },
+//);
 
 export default estabelecimentoRouter;

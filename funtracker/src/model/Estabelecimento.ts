@@ -16,9 +16,7 @@ export class Estabelecimento {
     ) {} // caller must increment numberRatings
   // caller must increment numberRatings
   updateRating(newRating: number, numberRatings: number): number {
-    const sum: number = this.rating * numberRatings;
-    return (this.rating = (sum + newRating) / (numberRatings + 1));
-  }
+    const sum: number = this.rating * numberRatings; return (this.rating = (sum + newRating) / (numberRatings + 1));}
 }
 
 export enum Categoria {
@@ -133,7 +131,7 @@ export class EstabelecimentoDAO {
   }
 
   //TODO verificar
-  async getByGamaPreco(gamaPreco: string): Promise<Estabelecimento[]> {
+  async getByGamaPreco(gamaPreco: GamaPreco): Promise<Estabelecimento[]> {
     return (
       await this.db.all('SELECT * FROM estabelecimentos where precos=?', gamaPreco)
     )
@@ -157,7 +155,7 @@ export class EstabelecimentoDAO {
   //TODO verificar
   async getSortByPrecos(): Promise<Estabelecimento[]> {
     return (
-      await this.db.all('SELECT * FROM estabelecimentos ORDER BY precos DESC')
+      await this.db.all('SELECT * FROM estabelecimentos ORDER BY precos ASC')
     )
       .map(c => (
         new Estabelecimento(
