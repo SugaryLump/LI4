@@ -1,6 +1,6 @@
 import {UserDAO, User}  from './User'
 import {Classificacao, ClassificacaoDAO}  from './Classificacao'
-import {Estabelecimento, EstabelecimentoDAO}  from './Estabelecimento'
+import {GamaPreco,Categoria, Estabelecimento, EstabelecimentoDAO}  from './Estabelecimento'
 import {Imagem, ImagensDAO} from './Imagem'
 
 import {PromisedDatabase} from 'promised-sqlite3';
@@ -57,8 +57,29 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
 
   /* Estabelecimentos */
   // TODO
-  static async criarEstabelecimento(): Promise<null> {
-    return null;
+
+    static async criaEstabelecimento(
+    nome: string,
+    lotacao: number,
+    classificacao: number,
+    gamaPreco: keyof typeof GamaPreco,
+    categoria: keyof typeof Categoria,
+    morada: string,
+    coordenadas: {latitude: string; longitude: string},
+    horarioAbertura: string,
+    horarioFecho: string,
+    contacto: string,
+  ): Promise<Estabelecimento> {
+      const abertura : Date = new Date();
+      let splitted : String[] = horarioAbertura.split(":")
+      abertura.setHours(+splitted[0])
+      abertura.setMinutes(+splitted[1])
+      const fecho : Date = new Date();
+      splitted = horarioFecho.split(":")
+      fecho.setHours(+splitted[0])
+      fecho.setMinutes(+splitted[1])
+      return await FunTracker.estabelecimentoDAO.cria(nome,lotacao,classificacao,GamaPreco[gamaPreco],Categoria[categoria],
+                                                      morada,coordenadas,abertura,fecho,contacto)
   }
 
   static async getEstabelecimentoByID(id: number): Promise<Estabelecimento> {

@@ -13,6 +13,7 @@ export default async function migrate(db: PromisedDatabase) {
         'id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT NOT NULL',
         'lotacao INTEGER',
         'morada VARCHAR(100)',
+        'categoria VARCHAR(50)',
         'coordenadas VARCHAR(50)',
         'precos INTEGER',
         'pontuacao FLOAT',

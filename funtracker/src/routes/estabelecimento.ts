@@ -1,12 +1,43 @@
-import { Router } from "express";
-import { Estabelecimento } from "../model/Estabelecimento";
-import { body } from "express-validator";
+import {Router} from 'express';
+import {Estabelecimento} from '../model/Estabelecimento';
+import {body} from 'express-validator';
 import isLoggedIn from '../middleware/isLoggedIn';
-import {hasPermission,isAdmin} from '../middleware/hasPermission';
-import { FunTracker } from '../model/FunTracker'
-import {UserJwt, getUser} from '../middleware/isLoggedIn'
+import {hasPermission, isAdmin} from '../middleware/hasPermission';
+import {FunTracker} from '../model/FunTracker';
+import {UserJwt, getUser} from '../middleware/isLoggedIn';
 
-const estabelecimentoRouter = Router()
+const estabelecimentoRouter = Router();
+
+estabelecimentoRouter.post('/', isLoggedIn, isAdmin, async (req, res) => {
+  try {
+    console.log(req.body.nome);
+    console.log(req.body.lotacao);
+    console.log(req.body.rating);
+    console.log(req.body.gamaPreco);
+    console.log(req.body.categoria);
+    console.log(req.body.morada);
+    console.log(req.body.coordenadas);
+    console.log(req.body.horarioAbertura);
+    console.log(req.body.horarioFecho);
+    console.log(req.body.contacto);
+    const estab: Estabelecimento = await FunTracker.criaEstabelecimento(
+      req.body.nome,
+      req.body.lotacao,
+      req.body.rating,
+      req.body.gamaPreco,
+      req.body.categoria,
+      req.body.morada,
+      req.body.coordenadas,
+      req.body.horarioAbertura,
+      req.body.horarioFecho,
+      req.body.contacto,
+    );
+    return res.status(200).json(estab);
+  } catch (e) {
+    console.log('rip');
+    res.status(500).send(e);
+  }
+});
 
 estabelecimentoRouter.get('/', isLoggedIn, async (req, res) => {
     try {
@@ -21,7 +52,11 @@ estabelecimentoRouter.get('/', isLoggedIn, async (req, res) => {
     }
 })
 
-estabelecimentoRouter.get('/:id', isLoggedIn, hasPermission, async (req, res) => {
+estabelecimentoRouter.get(
+  '/:id',
+  isLoggedIn,
+  hasPermission,
+  async (req, res) => {
     try {
         let infoLocal = await FunTracker.getEstabelecimentoByID(+req.params.id)
         return res.status(200).json(infoLocal)
@@ -33,11 +68,17 @@ estabelecimentoRouter.get('/:id', isLoggedIn, hasPermission, async (req, res) =>
     }
 })
 
-estabelecimentoRouter.get('/:id/allImagens', isLoggedIn, hasPermission, async (req, res) => {
-    let allImagens = await FunTracker.getAllImagensByEstabelecimentoID(req.body.id)
+estabelecimentoRouter.get(
+  '/:id/allImagens',
+  isLoggedIn,
+  hasPermission,
+  async (req, res) => {
+    let allImagens = await FunTracker.getAllImagensByEstabelecimentoID(
+      req.body.id,
+    );
 
-    if(allImagens) {
-        return res.status(200).json(allImagens)
+    if (allImagens) {
+      return res.status(200).json(allImagens);
     }
     else {
         return res.status(404).json({
@@ -47,10 +88,13 @@ estabelecimentoRouter.get('/:id/allImagens', isLoggedIn, hasPermission, async (r
     }
 })
 
+
 // Maybe mandar mesmo a imagem, fazer dowload dela e devolver o filepath
-estabelecimentoRouter.post('/:id/adicionarImagem', isLoggedIn, isAdmin,
-  body('filepath')
-      .exists(),
+estabelecimentoRouter.post(
+  '/:id/adicionarImagem',
+  isLoggedIn,
+  isAdmin,
+  body('filepath').exists(),
   async (req, res) => {
     let newImagen = FunTracker.adicionarImagen(req.body.id,req.body.filepath)
     if(newImagen) {
@@ -62,7 +106,8 @@ estabelecimentoRouter.post('/:id/adicionarImagem', isLoggedIn, isAdmin,
         errors: ["Não foi possível adicionar a imagem"],
       });
     }
-})
+  },
+);
 
 estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, isAdmin, async (req, res) => {
     try{
@@ -74,8 +119,10 @@ estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, isAdmin, async (req
       });
     }
 });
-
-estabelecimentoRouter.post('/:id/avaliar', isLoggedIn, hasPermission,
+estabelecimentoRouter.post(
+  '/:id/avaliar',
+  isLoggedIn,
+  hasPermission,
   body('valor').exists(),
   body('comentario').exists(),
   async (req, res) => {
@@ -90,6 +137,7 @@ estabelecimentoRouter.post('/:id/avaliar', isLoggedIn, hasPermission,
         errors: ["Não foi possível classificar o estabelecimento"],
       });
     }
-})
+  },
+);
 
-export default estabelecimentoRouter
+export default estabelecimentoRouter;

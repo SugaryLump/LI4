@@ -9,7 +9,7 @@ export class Estabelecimento {
     private gamaPreco: GamaPreco,
     private categoria: Categoria,
     private morada: string,
-    private coordenadas: {latitude: number; longitude: number},
+    private coordenadas: {latitude: string; longitude: string},
     private horarioAbertura: Date,
     private horarioFecho: Date,
     private contacto: string,
@@ -28,18 +28,15 @@ export enum Categoria {
 }
 
 export enum GamaPreco {
-  Low = '$',
-  Medium = '$$',
-  High = '$$$',
+  $,
+  $$,
+  $$$,
 }
 
 export class EstabelecimentoDAO {
   constructor(private readonly db: PromisedDatabase) {}
 
-  async avaliar(
-    valor: number,
-    estabelecimentoId: number,
-  ): Promise<number> {
+  async avaliar(valor: number, estabelecimentoId: number): Promise<number> {
     // ir buscar o local
     // verificar o any
     let estabelecimento: Estabelecimento | null = null as any;
@@ -70,10 +67,68 @@ export class EstabelecimentoDAO {
   }
 
   async getByID(id: number): Promise<Estabelecimento> {
-        return await this.db.get('SELECT * from estabelecimentos where id = ?', id);
+    return await this.db.get('SELECT * from estabelecimentos where id = ?', id);
   }
 
   async getAll(): Promise<Estabelecimento[]> {
     return await this.db.all('SELECT * from estabelecimentos');
+  }
+
+  async cria(
+    nome: string,
+    lotacao: number,
+    rating: number,
+    gamaPreco: GamaPreco,
+    categoria: Categoria,
+    morada: string,
+    coordenadas: {latitude: string; longitude: string},
+    horarioAbertura: Date,
+    horarioFecho: Date,
+    contacto: string,
+  ): Promise<Estabelecimento> {
+
+    const horario_abertura_parsed = `${horarioAbertura.getHours()}:${horarioAbertura.getMinutes()}`
+    const horario_fecho_parsed = `${horarioFecho.getHours()}:${horarioFecho.getMinutes()}`
+
+        console.log("--------------O que vai para db------------")
+      console.log(nome)
+      console.log(lotacao)
+      console.log(rating)
+      console.log(GamaPreco[gamaPreco])
+      console.log(Categoria[categoria])
+      console.log(morada)
+      console.log(coordenadas.latitude + ';' + coordenadas.longitude)
+      console.log(horario_abertura_parsed)
+      console.log(horario_fecho_parsed)
+      console.log(contacto)
+
+
+    const res = await this.db.run(
+      "INSERT INTO estabelecimentos(nome,lotacao,pontuacao,morada,coordenadas,precos,categoria,horario_abertura,horario_fecho,contacto) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%H:%M',?), \
+      strftime('%H:%M',?), ?)",
+      nome,
+      lotacao,
+      rating,
+      morada,
+      coordenadas.latitude + ';' + coordenadas.longitude,
+      gamaPreco,
+      Categoria[categoria],
+      horario_abertura_parsed,
+      horario_fecho_parsed,
+      contacto,
+    );
+    return new Estabelecimento(
+      res.lastID,
+      nome,
+      lotacao,
+      rating,
+      gamaPreco,
+      categoria,
+      morada,
+      coordenadas,
+      horarioAbertura,
+      horarioFecho,
+      contacto,
+    );
   }
 }
