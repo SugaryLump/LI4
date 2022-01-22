@@ -68,10 +68,5 @@ export const appTheme = {
             borderRadius:10,
         },
     },
-    Divider: {
-        style: {
-            padding:15,
-        },
-    },
 }
 

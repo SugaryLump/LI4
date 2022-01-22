@@ -15,8 +15,8 @@ export const FiltrosMenu = ({ navigation, route }:any) => {
     const [nome, setNome] = useState(route.params?.nome)
 
     return (
-        <View style={constants.styles.container}>
-            <View style={constants.styles.centered}>
+        <View style={{flex:1}}>
+            <View style={{flex:0.2, marginHorizontal:15, marginVertical:10}}>
                 <Button
                     title='Ok'
                     onPress={() => navigation.navigate({
@@ -34,17 +34,22 @@ export const FiltrosMenu = ({ navigation, route }:any) => {
                 />
             </View>
             <Divider/>
-            <CheckBox title='Abertos de momento' checked={aberto} onPress={() => setAberto(!aberto)} />
-            <CheckBox title='Bar' checked={bar} onPress={() => setBar(!bar)} />
-            <CheckBox title='Discoteca' checked={disco} onPress={() => setDisco(!disco)} />
+            <View style={{flex:0.25, marginHorizontal:15}}>
+                <CheckBox title='Abertos de momento' checked={aberto} onPress={() => setAberto(!aberto)} />
+                <CheckBox title='Bar' checked={bar} onPress={() => setBar(!bar)} />
+                <CheckBox title='Discoteca' checked={disco} onPress={() => setDisco(!disco)} />
+            </View>
             <Divider/>
-            <View style={constants.styles.centered}>
+            <View style={{flex:0.2}}>
                 <Text style= {{fontSize:15, padding:15,}}>Selecione uma ordem</Text>
                 <ButtonGroup
                     buttons={['Nenhuma','Proximidade', 'Custo', 'Críticas']}
                     selectedIndex={ordem}
                     onPress={(ordem) => setOrdem(ordem)}
                 />
+            </View>
+            <Divider/>
+            <View style={{flex:0.35}}>
                 <Input 
                     placeholder='Nome'
                     onChangeText={(nome)=>{setNome(nome)}}

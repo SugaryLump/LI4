@@ -115,8 +115,7 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
                     <Popup.MenuOptions>
                         <AdminOption/>
                         <MyMenuOption text='Histórico de Avaliações' value={{menu:'placeholder2', params:{}}}/>
-                        <MyMenuOption text='Opções...' value={{menu:'placeholder3', params:{}}}/>
-                        <MyMenuOption text='Sair' value={{menu: 'signout', params:{}}}/>
+                        <MyMenuOption text='Opções' value={{menu:'Opcoes', params:{}}}/>
                     </Popup.MenuOptions>
                 </Popup.Menu>
               )

@@ -14,6 +14,7 @@ import { EstabelecimentoMenu } from './Screens/Estabelecimento'
 import { AvaliarMenu } from './Screens/Avaliar'
 import { MenuProvider } from 'react-native-popup-menu'
 import { LoadingMenu } from './Screens/LoadingMenu'
+import OpcoesMenu from './Screens/Opcoes'
 
 const Stack = createNativeStackNavigator();
 
@@ -154,6 +155,13 @@ export default function App (): JSX.Element {
                       <Stack.Screen
                         name='Avaliar'
                         component={AvaliarMenu}
+                      />
+                      <Stack.Screen
+                        name='Opcoes'
+                        component={OpcoesMenu}
+                        options={{
+                          headerTitle:'Opções'
+                        }}
                       />
                     </>
                 }
