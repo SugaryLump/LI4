@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { Button, Input, Divider } from 'react-native-elements'
 
-export default function OpcoesMenu() {
+export default function OpcoesMenu({ navigation, route }:any) {
     const [newUsername, setNewUsername] = useState('')
     const [usernameError, setUsernameError] = useState('')
 
