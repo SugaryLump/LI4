@@ -1,21 +1,19 @@
 import {PromisedDatabase} from 'promised-sqlite3';
 
 export class Estabelecimento {
-  constructor(
-    private readonly id: number,
-    private nome: string,
-    private lotacao: number,
-    private rating: number,
-    private gamaPreco: GamaPreco,
-    private categoria: Categoria,
-    private morada: string,
-    private coordenadas: {latitude: string; longitude: string},
-    private horarioAbertura: Date,
-    private horarioFecho: Date,
-    private contacto: string,
-  ) {}
-
-  // caller must increment numberRatings
+    constructor(
+        private readonly id: number,
+        private nome: string,
+        private lotacao: number,
+        private rating: number,
+        private gamaPreco: GamaPreco,
+        private categoria: Categoria,
+        private morada: string,
+        private coordenadas: {latitude: string; longitude: string},
+        private horarioAbertura: Date,
+        private horarioFecho: Date,
+        private contacto: string
+    ) {} // caller must increment numberRatings
   updateRating(newRating: number, numberRatings: number): number {
     const sum: number = this.rating * numberRatings;
     return (this.rating = (sum + newRating) / (numberRatings + 1));
@@ -94,7 +92,7 @@ export class EstabelecimentoDAO {
       console.log(nome)
       console.log(lotacao)
       console.log(rating)
-      console.log(GamaPreco[gamaPreco])
+      console.log(gamaPreco)
       console.log(Categoria[categoria])
       console.log(morada)
       console.log(coordenadas.latitude + ';' + coordenadas.longitude)
@@ -104,8 +102,7 @@ export class EstabelecimentoDAO {
 
 
     const res = await this.db.run(
-      "INSERT INTO estabelecimentos(nome,lotacao,pontuacao,morada,coordenadas,precos,categoria,horario_abertura,horario_fecho,contacto) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%H:%M',?), \
-      strftime('%H:%M',?), ?)",
+      "INSERT INTO estabelecimentos(nome,lotacao,pontuacao,morada,coordenadas,precos,categoria,horario_abertura,horario_fecho,contacto) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%H:%M',?), strftime('%H:%M',?), ?)",
       nome,
       lotacao,
       rating,
@@ -117,6 +114,7 @@ export class EstabelecimentoDAO {
       horario_fecho_parsed,
       contacto,
     );
+      console.log("success db")
     return new Estabelecimento(
       res.lastID,
       nome,
