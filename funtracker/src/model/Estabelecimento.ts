@@ -2,21 +2,42 @@ import {PromisedDatabase} from 'promised-sqlite3';
 
 export class Estabelecimento {
     constructor(
-        private readonly id: number,
-        private nome: string,
-        private lotacao: number,
-        private rating: number,
-        private gamaPreco: string,
-        private categorias: string[],
-        private morada: string,
-        private coordenadas: {latitude: string; longitude: string},
-        private horarioAbertura: Date,
-        private horarioFecho: Date,
-        private contacto: string
+        public id: number,
+        public nome: string,
+        public lotacao: number,
+        public rating: number,
+        public gamaPreco: string,
+        public morada: string,
+        public coordenadas: {latitude: string, longitude: string},
+        public contacto: string
     ) {} // caller must increment numberRatings
+    public categorias: string[] = []
+    public horarioAbertura: Date = new Date()
+    public horarioFecho: Date =  new Date()
   // caller must increment numberRatings
   updateRating(newRating: number, numberRatings: number): number {
-    const sum: number = this.rating * numberRatings; return (this.rating = (sum + newRating) / (numberRatings + 1));}
+    const sum: number = this.rating * numberRatings;
+    return (this.rating = (sum + newRating) / (numberRatings + 1));
+  }
+
+  setCategorias(categorias: string[]) {
+      this.categorias = categorias
+  }
+
+  setHorarios(horario_abertura: string, horario_fecho: string) {
+      const splited_abertura = horario_abertura.split(";");
+      const splited_fecho = horario_fecho.split(";");
+      this.horarioAbertura.setHours(+splited_abertura[0])
+      this.horarioAbertura.setMinutes(+splited_abertura[1])
+      this.horarioFecho.setHours(+splited_fecho[0])
+      this.horarioFecho.setMinutes(+splited_fecho[1])
+  }
+    setHorarioAbertura(horarioAbertura: Date) {
+        this.horarioAbertura = horarioAbertura;
+    }
+    setHorarioFecho(horarioFecho: Date) {
+        this.horarioFecho = horarioFecho;
+    }
 }
 
 export enum Categoria {
@@ -44,6 +65,26 @@ export class EstabelecimentoDAO {
 
   private async countClassificacoes(estabelecimentoId: number): Promise<number> {
     return await this.db.get('SELECT COUNT(*) from avaliacoes where estabelecimento_id = ?', estabelecimentoId);
+  }
+
+  async getByID(id: number): Promise<Estabelecimento> {
+    return await this.db.get('SELECT * from estabelecimentos where id = ?', id) ;
+  }
+
+  async getAll(): Promise<Estabelecimento[]> {
+      let estabelecimentos : Estabelecimento [] = []
+
+      let c = await this.db.each('SELECT * from estabelecimentos', [], (row: any) => {
+        const coords : string = row.coordenadas.split(";")
+        const est : Estabelecimento = new Estabelecimento(row.id, row.nome,row.lotacao,row.pontuacao,row.precos,row.morada,{latitude:coords[0], longitude: coords[1]}, row.contacto)
+        estabelecimentos.push(est)
+    });
+
+      await Promise.all(estabelecimentos.map(async c => {
+        const categorias : string[] = await this.db.all('SELECT categoria FROM categorias WHERE estabelecimento_id = ?',c.id)
+        c.setCategorias(categorias)
+      }))
+      return estabelecimentos
   }
 
   async cria(
@@ -96,19 +137,20 @@ export class EstabelecimentoDAO {
       const categorias_names: string[] = categorias.map(c => Categoria[c])
       categorias_names.forEach(c => fun(res.lastID,c))
 
-    return new Estabelecimento(
+     let est = new Estabelecimento(
       res.lastID,
       nome,
       lotacao,
       rating,
       GamaPreco[gamaPreco],
-      categorias_names,
       morada,
       coordenadas,
-      horarioAbertura,
-      horarioFecho,
-      contacto,
+      contacto
     );
+      est.setCategorias(categorias_names)
+      est.setHorarioAbertura(horarioAbertura)
+      est.setHorarioFecho(horarioFecho)
+      return est
   }
 
   public async adicionarCategoria(categoria: Categoria, estabelecimento_id: number): Promise<{categoria: Categoria, estabelecimento_id: number}> {
@@ -122,57 +164,50 @@ export class EstabelecimentoDAO {
     }
   }
 
-  async getByID(id: number): Promise<Estabelecimento> {
-    return await this.db.get('SELECT * from estabelecimentos where id = ?', id);
-  }
-
-  async getAll(): Promise<Estabelecimento[]> {
-    return await this.db.all('SELECT * from estabelecimentos');
-  }
 
   //TODO verificar
-  async getByGamaPreco(gamaPreco: GamaPreco): Promise<Estabelecimento[]> {
-    return (
-      await this.db.all('SELECT * FROM estabelecimentos where precos=?', gamaPreco)
-    )
-      .map(c => (
-        new Estabelecimento(
-         c.id,
-         c.nome,
-         c.lotacao,
-         c.pontuacao,
-         c.precos,
-      // TODO mudar
-         [],
-         c.morada,
-         {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
-         c.horario_abertura,
-         c.horario_fecho,
-         c.contacto)
-    ))
-  }
-
-  //TODO verificar
-  async getSortByPrecos(): Promise<Estabelecimento[]> {
-    return (
-      await this.db.all('SELECT * FROM estabelecimentos ORDER BY precos ASC')
-    )
-      .map(c => (
-        new Estabelecimento(
-         c.id,
-         c.nome,
-         c.lotacao,
-         c.pontuacao,
-         c.precos,
-      // TODO mudar
-         [],
-         c.morada,
-         {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
-         c.horario_abertura,
-         c.horario_fecho,
-         c.contacto)
-    ))
-  }
+//  async getByGamaPreco(gamaPreco: GamaPreco): Promise<Estabelecimento[]> {
+//    return (
+//      await this.db.all('SELECT * FROM estabelecimentos where precos=?', gamaPreco)
+//    )
+//      .map(c => (
+//        new Estabelecimento(
+//         c.id,
+//         c.nome,
+//         c.lotacao,
+//         c.pontuacao,
+//         c.precos,
+//      // TODO mudar
+//         [],
+//         c.morada,
+//         {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
+//         c.horario_abertura,
+//         c.horario_fecho,
+//         c.contacto)
+//    ))
+//  }
+//
+//  //TODO verificar
+//  async getSortByPrecos(): Promise<Estabelecimento[]> {
+//    return (
+//      await this.db.all('SELECT * FROM estabelecimentos ORDER BY precos ASC')
+//    )
+//      .map(c => (
+//        new Estabelecimento(
+//         c.id,
+//         c.nome,
+//         c.lotacao,
+//         c.pontuacao,
+//         c.precos,
+//      // TODO mudar
+//         [],
+//         c.morada,
+//         {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
+//         c.horario_abertura,
+//         c.horario_fecho,
+//         c.contacto)
+//    ))
+//  }
 
   //TODO ordenado do mais perto para o mais longe
   public async getBySortLocalizacao(localizacao: {latitude: string; longitude: string}
@@ -181,71 +216,71 @@ export class EstabelecimentoDAO {
   }
 
   // TODO verificar
-  async getSortByPontuacao(): Promise<Estabelecimento[]> {
-    return (
-      await this.db.all('SELECT * FROM estabelecimentos ORDER BY pontuacao DESC')
-    )
-      .map(c => (
-        new Estabelecimento(
-         c.id,
-         c.nome,
-         c.lotacao,
-         c.pontuacao,
-         c.precos,
-      // TODO mudar
-         [],
-         c.morada,
-         {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
-         c.horario_abertura,
-         c.horario_fecho,
-         c.contacto)
-    ))
-  }
+//  async getSortByPontuacao(): Promise<Estabelecimento[]> {
+//    return (
+//      await this.db.all('SELECT * FROM estabelecimentos ORDER BY pontuacao DESC')
+//    )
+//      .map(c => (
+//        new Estabelecimento(
+//         c.id,
+//         c.nome,
+//         c.lotacao,
+//         c.pontuacao,
+//         c.precos,
+//      // TODO mudar
+//         [],
+//         c.morada,
+//         {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
+//         c.horario_abertura,
+//         c.horario_fecho,
+//         c.contacto)
+//    ))
+//  }
 
   // TODO verificar
-  async getSortByCategorias(): Promise<Estabelecimento[]> {
-    return (
-      await this.db.all('SELECT estabelecimentos.* , categorias.categoria FROM estabelecimentos LEFT JOIN categorias ON categorias.estabelecimento_id = categorias.estabelecimento_id')
-    )
-      .map(c => (
-        new Estabelecimento(
-         c.id,
-         c.nome,
-         c.lotacao,
-         c.pontuacao,
-         c.precos,
-      // TODO mudar
-         [],
-         c.morada,
-         {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
-         c.horario_abertura,
-         c.horario_fecho,
-         c.contacto)
-    ))
-  }
+//  async getSortByCategorias(): Promise<Estabelecimento[]> {
+//    return (
+//      await this.db.all('SELECT estabelecimentos.* , categorias.categoria FROM estabelecimentos LEFT JOIN categorias ON categorias.estabelecimento_id = categorias.estabelecimento_id')
+//    )
+//      .map(c => (
+//        new Estabelecimento(
+//         c.id,
+//         c.nome,
+//         c.lotacao,
+//         c.pontuacao,
+//         c.precos,
+//      // TODO mudar
+//         [],
+//         c.morada,
+//         {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
+//         c.horario_abertura,
+//         c.horario_fecho,
+//         c.contacto)
+//    ))
+//  }
 
   //TODO verificar
-  private async getByCategorias(categorias: Categoria[]): Promise<Estabelecimento[]> {
-    return (
-      await this.db.all('SELECT estabelecimentos.* FROM estabelecimentos WHERE EXISTS (SELECT estabelecimento_id FROM categorias WHERE categorias.categoria IN ?)',
-                            categorias)
-    )
-      .map(c => (
-        new Estabelecimento(
-         c.id,
-         c.nome,
-         c.lotacao,
-         c.pontuacao,
-         c.precos,
-      // TODO mudar
-         [],
-         c.morada,
-         {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
-         c.horario_abertura,
-         c.horario_fecho,
-         c.contacto)
-    ))
-  }
+  //private async getByCategorias(categorias: Categoria[]): Promise<Estabelecimento[]> {
+  //  return (
+  //    await this.db.all('SELECT estabelecimentos.* FROM estabelecimentos WHERE EXISTS (SELECT estabelecimento_id FROM categorias WHERE categorias.categoria IN ?)',
+  //                          categorias)
+  //  )
+  //    .map(c => (
+  //      new Estabelecimento(
+  //       c.id,
+  //       c.nome,
+  //       c.lotacao,
+  //       c.pontuacao,
+  //       c.precos,
+  //    // TODO mudar
+  //       [],
+  //       c.morada,
+  //       {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
+  //       c.horario_abertura,
+  //       c.horario_fecho,
+  //       c.contacto)
+  //  ))
+  //}
 
 
   //TODO
