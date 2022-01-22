@@ -166,48 +166,54 @@ export class EstabelecimentoDAO {
 
 
   //TODO verificar
-//  async getByGamaPreco(gamaPreco: GamaPreco): Promise<Estabelecimento[]> {
-//    return (
-//      await this.db.all('SELECT * FROM estabelecimentos where precos=?', gamaPreco)
-//    )
-//      .map(c => (
-//        new Estabelecimento(
-//         c.id,
-//         c.nome,
-//         c.lotacao,
-//         c.pontuacao,
-//         c.precos,
-//      // TODO mudar
-//         [],
-//         c.morada,
-//         {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
-//         c.horario_abertura,
-//         c.horario_fecho,
-//         c.contacto)
-//    ))
-//  }
-//
-//  //TODO verificar
-//  async getSortByPrecos(): Promise<Estabelecimento[]> {
-//    return (
-//      await this.db.all('SELECT * FROM estabelecimentos ORDER BY precos ASC')
-//    )
-//      .map(c => (
-//        new Estabelecimento(
-//         c.id,
-//         c.nome,
-//         c.lotacao,
-//         c.pontuacao,
-//         c.precos,
-//      // TODO mudar
-//         [],
-//         c.morada,
-//         {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
-//         c.horario_abertura,
-//         c.horario_fecho,
-//         c.contacto)
-//    ))
-//  }
+  async getByGamaPreco(gamaPreco: GamaPreco): Promise<Estabelecimento[]> {
+    return (
+      await this.db.all('SELECT * FROM estabelecimentos where precos=?', gamaPreco)
+    )
+      .map(c => {
+        let e = new Estabelecimento(
+         c.id,
+         c.nome,
+         c.lotacao,
+         c.pontuacao,
+         c.precos,
+      // TODO mudar
+         c.morada,
+          {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude},
+          c.contacto
+        )
+        e.horarioAbertura = c.horario_abertura
+        e.horarioFecho = c.horario_fecho
+        e.categorias = []
+        return (e)
+      }
+    )
+  }
+
+  //TODO verificar
+  async getSortByPrecos(): Promise<Estabelecimento[]> {
+    return (
+      await this.db.all('SELECT * FROM estabelecimentos ORDER BY precos ASC')
+    )
+      .map(c => {
+        let e = new Estabelecimento(
+         c.id,
+         c.nome,
+         c.lotacao,
+         c.pontuacao,
+         c.precos,
+      // TODO mudar
+         c.morada,
+          {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude},
+          c.contacto
+        )
+        e.horarioAbertura = c.horario_abertura
+        e.horarioFecho = c.horario_fecho
+        e.categorias = []
+        return (e)
+      }
+    )
+  }
 
   //TODO ordenado do mais perto para o mais longe
   public async getBySortLocalizacao(localizacao: {latitude: string; longitude: string}
@@ -216,71 +222,80 @@ export class EstabelecimentoDAO {
   }
 
   // TODO verificar
-//  async getSortByPontuacao(): Promise<Estabelecimento[]> {
-//    return (
-//      await this.db.all('SELECT * FROM estabelecimentos ORDER BY pontuacao DESC')
-//    )
-//      .map(c => (
-//        new Estabelecimento(
-//         c.id,
-//         c.nome,
-//         c.lotacao,
-//         c.pontuacao,
-//         c.precos,
-//      // TODO mudar
-//         [],
-//         c.morada,
-//         {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
-//         c.horario_abertura,
-//         c.horario_fecho,
-//         c.contacto)
-//    ))
-//  }
+  async getSortByPontuacao(): Promise<Estabelecimento[]> {
+    return (
+      await this.db.all('SELECT * FROM estabelecimentos ORDER BY pontuacao DESC')
+    )
+      .map(c => {
+        let e = new Estabelecimento(
+         c.id,
+         c.nome,
+         c.lotacao,
+         c.pontuacao,
+         c.precos,
+      // TODO mudar
+         c.morada,
+          {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude},
+          c.contacto
+        )
+        e.horarioAbertura = c.horario_abertura
+        e.horarioFecho = c.horario_fecho
+        e.categorias = []
+        return (e)
+      }
+    )
+  }
 
   // TODO verificar
-//  async getSortByCategorias(): Promise<Estabelecimento[]> {
-//    return (
-//      await this.db.all('SELECT estabelecimentos.* , categorias.categoria FROM estabelecimentos LEFT JOIN categorias ON categorias.estabelecimento_id = categorias.estabelecimento_id')
-//    )
-//      .map(c => (
-//        new Estabelecimento(
-//         c.id,
-//         c.nome,
-//         c.lotacao,
-//         c.pontuacao,
-//         c.precos,
-//      // TODO mudar
-//         [],
-//         c.morada,
-//         {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
-//         c.horario_abertura,
-//         c.horario_fecho,
-//         c.contacto)
-//    ))
-//  }
+  async getSortByCategorias(): Promise<Estabelecimento[]> {
+    return (
+      await this.db.all('SELECT estabelecimentos.* , categorias.categoria FROM estabelecimentos LEFT JOIN categorias ON categorias.estabelecimento_id = categorias.estabelecimento_id')
+    )
+      .map(c => {
+        let e = new Estabelecimento(
+         c.id,
+         c.nome,
+         c.lotacao,
+         c.pontuacao,
+         c.precos,
+      // TODO mudar
+         c.morada,
+          {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude},
+          c.contacto
+        )
+        e.horarioAbertura = c.horario_abertura
+        e.horarioFecho = c.horario_fecho
+        e.categorias = []
+        return (e)
+      }
+    )
+  }
 
   //TODO verificar
-  //private async getByCategorias(categorias: Categoria[]): Promise<Estabelecimento[]> {
-  //  return (
-  //    await this.db.all('SELECT estabelecimentos.* FROM estabelecimentos WHERE EXISTS (SELECT estabelecimento_id FROM categorias WHERE categorias.categoria IN ?)',
-  //                          categorias)
-  //  )
-  //    .map(c => (
-  //      new Estabelecimento(
-  //       c.id,
-  //       c.nome,
-  //       c.lotacao,
-  //       c.pontuacao,
-  //       c.precos,
-  //    // TODO mudar
-  //       [],
-  //       c.morada,
-  //       {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude}, // coordenadas
-  //       c.horario_abertura,
-  //       c.horario_fecho,
-  //       c.contacto)
-  //  ))
-  //}
+  private async getByCategorias(categorias: Categoria[]): Promise<Estabelecimento[]> {
+    return (
+      await this.db.all('SELECT estabelecimentos.* FROM estabelecimentos WHERE EXISTS (SELECT estabelecimento_id FROM categorias WHERE categorias.categoria IN ?)',
+                            categorias)
+    )
+      .map(c => {
+        let e = new Estabelecimento(
+         c.id,
+         c.nome,
+         c.lotacao,
+         c.pontuacao,
+         c.precos,
+      // TODO mudar
+         c.morada,
+          {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude},
+          c.contacto
+        )
+        e.horarioAbertura = c.horario_abertura
+        e.horarioFecho = c.horario_fecho
+        e.categorias = []
+        return (e)
+      }
+    )
+  }
 
 
   //TODO
