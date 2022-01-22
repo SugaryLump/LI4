@@ -21,7 +21,7 @@ export class UserDAO {
         }
 
         let passwordHash = await bcrypt.hash(password, 10)
-        let r = await this.db.run("INSERT INTO utilizadores (username, password_hash) VALUES (?, ?)", username, passwordHash)
+        let r = await this.db.run("INSERT INTO utilizadores (username, password_hash, is_admin) VALUES (?, ?, ?)", username, passwordHash, false)
         return {
             id: r.lastID,
             username,
@@ -36,7 +36,7 @@ export class UserDAO {
         }
 
         let passwordHash = await bcrypt.hash(password, 10)
-        let r = await this.db.run("INSERT INTO utilizadores (username, password_hash) VALUES (?, ?)", username, passwordHash)
+        let r = await this.db.run("INSERT INTO utilizadores (username, password_hash,is_admin) VALUES (?, ?,?)", username, passwordHash,true)
         return {
             id: r.lastID,
             username,

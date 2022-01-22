@@ -61,9 +61,9 @@ usersRouter.post(
   async (req, res) => {
 
     const user: UserJwt = getUser(req);
-    //FIXMkjE
     if ( //user.id === +req.params.id &&
-      user.is_admin) {
+       user.is_admin
+    ) {
       try {
         let user = await FunTracker.criarContaAdmin(req.body.username, req.body.password);
         return res
@@ -164,11 +164,11 @@ usersRouter.get('/all', isLoggedIn, async (req, res) => {
   if (user.is_admin) {
     try {
       let users = await FunTracker.getAllUsers()
-      let allSimpleUsers = users.map(c => {
-        c.id
-        c.username
-        c.isAdmin
-      })
+      let allSimpleUsers = users.map(c => ({
+        id: c.id,
+        username: c.username,
+        isAdmin: c.isAdmin
+      }))
       return res.status(200).json({success: true, users: allSimpleUsers})
     } catch(error: any) {
       return res.status(400).json({
