@@ -1,7 +1,7 @@
 // Routes relacionadas com utilizadores
 
 import {Request, Router} from 'express';
-import {body, validationResult} from 'express-validator';
+import { body, query, validationResult} from 'express-validator';
 import {FunTracker} from '../model/FunTracker';
 import isLoggedIn from '../middleware/isLoggedIn';
 import {hasPermission, isAdmin} from '../middleware/hasPermission';
@@ -154,6 +154,31 @@ usersRouter.get('/all', isLoggedIn, isAdmin, async (req, res) => {
       });
     }
 });
+
+usersRouter.get('/',
+  query('id').exists(),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({success: false, errors: errors.array()});
+    }
+
+    next();
+  }
+                , isLoggedIn, hasPermission, async (req , res) => {
+  try{
+      let user = await FunTracker.getUserById(+req.query?.id);
+      return res
+        .status(200)
+        .json({success: true, user: {username: user.username, id: user.id}});
+    } catch {
+      return res.status(404).json({
+        success: false,
+        errors: ["User não existe"],
+      });
+    }
+});
+
 
 usersRouter.get('/:id', isLoggedIn, hasPermission, async (req, res) => {
   try{

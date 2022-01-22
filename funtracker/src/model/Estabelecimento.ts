@@ -1,19 +1,21 @@
 import {PromisedDatabase} from 'promised-sqlite3';
 
 export class Estabelecimento {
-    constructor(
-        private readonly id: number,
-        private nome: string,
-        private lotacao: number,
-        private rating: number,
-        private gamaPreco: GamaPreco,
-        private categoria: Categoria,
-        private morada: string,
-        private coordenadas: {latitude: string; longitude: string},
-        private horarioAbertura: Date,
-        private horarioFecho: Date,
-        private contacto: string
-    ) {} // caller must increment numberRatings
+  constructor(
+    private readonly id: number,
+    private nome: string,
+    private lotacao: number,
+    private rating: number,
+    private gamaPreco: GamaPreco,
+    private categoria: Categoria,
+    private morada: string,
+    private coordenadas: {latitude: string; longitude: string},
+    private horarioAbertura: Date,
+    private horarioFecho: Date,
+    private contacto: string,
+  ) {}
+
+  // caller must increment numberRatings
   updateRating(newRating: number, numberRatings: number): number {
     const sum: number = this.rating * numberRatings;
     return (this.rating = (sum + newRating) / (numberRatings + 1));
@@ -35,33 +37,16 @@ export class EstabelecimentoDAO {
   constructor(private readonly db: PromisedDatabase) {}
 
   async avaliar(valor: number, estabelecimentoId: number): Promise<number> {
-    // ir buscar o local
-    // verificar o any
-    let estabelecimento: Estabelecimento | null = null as any;
+    let estabelecimento: Estabelecimento = await this.getByID(estabelecimentoId);
     if (estabelecimento == null) throw 'Local Não Encontrado';
-    // FIXME
-    let numberRatings = 0;
-    return estabelecimento.updateRating(valor, numberRatings);
+    let numberRatings = await this.countClassificacoes(estabelecimentoId);
+    const rating = estabelecimento.updateRating(valor, numberRatings);
+    await this.db.run("UPDATE estabelecimento SET `pontuacao` = ? WHERE `id` = ?", estabelecimento)
+    return rating;
   }
 
-  async getByGamaPreco(gamaPreco: string): Promise<Estabelecimento[]> {
-    //return (
-    //    await this.db.all('SELECT * FROM estabelecimentos WHERE gamaPreco = ?', gamaPreco)
-    //).map(c => ({
-    //    id: c.id,
-    //    lotacao: c.lotacao,
-    //    morada: c.morada,
-    //    rating: c.rating, // nao tem isto na base de dados
-    //    gamaPreco: c.gamaPreco, // nao tem isto na base de dados
-    //    precos: c.precos,
-    //    categoria: c.categoria,
-    //    pontuacao: c.pontuacao,
-    //    coordenadas: {c.coordenadas.latitude, c.coordenadas.longitude}, // coordenadas
-    //    horario_abertura: c.horario_abertura,
-    //    horario_fecho: c.horario_fecho,
-    //    contacto: c.contacto
-    //}));
-    return [];
+  private async countClassificacoes(estabelecimentoId: number): Promise<number> {
+    return await this.db.get('SELECT COUNT(*) from avaliacoes where estabelecimento_id = ?', estabelecimentoId);
   }
 
   async getByID(id: number): Promise<Estabelecimento> {
@@ -92,7 +77,7 @@ export class EstabelecimentoDAO {
       console.log(nome)
       console.log(lotacao)
       console.log(rating)
-      console.log(gamaPreco)
+      console.log(GamaPreco[gamaPreco])
       console.log(Categoria[categoria])
       console.log(morada)
       console.log(coordenadas.latitude + ';' + coordenadas.longitude)
@@ -102,7 +87,8 @@ export class EstabelecimentoDAO {
 
 
     const res = await this.db.run(
-      "INSERT INTO estabelecimentos(nome,lotacao,pontuacao,morada,coordenadas,precos,categoria,horario_abertura,horario_fecho,contacto) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%H:%M',?), strftime('%H:%M',?), ?)",
+      "INSERT INTO estabelecimentos(nome,lotacao,pontuacao,morada,coordenadas,precos,categoria,horario_abertura,horario_fecho,contacto) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%H:%M',?), \
+      strftime('%H:%M',?), ?)",
       nome,
       lotacao,
       rating,
@@ -114,7 +100,6 @@ export class EstabelecimentoDAO {
       horario_fecho_parsed,
       contacto,
     );
-      console.log("success db")
     return new Estabelecimento(
       res.lastID,
       nome,
@@ -128,5 +113,43 @@ export class EstabelecimentoDAO {
       horarioFecho,
       contacto,
     );
+  }
+
+  private async getByGamaPreco(gamaPreco: string): Promise<Estabelecimento[]> {
+    //return (
+    //    await this.db.all('SELECT * FROM estabelecimentos WHERE gamaPreco = ?', gamaPreco)
+    //).map(c => ({
+    //    id: c.id,
+    //    lotacao: c.lotacao,
+    //    morada: c.morada,
+    //    rating: c.rating, // nao tem isto na base de dados
+    //    gamaPreco: c.gamaPreco, // nao tem isto na base de dados
+    //    precos: c.precos,
+    //    categoria: c.categoria,
+    //    pontuacao: c.pontuacao,
+    //    coordenadas: {c.coordenadas.latitude, c.coordenadas.longitude}, // coordenadas
+    //    horario_abertura: c.horario_abertura,
+    //    horario_fecho: c.horario_fecho,
+    //    contacto: c.contacto
+    //}));
+    return [];
+  }
+
+  //TODO
+  private async getByLocalizacao(localizacao: {latitude: string; longitude: string}
+                        ): Promise<Estabelecimento[]> {
+    return [];
+  }
+
+  //TODO
+  private async getByCategorias(categorias: Categoria[]): Promise<Estabelecimento[]> {
+    return [];
+  }
+
+  //TODOk
+  async getByFiltros(localizacao: {latitude: string; longitude: string}| null ,
+                     gamaPreco: string | null, categorias: Categoria[] | null):
+  Promise<Estabelecimento[]> {
+    return [];
   }
 }
