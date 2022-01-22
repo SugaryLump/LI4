@@ -155,6 +155,10 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
         return await FunTracker.estabelecimentoDAO.getSortByPrecos()
     }
 
+    static async getEstabelecimentosAbertos(): Promise<Estabelecimento[]> {
+        return await FunTracker.estabelecimentoDAO.getOpenEstabelecimentos()
+    }
+
     static async getEstabelecimentosByGamaPreco(gamaPreco: keyof typeof GamaPreco): Promise<Estabelecimento[]> {
       const preco: GamaPreco = GamaPreco[gamaPreco]
       if(preco == undefined ) {

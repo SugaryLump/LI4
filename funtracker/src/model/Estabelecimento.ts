@@ -313,4 +313,30 @@ export class EstabelecimentoDAO {
 
     return [];
   }
+
+  async getOpenEstabelecimentos(): Promise<Estabelecimento[]> {
+    const dataAgora = new Date()
+    const data = dataAgora.getHours()+':'+dataAgora.getMinutes()
+    return (
+      await this.db.all('SELECT * FROM estabelecimentos WHERE ( horario_abertura > horario_fecho AND (horario_abertura <= strftime(\'%H:%M\',?) OR horario_fecho > strftime(\'%H:%M\',?) )) OR (horario_abertura <= strftime(\'%H:%M\',?) AND horario_fecho > strftime(\'%H:%M\',?))',
+                        data)
+    ).map(c => {
+        let e = new Estabelecimento(
+         c.id,
+         c.nome,
+         c.lotacao,
+         c.pontuacao,
+         c.precos,
+      // TODO mudar
+         c.morada,
+          {latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude},
+          c.contacto
+        )
+        e.horarioAbertura = c.horario_abertura
+        e.horarioFecho = c.horario_fecho
+        e.categorias = []
+        return (e);
+      }
+    )
+  }
 }

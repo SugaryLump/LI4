@@ -57,22 +57,6 @@ estabelecimentoRouter.get('/', isLoggedIn, async (req, res) => {
 })
 
 estabelecimentoRouter.get(
-  '/:id',
-  isLoggedIn,
-  hasPermission,
-  async (req, res) => {
-    try {
-        let infoLocal = await FunTracker.getEstabelecimentoByID(+req.params.id)
-        return res.status(200).json(infoLocal)
-    } catch {
-        return res.status(404).json({
-            success: false,
-            errors: ["Não Existe Nenhum Estabelecimento com esse ID"],
-        });
-    }
-})
-
-estabelecimentoRouter.get(
   '/:id/allImagens',
   isLoggedIn,
   hasPermission,
@@ -221,22 +205,62 @@ estabelecimentoRouter.get(
   },
 );
 
-//estabelecimentoRouter.get(
-//  '/filtro/gamaPreco',
-//  isLoggedIn, hasPermission,
-//  query('preco').exists(),
-//  async (req, res) => {
-//    try {
-//      console.log(req.body.preco)
-//      let estabelecimentos = await FunTracker.getEstabelecimentosByGamaPreco(req.body.preco)
-//        return res.status(200).json({success: true, estabelecimentos: estabelecimentos})
-//    } catch (e: any) {
-//      return res.status(400).json({
-//        success: false,
-//        errors: [e],
-//      });
-//    }
-//  },
-//);
+estabelecimentoRouter.get(
+  '/filtro/gamaPreco',
+  isLoggedIn, hasPermission,
+  query('preco').exists(),
+  async (req, res) => {
+    try {
+      console.log(req.body.preco)
+      let estabelecimentos = await FunTracker.getEstabelecimentosByGamaPreco(req.body.preco)
+        return res.status(200).json({success: true, estabelecimentos: estabelecimentos})
+    } catch (e: any) {
+      return res.status(400).json({
+        success: false,
+        errors: [e],
+      });
+    }
+  },
+);
+
+
+estabelecimentoRouter.get(
+  '/aberto',
+  isLoggedIn, hasPermission,
+  async (req, res) => {
+    try {
+      let estabelecimentos = await FunTracker.getEstabelecimentosAbertos()
+        return res.status(200).json({success: true, estabelecimentos: estabelecimentos})
+    } catch (e: any) {
+      return res.status(400).json({
+        success: false,
+        errors: [e],
+      });
+    }
+  },
+);
+
+estabelecimentoRouter.get(
+  '/:id',
+  isLoggedIn,
+  hasPermission,
+  async (req, res) => {
+    try {
+        const number = +req.params.id
+        if (isNaN(number)) {
+          return res.status(404).json({
+            success: false,
+            errors: ["Page Not Found"],
+          });
+        }
+        let infoLocal = await FunTracker.getEstabelecimentoByID(number)
+        return res.status(200).json(infoLocal)
+    } catch {
+        return res.status(404).json({
+            success: false,
+            errors: ["Não Existe Nenhum Estabelecimento com esse ID"],
+        });
+    }
+})
 
 export default estabelecimentoRouter;
