@@ -29,5 +29,9 @@ export type AppParamList = {
     Historico: undefined,
     Credenciais: {
         jwt: string
+    },
+    Adicionar: {
+        latitude?: number,
+        longitude?: number
     }
 }

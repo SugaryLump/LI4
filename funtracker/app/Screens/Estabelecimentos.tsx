@@ -1,17 +1,11 @@
 import React, { useState, useEffect, useLayoutEffect, useContext } from 'react'
 import { View, FlatList, TouchableOpacity, Dimensions } from 'react-native'
 import { AirbnbRating, Image, Text, Button } from 'react-native-elements'
-import { Input } from 'react-native-elements/dist/input/Input'
-import * as svg from 'react-native-svg'
-import * as constants from '../lib/constants'
 import * as Location from 'expo-location' 
-import { LocationEventEmitter } from 'expo-location/build/LocationEventEmitter'
-import { ListItem } from 'react-native-elements/dist/list/ListItem'
 import * as Popup from 'react-native-popup-menu'
-import { NavigationProp } from '@react-navigation/native'
-import { AuthContext } from '../auth'
 import { Divider } from 'react-native-elements/dist/divider/Divider'
 import { Coordinate } from 'react-native-maps'
+import { useAuthContext } from '../hooks'
 
 class LocalNoturno {
     constructor(
@@ -50,6 +44,8 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
     const [locationMessage, setLocationMessage] = useState('A obter localização')
     const [estabelecimentos, setEstabelecimentos] = useState([] as LocalNoturno[])
 
+    const authContext = useAuthContext()
+
     //Search
     useEffect (() => {
         if (!route.params?.searched) {
@@ -79,9 +75,7 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
             )
         }
         const AdminOption = () => {
-            //check if admin
-            let isAdmin=true
-            if (isAdmin) {
+            if (authContext.isAdmin) {
                 return (
                     <MyMenuOption
                         text='Adicionar local'

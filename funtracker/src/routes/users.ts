@@ -6,6 +6,7 @@ import {FunTracker} from '../model/FunTracker';
 import isLoggedIn from '../middleware/isLoggedIn';
 import {hasPermission, isAdmin, isSpecial} from '../middleware/hasPermission';
 import jwt from 'jsonwebtoken'
+import { checkValidation } from '../middleware/checkValidation';
 
 const usersRouter = Router();
 
@@ -85,14 +86,7 @@ usersRouter.patch(
     .exists()
     .isLength({min: 8})
     .withMessage('Must be at least 8 characters long'),
-  (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({success: false, errors: errors.array().map(err => err.msg)});
-    }
-
-    next();
-  },
+  checkValidation,
   async (req, res) => {
       try {
         await FunTracker.changePassword(+req.params?.id, req.body.password);

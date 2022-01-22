@@ -183,8 +183,8 @@ export default function App(): JSX.Element {
                           headerTitle:'Adicionar Local'
                         }}
                         initialParams={{
-                          latitude:0,
-                          longitude:0,
+                          latitude: 0,
+                          longitude: 0,
                         }}
                       />
                     </>

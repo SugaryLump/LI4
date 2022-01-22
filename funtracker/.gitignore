@@ -5,3 +5,4 @@ node_modules
 docs/
 .expo/
 db.sqlite3
+images/
