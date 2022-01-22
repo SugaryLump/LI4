@@ -45,12 +45,12 @@ usersRouter.post(
 
 /* registar um admin */
 usersRouter.post(
-  '/createAdmin', isLoggedIn, isAdmin,
+  '/createAdmin',
   body('password')
     .exists()
     .isLength({min: 8})
     .withMessage('Must be at least 8 characters long'),
-  body('username').exists(),
+  body('username').exists(), isLoggedIn, isAdmin,
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

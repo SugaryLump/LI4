@@ -8,13 +8,13 @@ import {UserJwt, getUser} from '../middleware/isLoggedIn';
 
 const estabelecimentoRouter = Router();
 
-estabelecimentoRouter.post('/', isLoggedIn, isAdmin, async (req, res) => {
+estabelecimentoRouter.post('/',  isLoggedIn, isAdmin, async (req, res) => {
   try {
     console.log(req.body.nome);
     console.log(req.body.lotacao);
     console.log(req.body.rating);
     console.log(req.body.gamaPreco);
-    console.log(req.body.categoria);
+    console.log(req.body.categorias);
     console.log(req.body.morada);
     console.log(req.body.coordenadas);
     console.log(req.body.horarioAbertura);
@@ -25,7 +25,7 @@ estabelecimentoRouter.post('/', isLoggedIn, isAdmin, async (req, res) => {
       req.body.lotacao,
       req.body.rating,
       req.body.gamaPreco,
-      req.body.categoria,
+      req.body.categorias,
       req.body.morada,
       req.body.coordenadas,
       req.body.horarioAbertura,
@@ -34,8 +34,12 @@ estabelecimentoRouter.post('/', isLoggedIn, isAdmin, async (req, res) => {
     );
     return res.status(200).json(estab);
   } catch (e) {
-    console.log('rip');
-    res.status(500).send(e);
+      if(typeof e == 'number') {
+          res.status(e).send(e.toString())
+      }
+      else {
+        res.status(500).send(e);
+      }
   }
 });
 

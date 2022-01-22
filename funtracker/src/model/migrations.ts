@@ -14,7 +14,6 @@ export default async function migrate(db: PromisedDatabase) {
         'nome VARCHAR(100)',
         'lotacao INTEGER',
         'morada VARCHAR(100)',
-        'categoria VARCHAR(50)',
         'coordenadas VARCHAR(50)',
         'precos INTEGER',
         'pontuacao FLOAT',

@@ -6,8 +6,8 @@ export class Estabelecimento {
         private nome: string,
         private lotacao: number,
         private rating: number,
-        private gamaPreco: GamaPreco,
-        private categoria: Categoria,
+        private gamaPreco: string,
+        private categorias: string[],
         private morada: string,
         private coordenadas: {latitude: string; longitude: string},
         private horarioAbertura: Date,
@@ -77,7 +77,7 @@ export class EstabelecimentoDAO {
     lotacao: number,
     rating: number,
     gamaPreco: GamaPreco,
-    categoria: Categoria,
+    categorias: Categoria[],
     morada: string,
     coordenadas: {latitude: string; longitude: string},
     horarioAbertura: Date,
@@ -93,7 +93,6 @@ export class EstabelecimentoDAO {
       console.log(lotacao)
       console.log(rating)
       console.log(gamaPreco)
-      console.log(Categoria[categoria])
       console.log(morada)
       console.log(coordenadas.latitude + ';' + coordenadas.longitude)
       console.log(horario_abertura_parsed)
@@ -102,26 +101,31 @@ export class EstabelecimentoDAO {
 
 
     const res = await this.db.run(
-      "INSERT INTO estabelecimentos(nome,lotacao,pontuacao,morada,coordenadas,precos,categoria,horario_abertura,horario_fecho,contacto) VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%H:%M',?), strftime('%H:%M',?), ?)",
+      "INSERT INTO estabelecimentos(nome,lotacao,pontuacao,morada,coordenadas,precos,horario_abertura,horario_fecho,contacto) VALUES (?, ?, ?, ?, ?, ?,  strftime('%H:%M',?), strftime('%H:%M',?), ?)",
       nome,
       lotacao,
       rating,
       morada,
       coordenadas.latitude + ';' + coordenadas.longitude,
       gamaPreco,
-      Categoria[categoria],
       horario_abertura_parsed,
       horario_fecho_parsed,
-      contacto,
+      contacto
     );
-      console.log("success db")
+
+      var fun = (last_id: number ,category_name: string) =>  {
+          return this.db.run("INSERT INTO categorias(estabelecimento_id,categoria) VALUES (?,?)", last_id, category_name )
+      }
+      const categorias_names: string[] = categorias.map(c => Categoria[c])
+      categorias_names.forEach(c => fun(res.lastID,c))
+
     return new Estabelecimento(
       res.lastID,
       nome,
       lotacao,
       rating,
-      gamaPreco,
-      categoria,
+      GamaPreco[gamaPreco],
+      categorias_names,
       morada,
       coordenadas,
       horarioAbertura,

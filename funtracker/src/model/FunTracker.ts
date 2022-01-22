@@ -62,24 +62,34 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
     nome: string,
     lotacao: number,
     classificacao: number,
-    gamaPreco: keyof typeof GamaPreco,
-    categoria: keyof typeof Categoria,
+    gamaPreco: keyof typeof GamaPreco ,
+    nomes_categorias: (keyof typeof Categoria) [],
     morada: string,
     coordenadas: {latitude: string; longitude: string},
     horarioAbertura: string,
     horarioFecho: string,
     contacto: string,
   ): Promise<Estabelecimento> {
+
+
       const abertura : Date = new Date();
-      let splitted : String[] = horarioAbertura.split(":")
-      abertura.setHours(+splitted[0])
-      abertura.setMinutes(+splitted[1])
+      let [hours,minutes] : String[] = horarioAbertura.split(":")
+      abertura.setHours(+hours)
+      abertura.setMinutes(+minutes)
       const fecho : Date = new Date();
-      splitted = horarioFecho.split(":")
-      fecho.setHours(+splitted[0])
-      fecho.setMinutes(+splitted[1])
-      return await FunTracker.estabelecimentoDAO.cria(nome,lotacao,classificacao,GamaPreco[gamaPreco],Categoria[categoria],
-                                                      morada,coordenadas,abertura,fecho,contacto)
+      [hours,minutes] = horarioFecho.split(":")
+      fecho.setHours(+hours)
+      fecho.setMinutes(+minutes)
+      let categorias : (Categoria|undefined)[] = nomes_categorias.map(c => Categoria[c])
+      const preco: GamaPreco = GamaPreco[gamaPreco]
+      if(gamaPreco == undefined ||  categorias.includes(undefined) ) {
+          throw 400
+      }
+      else {
+          return await FunTracker
+            .estabelecimentoDAO
+            .cria(nome,lotacao,classificacao,preco, <Categoria[]> categorias,morada,coordenadas,abertura,fecho,contacto)
+          }
   }
 
   static async getEstabelecimentoByID(id: number): Promise<Estabelecimento> {
