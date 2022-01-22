@@ -16,6 +16,7 @@ import { MenuProvider } from 'react-native-popup-menu'
 import { LoadingMenu } from './Screens/LoadingMenu'
 import OpcoesMenu from './Screens/Opcoes'
 import HistoricoMenu from './Screens/Historico'
+import CredenciaisMenu from './Screens/Credenciais'
 
 const Stack = createNativeStackNavigator();
 
@@ -150,6 +151,13 @@ export default function App(): JSX.Element {
                         component={HistoricoMenu}
                         options={{
                           headerTitle:'Histórico de Avaliações'
+                        }}
+                      />
+                      <Stack.Screen
+                        name='Credenciais'
+                        component={CredenciaisMenu}
+                        options={{
+                          headerTitle:'Alterar Credenciais'
                         }}
                       />
                     </>
