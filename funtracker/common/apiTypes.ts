@@ -17,8 +17,6 @@ interface APIDef {
     }
 }
 
-
-
 export interface API extends APIDef {
     '/session': {
         POST: {
