@@ -69,8 +69,10 @@ export class EstabelecimentoDAO {
     contacto: string,
   ): Promise<Estabelecimento> {
 
-    const horario_abertura_parsed = `${horarioAbertura.getHours()}:${horarioAbertura.getMinutes()}`
-    const horario_fecho_parsed = `${horarioFecho.getHours()}:${horarioFecho.getMinutes()}`
+    const buildTime = (date : Date) => {
+        let leadingZero = (str : number)  => { return ("0" + str).slice(-2)}
+        return  `${leadingZero(date.getHours())}:${leadingZero(date.getMinutes())}`
+    }
 
         console.log("--------------O que vai para db------------")
       console.log(nome)
@@ -80,8 +82,8 @@ export class EstabelecimentoDAO {
       categorias.forEach(c => console.log(Categoria[c]))
       console.log(morada)
       console.log(coordenadas.latitude + ';' + coordenadas.longitude)
-      console.log(horario_abertura_parsed)
-      console.log(horario_fecho_parsed)
+      console.log(buildTime(horarioAbertura))
+      console.log(buildTime(horarioFecho))
       console.log(contacto)
 
 
@@ -93,8 +95,8 @@ export class EstabelecimentoDAO {
       morada,
       coordenadas.latitude + ';' + coordenadas.longitude,
       gamaPreco,
-      horario_abertura_parsed,
-      horario_fecho_parsed,
+      buildTime(horarioAbertura),
+      buildTime(horarioFecho),
       contacto
     );
 
