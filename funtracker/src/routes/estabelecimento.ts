@@ -2,45 +2,48 @@ import { Router } from "express";
 import { Estabelecimento } from "../model/Estabelecimento";
 import { body } from "express-validator";
 import isLoggedIn from '../middleware/isLoggedIn';
-import {isUser, isAdmin} from '../middleware/index'
+import {hasPermission,isAdmin} from '../middleware/hasPermission';
 import { FunTracker } from '../model/FunTracker'
 import {UserJwt, getUser} from '../middleware/isLoggedIn'
 
 const estabelecimentoRouter = Router()
 
-estabelecimentoRouter.get('/', isLoggedIn,async (req, res) => {
+estabelecimentoRouter.get('/', isLoggedIn, async (req, res) => {
     try {
         const estab : Estabelecimento[] = await FunTracker.getEstabelecimentos()
         return res.status(200).json(estab)
     }
     catch(e) {
-        res.status(500).send(e);
+      return res.status(404).json({
+        success: false,
+        errors: ["Não existem estabelecimentos"],
+      });
     }
 })
 
-estabelecimentoRouter.get('/:id', isLoggedIn, isUser, async (req, res) => {
+estabelecimentoRouter.get('/:id', isLoggedIn, hasPermission, async (req, res) => {
     try {
         let infoLocal = await FunTracker.getEstabelecimentoByID(+req.params.id)
-        if(infoLocal) {
-            return res.status(200).json(infoLocal)
-        }
-        else {
-             return res.status(404).send("Estabelecimento Não Existe")
-        }
-    }
-    catch(e) {
-        res.status(500).send(e)
+        return res.status(200).json(infoLocal)
+    } catch {
+        return res.status(404).json({
+            success: false,
+            errors: ["Não Existe Nenhum Estabelecimento com esse ID"],
+        });
     }
 })
 
-estabelecimentoRouter.get('/:id/allImagens', isLoggedIn, isUser, async (req, res) => {
+estabelecimentoRouter.get('/:id/allImagens', isLoggedIn, hasPermission, async (req, res) => {
     let allImagens = await FunTracker.getAllImagensByEstabelecimentoID(req.body.id)
 
     if(allImagens) {
         return res.status(200).json(allImagens)
     }
     else {
-        res.status(404).send("Não existem imagens associadas");
+        return res.status(404).json({
+            success: false,
+            errors: ["Não existem imagens associadas"],
+        });
     }
 })
 
@@ -54,15 +57,25 @@ estabelecimentoRouter.post('/:id/adicionarImagem', isLoggedIn, isAdmin,
         return res.status(200).json(newImagen)
     }
     else {
-        res.status(404).send("Não foi possível adicionar a imagem");
+      return res.status(500).json({
+        success: false,
+        errors: ["Não foi possível adicionar a imagem"],
+      });
     }
 })
 
-estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, isUser, async (req, res) => {
-    return res.status(200).json(FunTracker.getClassificacoesByEstabelecimentoID(req.body.id));
+estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, isAdmin, async (req, res) => {
+    try{
+        return res.status(200).json(FunTracker.getClassificacoesByEstabelecimentoID(req.body.id));
+    } catch {
+      return res.status(404).json({
+        success: false,
+        errors: ["Não existem classificações para este estabelecimento"],
+      });
+    }
 });
 
-estabelecimentoRouter.post('/:id/avaliar', isLoggedIn, isUser,
+estabelecimentoRouter.post('/:id/avaliar', isLoggedIn, hasPermission,
   body('valor').exists(),
   body('comentario').exists(),
   async (req, res) => {
@@ -72,7 +85,10 @@ estabelecimentoRouter.post('/:id/avaliar', isLoggedIn, isUser,
         return res.status(200).json(newClassificacao)
     }
     else {
-        res.status(404).send("Não foi possível classificar o estabelecimento");
+      return res.status(500).json({
+        success: false,
+        errors: ["Não foi possível classificar o estabelecimento"],
+      });
     }
 })
 

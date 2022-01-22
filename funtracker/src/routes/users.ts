@@ -4,7 +4,7 @@ import {Request, Router} from 'express';
 import {body, validationResult} from 'express-validator';
 import {FunTracker} from '../model/FunTracker';
 import isLoggedIn from '../middleware/isLoggedIn';
-import {isUser,isAdmin} from '../middleware/index'
+import {hasPermission, isAdmin} from '../middleware/hasPermission';
 
 const usersRouter = Router();
 
@@ -79,7 +79,7 @@ usersRouter.post(
 
 /* mudar a password */
 usersRouter.post(
-  '/:id/changePassword', isLoggedIn, isUser,
+  '/:id/changePassword', isLoggedIn, hasPermission,
   body('password')
     .exists()
     .isLength({min: 8})
@@ -111,7 +111,7 @@ usersRouter.post(
 
 /* mudar o username */
 usersRouter.post(
-  '/:id/changeUsername', isLoggedIn, isUser,
+  '/:id/changeUsername', isLoggedIn, hasPermission ,
   body('username').exists(),
   (req, res, next) => {
     const errors = validationResult(req);
@@ -130,7 +130,7 @@ usersRouter.post(
           // Erro 19 é o erro de uma constraint falhada
           error = 'Username already exists';
         }
-        return res.status(400).json({
+        return res.status(404).json({
           success: false,
           errors: [error],
         });
@@ -148,23 +148,36 @@ usersRouter.get('/all', isLoggedIn, isAdmin, async (req, res) => {
       }))
       return res.status(200).json({success: true, users: allSimpleUsers})
     } catch(error: any) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
         errors: [error],
       });
     }
 });
 
-usersRouter.get('/:id', isLoggedIn, isUser, async (req, res) => {
+usersRouter.get('/:id', isLoggedIn, hasPermission, async (req, res) => {
+  try{
       let user = await FunTracker.getUserById(+req.params.id);
       return res
         .status(200)
         .json({success: true, user: {username: user.username, id: user.id}});
+    } catch {
+      return res.status(404).json({
+        success: false,
+        errors: ["User não existe"],
+      });
+    }
 });
 
-/* Ver histórico */
-usersRouter.get('/:id/historico', isLoggedIn, isUser, async (req, res) => {
+usersRouter.get('/:id/historico', isLoggedIn, hasPermission, async (req, res) => {
+  try {
     return res.status(200).json(FunTracker.getClassificacoesByUserID(+req.params.id));
+  } catch {
+      return res.status(404).json({
+        success: false,
+        errors: ["Utilizador ainda não tem histórico"],
+      });
+  }
 });
 
 export default usersRouter;
