@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { Estabelecimento } from "../model/Estabelecimento";
-import { body, validationResult } from "express-validator";
+import { body } from "express-validator";
 import isLoggedIn from '../middleware/isLoggedIn';
+import {isUser, isAdmin} from '../middleware/index'
 import { FunTracker } from '../model/FunTracker'
 import {UserJwt, getUser} from '../middleware/isLoggedIn'
 
@@ -17,7 +18,7 @@ estabelecimentoRouter.get('/', isLoggedIn,async (req, res) => {
     }
 })
 
-estabelecimentoRouter.get('/:id', isLoggedIn, async (req, res) => {
+estabelecimentoRouter.get('/:id', isLoggedIn, isUser, async (req, res) => {
     try {
         let infoLocal = await FunTracker.getEstabelecimentoByID(+req.params.id)
         if(infoLocal) {
@@ -32,8 +33,9 @@ estabelecimentoRouter.get('/:id', isLoggedIn, async (req, res) => {
     }
 })
 
-estabelecimentoRouter.get('/:id/allImagens', isLoggedIn, async (req, res) => {
+estabelecimentoRouter.get('/:id/allImagens', isLoggedIn, isUser, async (req, res) => {
     let allImagens = await FunTracker.getAllImagensByEstabelecimentoID(req.body.id)
+
     if(allImagens) {
         return res.status(200).json(allImagens)
     }
@@ -43,7 +45,7 @@ estabelecimentoRouter.get('/:id/allImagens', isLoggedIn, async (req, res) => {
 })
 
 // Maybe mandar mesmo a imagem, fazer dowload dela e devolver o filepath
-estabelecimentoRouter.post('/:id/adicionarImagem', isLoggedIn,
+estabelecimentoRouter.post('/:id/adicionarImagem', isLoggedIn, isAdmin,
   body('filepath')
       .exists(),
   async (req, res) => {
@@ -56,19 +58,11 @@ estabelecimentoRouter.post('/:id/adicionarImagem', isLoggedIn,
     }
 })
 
-estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, async (req, res) => {
-  const user: UserJwt = getUser(req);
-  if (user.id === +req.params.id || user.is_admin) {
+estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, isUser, async (req, res) => {
     return res.status(200).json(FunTracker.getClassificacoesByEstabelecimentoID(req.body.id));
-  } else {
-    return res.status(403).json({
-      success: false,
-      errors: ['Permission Denied'],
-    });
-  }
 });
 
-estabelecimentoRouter.post('/:id/avaliar', isLoggedIn,
+estabelecimentoRouter.post('/:id/avaliar', isLoggedIn, isUser,
   body('valor').exists(),
   body('comentario').exists(),
   async (req, res) => {

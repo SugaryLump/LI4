@@ -64,7 +64,6 @@ export class UserDAO {
             throw "Utilizador não existe"
         }
         let passwordHash = await bcrypt.hash(newPassword, 10)
-        //TODO atualizar a nova password na base de dados (verificar se ta bem)
         this.db.run("UPDATE utilizadores SET `password_hash` = ? WHERE `id` = ?", passwordHash, userId)
     }
 
@@ -75,7 +74,6 @@ export class UserDAO {
         if ( await this.db.exists("utilizadores", "username = ?", newUsername) ) {
             throw "Utilizador com esse username já existe"
         }
-        // TODO atualizar o novo userName na base de dados (verificar se ta bem)
         this.db.run("UPDATE utilizadores SET `username` = ? WHERE `id` = ?", newUsername, userId)
     }
 
