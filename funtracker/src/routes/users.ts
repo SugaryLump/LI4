@@ -5,7 +5,6 @@ import {body, validationResult} from 'express-validator';
 import {FunTracker} from '../model/FunTracker';
 import isLoggedIn from '../middleware/isLoggedIn';
 import {hasPermission, isAdmin} from '../middleware/hasPermission';
-import {UserJwt, getUser} from '../middleware/isLoggedIn'
 
 const usersRouter = Router();
 
@@ -131,7 +130,7 @@ usersRouter.post(
           // Erro 19 é o erro de uma constraint falhada
           error = 'Username already exists';
         }
-        return res.status(400).json({
+        return res.status(404).json({
           success: false,
           errors: [error],
         });
@@ -140,7 +139,6 @@ usersRouter.post(
 );
 
 usersRouter.get('/all', isLoggedIn, isAdmin, async (req, res) => {
-  const user: UserJwt = getUser(req);
     try {
       let users = await FunTracker.getAllUsers()
       let allSimpleUsers = users.map(c => ({
@@ -150,7 +148,7 @@ usersRouter.get('/all', isLoggedIn, isAdmin, async (req, res) => {
       }))
       return res.status(200).json({success: true, users: allSimpleUsers})
     } catch(error: any) {
-      return res.status(400).json({
+      return res.status(404).json({
         success: false,
         errors: [error],
       });
@@ -158,14 +156,28 @@ usersRouter.get('/all', isLoggedIn, isAdmin, async (req, res) => {
 });
 
 usersRouter.get('/:id', isLoggedIn, hasPermission, async (req, res) => {
+  try{
       let user = await FunTracker.getUserById(+req.params.id);
       return res
         .status(200)
         .json({success: true, user: {username: user.username, id: user.id}});
+    } catch {
+      return res.status(404).json({
+        success: false,
+        errors: ["User não existe"],
+      });
+    }
 });
 
 usersRouter.get('/:id/historico', isLoggedIn, hasPermission, async (req, res) => {
+  try {
     return res.status(200).json(FunTracker.getClassificacoesByUserID(+req.params.id));
+  } catch {
+      return res.status(404).json({
+        success: false,
+        errors: ["Utilizador ainda não tem histórico"],
+      });
+  }
 });
 
 export default usersRouter;

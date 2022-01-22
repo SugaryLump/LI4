@@ -14,22 +14,22 @@ estabelecimentoRouter.get('/', isLoggedIn, async (req, res) => {
         return res.status(200).json(estab)
     }
     catch(e) {
-        res.status(500).send(e);
+      return res.status(404).json({
+        success: false,
+        errors: ["Não existem estabelecimentos"],
+      });
     }
 })
 
 estabelecimentoRouter.get('/:id', isLoggedIn, hasPermission, async (req, res) => {
     try {
         let infoLocal = await FunTracker.getEstabelecimentoByID(+req.params.id)
-        if(infoLocal) {
-            return res.status(200).json(infoLocal)
-        }
-        else {
-             return res.status(404).send("Não Existe Nenhum Estabelecimento")
-        }
-    }
-    catch(e) {
-        res.status(500).send(e)
+        return res.status(200).json(infoLocal)
+    } catch {
+        return res.status(404).json({
+            success: false,
+            errors: ["Não Existe Nenhum Estabelecimento com esse ID"],
+        });
     }
 })
 
@@ -40,7 +40,10 @@ estabelecimentoRouter.get('/:id/allImagens', isLoggedIn, hasPermission, async (r
         return res.status(200).json(allImagens)
     }
     else {
-        res.status(404).send("Não existem imagens associadas");
+        return res.status(404).json({
+            success: false,
+            errors: ["Não existem imagens associadas"],
+        });
     }
 })
 
@@ -54,12 +57,22 @@ estabelecimentoRouter.post('/:id/adicionarImagem', isLoggedIn, isAdmin,
         return res.status(200).json(newImagen)
     }
     else {
-        res.status(404).send("Não foi possível adicionar a imagem");
+      return res.status(500).json({
+        success: false,
+        errors: ["Não foi possível adicionar a imagem"],
+      });
     }
 })
 
 estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, isAdmin, async (req, res) => {
-    return res.status(200).json(FunTracker.getClassificacoesByEstabelecimentoID(req.body.id));
+    try{
+        return res.status(200).json(FunTracker.getClassificacoesByEstabelecimentoID(req.body.id));
+    } catch {
+      return res.status(404).json({
+        success: false,
+        errors: ["Não existem classificações para este estabelecimento"],
+      });
+    }
 });
 
 estabelecimentoRouter.post('/:id/avaliar', isLoggedIn, hasPermission,
@@ -72,7 +85,10 @@ estabelecimentoRouter.post('/:id/avaliar', isLoggedIn, hasPermission,
         return res.status(200).json(newClassificacao)
     }
     else {
-        res.status(404).send("Não foi possível classificar o estabelecimento");
+      return res.status(500).json({
+        success: false,
+        errors: ["Não foi possível classificar o estabelecimento"],
+      });
     }
 })
 
