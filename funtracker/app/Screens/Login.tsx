@@ -47,6 +47,7 @@ export const LoginMenu = ({ navigation }:any) => {
       }).then(r => r.json())
       if (result.success) {
         setJwt(result.jwt)
+        navigation.reset({ index: 0, routes: [{ name: 'Estabelecimentos' }] });
       } else {
         setUsernameError("Combinação de utilizador/password inválida")
         setPasswordError("Combinação de utilizador/password inválida")
@@ -61,7 +62,6 @@ export const LoginMenu = ({ navigation }:any) => {
     } catch(e) {
       setUsernameError("Erro a comunicar com o servidor")
     }
-    // navigation.reset({index: 0, routes: [{ name: 'Estabelecimentos'}]});
   }
 
   useEffect(() => usernameRef.current?.focus(), [])

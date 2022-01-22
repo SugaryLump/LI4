@@ -1,6 +1,6 @@
 // Routes relacionadas com utilizadores
 
-import {Router} from 'express';
+import {Request, Router} from 'express';
 import {body, validationResult} from 'express-validator';
 import {FunTracker} from '../model/FunTracker';
 import isLoggedIn from '../middleware/isLoggedIn';
@@ -133,10 +133,19 @@ usersRouter.post(
 
     next();
   },
-  async (req, res) => {
+  async (req: Request, res) => {
       try {
-        await FunTracker.changeUsername(req.params?.id, req.body.username);
-        return res.status(200).json({success: true, username: req.body.username});
+        const user = getUser(req)
+
+        if (user.id === +req.params.id || user.is_admin) {
+          await FunTracker.changeUsername(+req.params.id, req.body.username);
+          return res.status(200).json({success: true, username: req.body.username});
+        } else {
+          res.status(403).json({
+            success: false,
+            errors: ["Not authorized"]
+          })
+        }
       } catch (error: any) {
         if (error.errno == 19) {
           // Erro 19 é o erro de uma constraint falhada
@@ -152,14 +161,13 @@ usersRouter.post(
 
 usersRouter.get('/all', isLoggedIn, async (req, res) => {
   const user: UserJwt = getUser(req);
-  if (// user.id === +req.params.id &&
-    user.is_admin) {
+  if (user.is_admin) {
     try {
       let users = await FunTracker.getAllUsers()
       let allSimpleUsers = users.map(c => {
-        id: c.id
-        username: c.username
-        isAdmin: c.isAdmin
+        c.id
+        c.username
+        c.isAdmin
       })
       return res.status(200).json({success: true, users: allSimpleUsers})
     } catch(error: any) {
@@ -178,7 +186,7 @@ usersRouter.get('/all', isLoggedIn, async (req, res) => {
 
 usersRouter.get('/:id', isLoggedIn, async (req, res) => {
   const user: UserJwt = getUser(req);
-  if ( user.is_admin ) {
+  if (user.is_admin || user.id === +req.params.id) {
       let user = await FunTracker.getUserById(+req.params.id);
       return res
         .status(200)
