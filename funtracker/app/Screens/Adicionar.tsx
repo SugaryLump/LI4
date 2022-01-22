@@ -68,6 +68,15 @@ export default function AdicionarMenu({ navigation, route} : any) {
         )
     }
 
+    function padTime (time: number): string {
+        if (time < 10) {
+            return '0'.concat(time.toString())
+        }
+        else {
+            return time.toString()
+        }
+    }
+
     return(
         <View style={{flex:1, maxWidth:800}}>
             <ScrollView>
@@ -102,14 +111,14 @@ export default function AdicionarMenu({ navigation, route} : any) {
                             onPress={() => {setHoraMode('abertura');setShowTimePicker(true)}}
                             activeOpacity={0.5}
                         >
-                            <Text style={{fontSize:18, color:constants.colors.lightBlue}}>{abertura.getHours()}:{abertura.getMinutes()}</Text>
+                            <Text style={{fontSize:18, color:constants.colors.lightBlue}}>{abertura.getHours()}:{padTime(abertura.getMinutes())}</Text>
                         </TouchableOpacity>
                         <Text style={{fontSize:18}}> às </Text>
                         <TouchableOpacity
                             onPress={() => {setHoraMode('fecho');setShowTimePicker(true)}}
                             activeOpacity={0.5}
                         >
-                            <Text style={{fontSize:18, color:constants.colors.lightBlue}}>{fecho.getHours()}:{fecho.getMinutes()}</Text>
+                            <Text style={{fontSize:18, color:constants.colors.lightBlue}}>{fecho.getHours()}:{padTime(fecho.getMinutes())}</Text>
                         </TouchableOpacity>
                     </View>
                     <Input
