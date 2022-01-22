@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { ScrollView, TextInput, View } from 'react-native'
 import { Text, Button, Input } from 'react-native-elements'
 // import { Input } from 'react-native-elements/dist/input/Input'
 import * as svg from 'react-native-svg'
+import { AuthContext } from '../auth'
 import { colors, serverUrl } from '../lib/constants'
-import { setJwt } from '../storage'
 
 const LoginCircle = () => (
   <View style={{justifyContent: 'center', alignItems: 'center', paddingTop: 20, paddingBottom: 50}}>
@@ -38,6 +38,8 @@ export const LoginMenu = ({ navigation }:any) => {
   const usernameRef = React.createRef<TextInput>()
   const passwordRef = React.createRef<TextInput>()
 
+  const authContext = useContext(AuthContext)
+
   const login = async () => {
     try {
       let result = await fetch(serverUrl + "/api/v1/session", {
@@ -46,8 +48,7 @@ export const LoginMenu = ({ navigation }:any) => {
         body: JSON.stringify({ username, password })
       }).then(r => r.json())
       if (result.success) {
-        setJwt(result.jwt)
-        navigation.reset({ index: 0, routes: [{ name: 'Estabelecimentos' }] });
+        authContext.signIn(result.jwt)
       } else {
         setUsernameError("Combinação de utilizador/password inválida")
         setPasswordError("Combinação de utilizador/password inválida")
@@ -110,7 +111,6 @@ export const LoginMenu = ({ navigation }:any) => {
         <Button title='Login' onPress={login} disabled={loginDisabled} containerStyle={{ backgroundColor: colors.lightBlue, borderRadius: 10, borderWidth: 0 }} titleStyle={{ color: '#fff' }} />
         <Text style={{ alignSelf: 'center', marginTop: 20, marginBottom: 10 }}> Don't have an account yet? </Text>
         <Button title='Sign up' onPress={() => navigation.navigate('Signup')} />
-        <Button title='DEBUG:Jump to Estabelecimentos' onPress={() => navigation.reset({ index: 0, routes: [{ name: 'Estabelecimentos' }] })}/>
       </View>
     </ScrollView>
   )

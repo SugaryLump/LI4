@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react'
+import React, { useState, useEffect, useLayoutEffect, useContext } from 'react'
 import { View, FlatList, TouchableOpacity, StyleSheet } from 'react-native'
 import { AirbnbRating, Card, Text, Button } from 'react-native-elements'
 import { Input } from 'react-native-elements/dist/input/Input'
@@ -8,6 +8,8 @@ import * as Location from 'expo-location'
 import { LocationEventEmitter } from 'expo-location/build/LocationEventEmitter'
 import { ListItem } from 'react-native-elements/dist/list/ListItem'
 import * as Popup from 'react-native-popup-menu'
+import { NavigationProp } from '@react-navigation/native'
+import { AuthContext } from '../auth'
 
 class LocalNoturno {
     constructor(
@@ -41,11 +43,13 @@ export function fetchEstabelecimentos(aberto:boolean, disco:boolean, bar:boolean
     return locais;
 }
 
-export const EstabelecimentosMenu = ({ navigation, route }:any) => {
+export const EstabelecimentosMenu = ({ navigation, route }: any) => {
     const [location, setLocation] = useState({})
     const [locationMessage, setLocationMessage] = useState('A obter localização')
     const [estabelecimentos, setEstabelecimentos] = useState([] as LocalNoturno[])
     const [debug, setDebug] = useState(0)
+
+    const authContext = useContext(AuthContext)
     
     //Search
     useEffect (() => {
@@ -89,9 +93,19 @@ export const EstabelecimentosMenu = ({ navigation, route }:any) => {
                 return (<></>)
             }
         }
+
+        // TODO: Colocar o value no seu próprio tipo
+        const onSelect = (value: any) => {
+            if (value.menu === 'signout') {
+                authContext.signOut()
+            } else {
+                navigation.navigate(value.menu, value.params)
+            }
+        }
+
         navigation.setOptions({
             headerRight: () => (
-                <Popup.Menu onSelect={value => {navigation.navigate({name:value.menu, params:value.params})}}>
+                <Popup.Menu onSelect={onSelect}>
                     <Popup.MenuTrigger>
                         <View style={{paddingVertical:10, paddingHorizontal:20}}>
                         <Text style={{fontSize:25, fontWeight:'bold'}}>⋮</Text>
@@ -102,6 +116,7 @@ export const EstabelecimentosMenu = ({ navigation, route }:any) => {
                         <AdminOption/>
                         <MyMenuOption text='Histórico de Avaliações' value={{menu:'placeholder2', params:{}}}/>
                         <MyMenuOption text='Opções...' value={{menu:'placeholder3', params:{}}}/>
+                        <MyMenuOption text='Sair' value={{menu: 'signout', params:{}}}/>
                     </Popup.MenuOptions>
                 </Popup.Menu>
               )

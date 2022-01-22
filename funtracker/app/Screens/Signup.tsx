@@ -32,9 +32,6 @@ export const SignupMenu = ({ navigation }: any) => {
     } catch (e) {
       setUsernameError("Erro a comunicar com o servidor")
     }
-
-    //go to home menu if successful
-    navigation.reset({ index: 0, routes: [{ name: 'Estabelecimentos' }] });
   }
 
   //Components
@@ -75,6 +72,7 @@ export const SignupMenu = ({ navigation }: any) => {
         errorMessage={passwordError}
         ref={passwordRef}
         blurOnSubmit={false}
+        returnKeyType='next'
         onSubmitEditing={() => confirmPasswordRef.current?.focus()}
       />
       <Input
