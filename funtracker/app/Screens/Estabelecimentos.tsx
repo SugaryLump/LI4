@@ -49,7 +49,6 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
     const [location, setLocation] = useState({} as Location.LocationObject)
     const [locationMessage, setLocationMessage] = useState('A obter localização')
     const [estabelecimentos, setEstabelecimentos] = useState([] as LocalNoturno[])
-    const [debug, setDebug] = useState(0)
 
     //Search
     useEffect (() => {
@@ -65,7 +64,6 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
                                         route.params?.order,
                                         route.params?.nome);
             setEstabelecimentos(locais);
-            setDebug(debug+1)
         }
     });
 
@@ -208,7 +206,6 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
 
                 <Button title='Atualizar Localização' onPress={() => updateLocation()} />
                 <Text>{locationMessage}</Text>
-                <Text>DEBUG: {debug}</Text>
             </View>
         </View>
     )

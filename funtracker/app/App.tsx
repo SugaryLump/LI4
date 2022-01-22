@@ -131,6 +131,7 @@ export default function App(): JSX.Element {
                           disco: false,
                           aberto: false,
                           ordem: 0,
+                          preco: 0,
                           nome: undefined,
                           searched: false,
                         }}
@@ -142,7 +143,8 @@ export default function App(): JSX.Element {
                           bar: false,
                           disco: false,
                           aberto: false,
-                          ordem: 0
+                          ordem: 0,
+                          preco: 0
                         }}
                       />
                       <Stack.Screen

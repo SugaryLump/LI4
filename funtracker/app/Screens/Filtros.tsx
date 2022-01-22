@@ -10,12 +10,13 @@ export const FiltrosMenu = ({ navigation, route }: NativeStackScreenProps<AppPar
     const [bar, setBar] = useState(route.params.bar)
     const [disco, setDisco] = useState(route.params.disco)
     const [aberto, setAberto] = useState(route.params.aberto)
+    const [preco, setPreco] = useState(route.params.preco)
     const [ordem, setOrdem] = useState(route.params.ordem)
     const [nome, setNome] = useState(route.params.nome)
 
     return (
         <View style={{ flex: 1 }}>
-            <View style={{ flex: 0.2, marginHorizontal: 15, marginVertical: 10 }}>
+            <View style={{ flex: 0.1, marginHorizontal: 15, marginVertical: 10 }}>
                 <Button
                     title='Ok'
                     onPress={() => navigation.navigate({
@@ -26,6 +27,7 @@ export const FiltrosMenu = ({ navigation, route }: NativeStackScreenProps<AppPar
                             aberto,
                             ordem,
                             nome: undefined,
+                            preco:preco,
                             searched: false,
                         },
                         merge: true,
@@ -39,12 +41,18 @@ export const FiltrosMenu = ({ navigation, route }: NativeStackScreenProps<AppPar
                 <CheckBox title='Discoteca' checked={disco} onPress={() => setDisco(!disco)} />
             </View>
             <Divider />
-            <View style={{ flex: 0.2 }}>
+            <View style={{ flex: 0.3 }}>
                 <Text style={{ fontSize: 15, padding: 15, }}>Selecione uma ordem</Text>
                 <ButtonGroup
                     buttons={['Nenhuma', 'Proximidade', 'Custo', 'Críticas']}
                     selectedIndex={ordem}
                     onPress={(ordem) => setOrdem(ordem)}
+                />
+                <Text style={{ fontSize: 15, padding: 15, }}>Selecione uma gama de preço</Text>
+                <ButtonGroup
+                    buttons={['Nenhuma', '€', '€€', '€€€']}
+                    selectedIndex={preco}
+                    onPress={(preco) => setPreco(preco)}
                 />
             </View>
             <Divider />
@@ -72,6 +80,7 @@ export const FiltrosMenu = ({ navigation, route }: NativeStackScreenProps<AppPar
                             aberto: aberto,
                             ordem: ordem,
                             nome: nome,
+                            preco:preco,
                             searched: true
                         },
                         merge: true

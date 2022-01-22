@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { View, ScrollView, TouchableOpacity, Platform, Linking, Dimensions } from 'react-native'
-import { Button, Text, Image, Input, Divider, CheckBox } from 'react-native-elements'
+import { Button, Text, Image, Input, Divider, ButtonGroup, CheckBox } from 'react-native-elements'
 import * as ImagePicker from 'expo-image-picker'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import * as constants from '../lib/constants'
@@ -18,6 +18,8 @@ export default function AdicionarMenu({ navigation, route} : any) {
     const [disco, setDisco] = useState(false)
     const [bar, setBar] = useState(false)
 
+    const [preco, setPreco] = useState(0)
+
     const [abertura, setAbertura] = useState(new Date(0))
     const [fecho, setFecho] = useState(new Date(1209550000))
     const [horaMode, setHoraMode] = useState('abertura')
@@ -26,8 +28,6 @@ export default function AdicionarMenu({ navigation, route} : any) {
     const [latitude, setLatitude] = useState(route.params?.latitude)
     const [longitude, setLongitude] = useState(route.params?.longitude)
     const [morada, setMorada] = useState('')
-
-    const[debug, setDebug] = useState(0)
 
     const pickImage = async () => {
         let newImage = await ImagePicker.launchImageLibraryAsync({
@@ -104,6 +104,12 @@ export default function AdicionarMenu({ navigation, route} : any) {
                     <View style={{marginHorizontal:15}}>
                         <CheckBox title='Bar' checked={bar} onPress={() => setBar(!bar)} />
                         <CheckBox title='Discoteca' checked={disco} onPress={() => setDisco(!disco)} />
+                        <Text style={{ fontSize: 15, padding: 15, }}>Selecione uma gama de preço</Text>
+                        <ButtonGroup
+                            buttons={['Nenhuma', '€', '€€', '€€€']}
+                            selectedIndex={preco}
+                            onPress={(preco) => setPreco(preco)}
+                        />
                     </View>
                     <View style={{flexDirection:'row', justifyContent:'center', marginVertical:20}}>
                         <Text style={{fontSize:18}}>Aberto das </Text>

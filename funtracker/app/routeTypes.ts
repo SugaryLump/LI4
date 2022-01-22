@@ -7,6 +7,7 @@ export type AppParamList = {
         disco: boolean,
         aberto: boolean,
         ordem: number,
+        preco: number,
         nome?: string,
         searched: boolean
     },
@@ -15,6 +16,7 @@ export type AppParamList = {
         disco: boolean,
         aberto: boolean,
         ordem: number,
+        preco: number,
         nome?: string
     },
     Estabelecimento: {
