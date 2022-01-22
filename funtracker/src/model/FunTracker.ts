@@ -82,7 +82,7 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
       fecho.setMinutes(+minutes)
       let categorias : (Categoria|undefined)[] = nomes_categorias.map(c => Categoria[c])
       const preco: GamaPreco = GamaPreco[gamaPreco]
-      if(gamaPreco == undefined ||  categorias.includes(undefined) ) {
+      if(preco == undefined ||  categorias.includes(undefined) ) {
           throw 400
       }
       else {
