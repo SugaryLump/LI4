@@ -109,7 +109,7 @@ export const LoginMenu = ({ navigation }:any) => {
         />
         <Button title='Login' onPress={login} disabled={loginDisabled} containerStyle={{ backgroundColor: colors.lightBlue, borderRadius: 10, borderWidth: 0 }} titleStyle={{ color: '#fff' }} />
         <Text style={{ alignSelf: 'center', marginTop: 20, marginBottom: 10 }}> Don't have an account yet? </Text>
-        <Button title='Sign up' onPress={() => navigation.navigate('Signup')} />
+        <Button title='Sign up' onPress={() => navigation.navigate('MainDrawer')} />
       </View>
     </ScrollView>
   )

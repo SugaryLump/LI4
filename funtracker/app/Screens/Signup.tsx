@@ -19,7 +19,7 @@ export const SignupMenu = ({ navigation }: any) => {
       .catch(async error => console.error(error))
 
     //go to home menu if successful
-    navigation.reset({ index: 0, routes: [{ name: 'Estabelecimentos' }] });
+    navigation.reset({ index: 0, routes: [{ name: 'MainDrawer' }] });
   }
 
   //Components

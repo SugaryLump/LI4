@@ -7,10 +7,8 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { LoginMenu } from './Screens/Login'
 import { SignupMenu } from './Screens/Signup'
-import { EstabelecimentosMenu } from './Screens/Estabelecimentos'
-import { FiltrosMenu } from './Screens/Filtros'
-import { EstabelecimentoMenu } from './Screens/Estabelecimento'
-import { AvaliarMenu } from './Screens/Avaliar'
+import MainDrawerNavigator from './Screens/MainDrawer'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 const Stack = createNativeStackNavigator();
 
@@ -45,37 +43,8 @@ export default function App (): JSX.Element {
               }}
             />
             <Stack.Screen
-              name='Estabelecimentos'
-              component={EstabelecimentosMenu}
-              initialParams={{
-                bar:false,
-                disco:false,
-                aberto:false,
-                ordem:0,
-                nome:null,
-                searched:false,
-              }}
-              options={{
-                title: 'Estabelecimentos'
-              }}
-            />
-            <Stack.Screen
-              name='Filtros'
-              component={FiltrosMenu}
-              initialParams={{
-                bar:false,
-                disco:false,
-                aberto:false,
-                ordem:0
-              }}
-            />
-            <Stack.Screen
-              name='Estabelecimento'
-              component={EstabelecimentoMenu}
-            />
-            <Stack.Screen
-              name='Avaliar'
-              component={AvaliarMenu}
+              name='MainDrawer'
+              component={MainDrawerNavigator}
             />
 
           </Stack.Navigator>
