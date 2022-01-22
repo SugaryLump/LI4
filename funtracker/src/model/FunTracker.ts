@@ -106,9 +106,8 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
     estabelecimentoNoturnoId: number,
     utilizadorId: number,
   ): Promise<Classificacao> {
-    // atualizar o rating do local Noturno
-    FunTracker.estabelecimentoDAO.avaliar(valor, estabelecimentoNoturnoId);
-    return FunTracker.classificacaoDAO.createClassificacao(
+    await FunTracker.estabelecimentoDAO.avaliar(valor, estabelecimentoNoturnoId);
+    return await FunTracker.classificacaoDAO.createClassificacao(
       valor,
       comentario,
       estabelecimentoNoturnoId,

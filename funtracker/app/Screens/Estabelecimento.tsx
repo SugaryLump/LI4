@@ -8,7 +8,7 @@ import MapView from 'react-native-maps'
 
 class LocalNoturno {
     constructor(
-        public key:number,
+        public id:number,
         public nome:string,
         public rating:number,
         public gamaPreco:string,
@@ -26,11 +26,11 @@ class LocalNoturno {
 }
 
 export const EstabelecimentoMenu = ({ navigation, route }: any) => {
-    const [estabelecimento,setEstabelecimento] = useState(fetchLocalNoturno(route.params?.key))
+    const [estabelecimento,setEstabelecimento] = useState(fetchLocalNoturno(route.params?.id))
 
 
-    function fetchLocalNoturno(key:number) : LocalNoturno {
-        //Pedir ao server o local pelo seu key
+    function fetchLocalNoturno(id:number) : LocalNoturno {
+        //Pedir ao server o local pelo seu id
     
         //fake result para demo
         let local = new LocalNoturno(
@@ -62,7 +62,7 @@ export const EstabelecimentoMenu = ({ navigation, route }: any) => {
         let admin = true; //Temos de verificar se é admin para mostrar isto ou não
         if (admin) {
             return (
-                <Button title='Adicionar foto' onPress={() => navigation.navigate({name:'AdicionarFoto', params:{key:estabelecimento.key}})}/>
+                <Button title='Adicionar foto' onPress={() => navigation.navigate({name:'AdicionarFoto', params:{id:estabelecimento.id}})}/>
             )
         }
         else {
@@ -109,9 +109,9 @@ export const EstabelecimentoMenu = ({ navigation, route }: any) => {
                         </View>
                     </View>
                     <View style={{flex:0.50,marginTop:15, marginHorizontal:10}}>
-                        {estabelecimento.criticas.map((critica) => {
+                        {estabelecimento.criticas.map((critica, index) => {
                             return (
-                                <View style={{marginBottom:30}}>
+                                <View style={{marginBottom:30}} key={index}>
                                         <Text style={{marginLeft:2, fontSize:15, color:'#000'}}>{critica.nome}</Text>
                                         <AirbnbRating
                                             isDisabled
@@ -156,7 +156,7 @@ export const EstabelecimentoMenu = ({ navigation, route }: any) => {
                     />
                 </View>
                 <View style={{marginHorizontal:10, marginVertical:20}}>
-                <Button title='Avaliar' onPress={() => navigation.navigate({name:'Avaliar', params:{key:estabelecimento.key}})}/>
+                <Button title='Avaliar' onPress={() => navigation.navigate({name:'Avaliar', params:{id:estabelecimento.id}})}/>
                 </View>
             </ScrollView>
         </View>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect, useContext } from 'react'
-import { View, FlatList, TouchableOpacity, StyleSheet } from 'react-native'
-import { AirbnbRating, Card, Text, Button } from 'react-native-elements'
+import { View, FlatList, TouchableOpacity, Dimensions } from 'react-native'
+import { AirbnbRating, Image, Text, Button } from 'react-native-elements'
 import { Input } from 'react-native-elements/dist/input/Input'
 import * as svg from 'react-native-svg'
 import * as constants from '../lib/constants'
@@ -10,10 +10,11 @@ import { ListItem } from 'react-native-elements/dist/list/ListItem'
 import * as Popup from 'react-native-popup-menu'
 import { NavigationProp } from '@react-navigation/native'
 import { AuthContext } from '../auth'
+import { Divider } from 'react-native-elements/dist/divider/Divider'
 
 class LocalNoturno {
     constructor(
-        public key:number,
+        public id:number,
         public nome:string,
         public rating:number,
         public gamaPreco:string,
@@ -30,16 +31,16 @@ export function fetchEstabelecimentos(aberto:boolean, disco:boolean, bar:boolean
 
     //Resultado false temporário
     let locais = [(new LocalNoturno(0,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-    (new LocalNoturno(1,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-    (new LocalNoturno(2,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-    (new LocalNoturno(3,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-    (new LocalNoturno(4,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-    (new LocalNoturno(5,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-    (new LocalNoturno(6,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-    (new LocalNoturno(7,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-    (new LocalNoturno(8,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-    (new LocalNoturno(9,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-    (new LocalNoturno(10,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg'))]
+                (new LocalNoturno(1,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
+                (new LocalNoturno(2,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
+                (new LocalNoturno(3,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
+                (new LocalNoturno(4,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
+                (new LocalNoturno(5,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
+                (new LocalNoturno(6,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
+                (new LocalNoturno(7,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
+                (new LocalNoturno(8,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
+                (new LocalNoturno(9,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
+                (new LocalNoturno(10,'TabernaLinda', 4, '€', 32, ['Bar'],'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg'))]
     return locais;
 }
 
@@ -64,6 +65,7 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
                                         route.params?.order,
                                         route.params?.nome);
             setEstabelecimentos(locais);
+            setDebug(debug+1)
         }
     });
 
@@ -114,12 +116,11 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
 
                     <Popup.MenuOptions>
                         <AdminOption/>
-                        <MyMenuOption text='Histórico de Avaliações' value={{menu:'placeholder2', params:{}}}/>
-                        <MyMenuOption text='Opções...' value={{menu:'placeholder3', params:{}}}/>
-                        <MyMenuOption text='Sair' value={{menu: 'signout', params:{}}}/>
+                        <MyMenuOption text='Histórico de Avaliações' value={{menu:'Historico', params:{}}}/>
+                        <MyMenuOption text='Opções' value={{menu:'Opcoes', params:{}}}/>
                     </Popup.MenuOptions>
                 </Popup.Menu>
-              )
+            )
         })
     })
 
@@ -128,7 +129,7 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
         if (permission.granted) {
             let location = await Location.getCurrentPositionAsync();
             setLocation(location);
-            setLocationMessage(JSON.stringify(location));
+            setLocationMessage(JSON.stringify(location.coords));
             return;
         }
         else {
@@ -146,60 +147,66 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
         }
         return (
             //Something is padding these cards and I don't know what
-            <TouchableOpacity key={index} onPress={() => navigation.navigate({name:'Estabelecimento', params:{key:item.key}})} activeOpacity={0.7}>
-                <View>
-                    <Card 
-                        containerStyle={{
-                            elevation:0,
-                            borderWidth:0,
-                            paddingVertical:10,
-                            paddingHorizontal:0, 
-                            backgroundColor:'#f2f2f2'}}
-                    >
+            <TouchableOpacity key={index} onPress={() => navigation.navigate({name:'Estabelecimento', params:{id:item.id}})} activeOpacity={0.7}>
+                <View
+                    key={index}
+                    style={{
+                        height:Dimensions.get('window').height/6,
+                        marginHorizontal:10,
+                        marginVertical:5,
+                        flexDirection:'row',
+                    }}
+                >
+                    <Image
+                        source={{uri:item.imagem}}
+                        containerStyle={{aspectRatio:1/1,flex:0.8,alignSelf:'stretch'}}
+                    />
+                    <View style={{marginHorizontal:10, marginVertical:15}}>
                         <View style={{flexDirection:'row'}}>
-                            <Card.Image
-                                source={{uri:item.imagem}}
-                                containerStyle={{height:85, width:85}}
-                                transition={true}
-                                transitionDuration={180}
-                                resizeMode='repeat'/>
-                            <View style={{paddingHorizontal:20, paddingVertical:25}}>
-                                <View style={{flexDirection:'row'}}>
-                                    <CardText text={item.rating}/>
-                                    <AirbnbRating 
-                                        defaultRating={item.rating}
-                                        isDisabled={true}
-                                        showRating={false}
-                                        size={10}
-                                        starContainerStyle={{transform:[{ translateY:0 }], paddingRight:5}}
-                                        selectedColor='#ffd500'
-                                    />
-                                    <CardText text='•'/>
-                                    <CardText text={JSON.stringify(item.totalRatings).concat(' críticas')}/>
-                                    <CardText text='•'/>
-                                    <CardText text={item.gamaPreco}/>
-                                </View>
-                                <CardText text={item.categorias.join('   •   ')}/>
-                            </View>
+                            <CardText text={item.rating}/>
+                            <AirbnbRating 
+                                defaultRating={item.rating}
+                                isDisabled={true}
+                                showRating={false}
+                                size={10}
+                                starContainerStyle={{transform:[{ translateY:0 }], paddingRight:5}}
+                                selectedColor='#ffd500'
+                            />
+                            <CardText text='•'/>
+                            <CardText text={JSON.stringify(item.totalRatings).concat(' críticas')}/>
+                            <CardText text='•'/>
+                            <CardText text={item.gamaPreco}/>
                         </View>
-                    </Card>
+                        <CardText text={item.categorias.join('   •   ')}/>
+                    </View>
                 </View>
             </TouchableOpacity>
         )
     }
 
     return (
-        <View style={constants.styles.container}>
-            <View style={constants.styles.contentContainer}>
-                <View style={constants.styles.centered}>
-                    <Button title='Filtrar' onPress={() => navigation.navigate({name:'Filtros', params:route.params,})} containerStyle={{paddingVertical:20}}/>
-                    <FlatList
-                        data={estabelecimentos}
-                        renderItem={renderLocalTile}
-                    />
-                </View>
+        <View style={{flex:1}}>
+            <View style={{flex:0.08, marginHorizontal:15, marginVertical:10}}>
+                <Button
+                    title='Filtrar'
+                    onPress={() => navigation.navigate({name:'Filtros', params:route.params,})}
+                />
             </View>
-            <View style={constants.styles.footer}>
+            <Divider/>
+            <View style={{flex:0.72}}>
+                <FlatList
+                    data={estabelecimentos}
+                    renderItem={renderLocalTile}
+                />
+            </View>
+            <Divider/>
+            <View 
+                style={{
+                    flex:0.16,
+                    marginHorizontal:15,
+                    marginVertical:5,
+                }}
+            >
                 <Button title='Atualizar Localização' onPress={() => updateLocation()}/>
                 <Text>{locationMessage}</Text>
                 <Text>DEBUG: {debug}</Text> 
