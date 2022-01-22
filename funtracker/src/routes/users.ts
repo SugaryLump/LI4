@@ -78,8 +78,8 @@ usersRouter.post(
 );
 
 /* mudar a password */
-usersRouter.post(
-  '/:id/changePassword', isLoggedIn, hasPermission,
+usersRouter.patch(
+  '/:id/password', isLoggedIn, hasPermission,
   body('password')
     .exists()
     .isLength({min: 8})
@@ -110,8 +110,8 @@ usersRouter.post(
 );
 
 /* mudar o username */
-usersRouter.post(
-  '/:id/changeUsername', isLoggedIn, hasPermission ,
+usersRouter.patch(
+  '/:id/username', isLoggedIn, hasPermission ,
   body('username').exists(),
   (req, res, next) => {
     const errors = validationResult(req);

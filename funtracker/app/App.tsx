@@ -7,7 +7,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { LoginMenu } from './Screens/Login'
 import { SignupMenu } from './Screens/Signup'
-import { getJwt, setJwt, AuthContext, AuthContextT } from './auth'
+import { getJwt, setJwt, AuthContext, AuthContextT, JWT, AuthState, AuthAction } from './auth'
 import { EstabelecimentosMenu } from './Screens/Estabelecimentos'
 import { FiltrosMenu } from './Screens/Filtros'
 import { EstabelecimentoMenu } from './Screens/Estabelecimento'
@@ -18,18 +18,7 @@ import OpcoesMenu from './Screens/Opcoes'
 
 const Stack = createNativeStackNavigator();
 
-interface AuthAction {
-  type: 'SIGN_IN' | 'RESTORE_TOKEN' | 'SIGN_OUT',
-  token?: string | null
-}
-
-type AuthState = {
-  userToken?: string | null,
-  isLoading: boolean,
-  isSignout: boolean
-}
-
-export default function App (): JSX.Element {
+export default function App(): JSX.Element {
   const [state, dispatch] = React.useReducer<Reducer<AuthState, AuthAction>>(
     (prevState, action) => {
       switch (action.type) {
@@ -70,26 +59,17 @@ export default function App (): JSX.Element {
   }, [])
 
   const authContext = React.useMemo<AuthContextT>(
-    () => ({
-      signIn: async (token: string) => {
-        setJwt(token)
-        dispatch({ type: 'SIGN_IN', token })
-      },
-      signOut: () => {
-        setJwt(null)
-        dispatch({ type: 'SIGN_OUT' })
-      },
-    }),
+    () => new AuthContextT(dispatch),
     []
   )
 
   return (
-    <AuthContext.Provider value={authContext}>
-      <SafeAreaProvider>
-        <ThemeProvider theme={constants.appTheme}>
-          <MenuProvider>
+    <SafeAreaProvider>
+      <ThemeProvider theme={constants.appTheme}>
+        <MenuProvider>
+          <AuthContext.Provider value={authContext}>
             <NavigationContainer>
-              <Stack.Navigator 
+              <Stack.Navigator
                 screenOptions={{
                   headerStyle: {
                     backgroundColor: '#f6f7f8',
@@ -167,10 +147,10 @@ export default function App (): JSX.Element {
                 }
               </Stack.Navigator>
             </NavigationContainer>
-          </MenuProvider>
-        </ThemeProvider>
-      </SafeAreaProvider>
-    </AuthContext.Provider>
+          </AuthContext.Provider>
+        </MenuProvider>
+      </ThemeProvider>
+    </SafeAreaProvider>
   )
 }
 

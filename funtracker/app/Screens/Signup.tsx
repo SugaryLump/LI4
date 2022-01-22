@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { ScrollView, TextInput, View } from 'react-native'
 import { Text, Button, Input } from 'react-native-elements'
+import { AuthContext } from '../auth'
 import * as constants from '../lib/constants'
 import { colors } from '../lib/constants'
 
@@ -18,12 +19,13 @@ export const SignupMenu = ({ navigation }: any) => {
 
   const signupDisabled = username === '' || password == '' || password.length < 8 || password !== confirmPassword
 
+  const authContext = useContext(AuthContext)
+
   const createUser = async () => {
     try {
-      let result = await fetch(constants.serverUrl + '/api/v1/user', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-      }).then(r => r.json())
+      let result = await authContext.fetchWithJwt('/user', 'POST', {
+        username, password
+      })
       if (result.success) {
         navigation.goBack()
       } else {
@@ -37,7 +39,7 @@ export const SignupMenu = ({ navigation }: any) => {
   //Components
 
   return (
-    <ScrollView contentContainerStyle={{
+    <View style={{
       flexDirection: 'column',
       justifyContent: 'center',
       top: 0,
@@ -88,6 +90,6 @@ export const SignupMenu = ({ navigation }: any) => {
       />
 
       <Button title='Sign up' onPress={createUser} disabled={signupDisabled} containerStyle={{ backgroundColor: colors.lightBlue, borderRadius: 10, borderWidth: 0 }} titleStyle={{ color: '#fff' }} />
-    </ScrollView>
+    </View>
   )
 }
