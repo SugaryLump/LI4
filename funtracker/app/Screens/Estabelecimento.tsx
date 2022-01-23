@@ -114,7 +114,7 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
         let result = await authContext.fetchWithJwt('/estabelecimento/:id', 'DELETE', {}, { id: route.params.id })
 
         if (result.success) {
-            navigation.goBack()
+            navigation.navigate({ name: 'Estabelecimentos', params: { searched:false } })
         } else {
             setError('Erro ao remover estabelecimento')
         }
