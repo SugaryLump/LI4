@@ -1,6 +1,6 @@
 import express, { Router, Request } from 'express';
 import { Estabelecimento, GamaPreco, Ordem } from '../model/Estabelecimento';
-import { body, oneOf, query } from 'express-validator';
+import { body, oneOf, param, query } from 'express-validator';
 import isLoggedIn from '../middleware/isLoggedIn';
 import { hasPermission, isAdmin } from '../middleware/hasPermission';
 import { FunTracker } from '../model/FunTracker';
@@ -320,18 +320,17 @@ estabelecimentoRouter.post(
 
 estabelecimentoRouter.get('/:id',
   //isLoggedIn,
+  param('id').isNumeric(),
+  checkValidation,
   async (req, res) => {
       console.log("maria")
     try {
       const number = +req.params.id
-      if (isNaN(number)) {
-        return res.status(404).json({
-          success: false,
-          errors: ["Page Not Found"],
-        });
-      }
       let infoLocal = await FunTracker.getEstabelecimentoByID(number)
-      return res.status(200).json(infoLocal)
+      return res.status(200).json({
+        success: true,
+        estabelecimento: infoLocal
+      })
     } catch {
       return res.status(404).json({
         success: false,
