@@ -79,8 +79,8 @@ export default function AdicionarMenu({ navigation, route }: NativeStackScreenPr
 
     const atualizaCoordenadas = async () => {
         let location = (await Location.geocodeAsync(morada))[0]
-        setLatitude(location.latitude)
-        setLongitude(location.longitude)
+        setLatitude(location?.latitude)
+        setLongitude(location?.longitude)
     }
 
     function createMapURL(): string {
@@ -103,7 +103,7 @@ export default function AdicionarMenu({ navigation, route }: NativeStackScreenPr
         let categorias: string[] = []
 
         if (bar) categorias.push("Bar")
-        if (disco) categorias.push("Disco")
+        if (disco) categorias.push("Discoteca")
 
         try {
             let res = await authContext.fetchWithJwt('/estabelecimento', 'POST', {

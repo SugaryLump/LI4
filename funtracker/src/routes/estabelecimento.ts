@@ -216,16 +216,16 @@ estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, hasPermission, asyn
 estabelecimentoRouter.post(
   '/:id/classificacoes',
   isLoggedIn,
-  hasPermission,
   body('valor').exists(),
   body('comentario').exists(),
+  checkValidation,
   async (req, res) => {
     try {
       const user: UserJwt = getUser(req);
       let newClassificacao = await FunTracker.avaliar(+req.body.valor, req.body.comentario, +req.params?.id, user.id)
-      return res.status(200).json({success: true,classificacao:newClassificacao})
+      return res.status(200).json({ success: true, classificacao: newClassificacao })
     } catch(e) {
-      return res.status(500).json({
+      return res.status(400).json({
         success: false,
         errors: [e]
       });

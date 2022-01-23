@@ -100,6 +100,23 @@ export interface API extends APIDef {
                 }
             }>
         }
+    },
+    '/estabelecimento/:id/classificacoes': {
+        POST: {
+            req: {
+                valor: number,
+                comentario?: string
+            },
+            res: APIResponse<{
+                classificacao: {
+                    id: number;
+                    valor: number;
+                    comentario: string | null;
+                    estabelecimentoNoturnoId: number;
+                    utilizadorId: number;
+                }
+            }>
+        }
     }
 }
 
