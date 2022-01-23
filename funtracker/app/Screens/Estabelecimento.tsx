@@ -41,6 +41,7 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
 
         if(c.success) {
             c.classificacoes.map(e => {
+                console.log(e.comentario)
                 comentarios.push({id: e.id, nome: e.username, text: e.comentario, rating: e.valor})
             })
         }
