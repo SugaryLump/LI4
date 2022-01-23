@@ -145,6 +145,18 @@ export interface API extends APIDef {
         }
     },
     '/estabelecimento/:id/classificacoes': {
+        GET: {
+            req: {},
+            res: APIResponse<{
+                classificacao: {
+                    id: number;
+                    valor: number;
+                    comentario: string | null;
+                    estabelecimentoNoturnoId: number;
+                    utilizadorId: number;
+                }
+            }>
+        }
         POST: {
             req: {
                 valor: number,
@@ -160,7 +172,7 @@ export interface API extends APIDef {
                 }
             }>
         }
-    }
+    },
 }
 
 export type HTTPMethod = 'GET' | 'POST' | 'PATCH'

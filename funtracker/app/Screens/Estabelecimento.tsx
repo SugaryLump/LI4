@@ -30,6 +30,8 @@ class LocalNoturno {
 
 export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProps<AppParamList, 'Estabelecimento'>) => {
     const [estabelecimento, setEstabelecimento] = useState<LocalNoturno|undefined>(undefined)
+    const [error, setError] = useState('')
+
 
     const authContext = useAuthContext()
 
@@ -107,6 +109,16 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
             return (<></>)
         }
     }*/
+        const removerEstabelecimento = async () => {
+        let result = await authContext.fetchWithJwt('/estabelecimento/:id', 'DELETE', {}, { id: route.params.id })
+
+        if (result.success) {
+            navigation.goBack()
+        } else {
+            setError('Erro ao remover estabelecimento')
+        }
+    }
+
 
     return (
         <View style={{ flex: 1 }}>
@@ -198,7 +210,13 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
                 <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
                     <Button title='Avaliar' onPress={() => navigation.navigate({ name: 'Avaliar', params: { id: estabelecimento.id } })} />
                     {authContext.isAdmin && (
-                            <Button title='Eliminar Estabelecimento'  containerStyle={{marginTop:10}} titleStyle={{ color: 'red' }} buttonStyle={{ borderColor: 'red' }}/>
+                            <Button title='Eliminar Estabelecimento'  containerStyle={{marginTop:10}} titleStyle={{ color: 'red' }} buttonStyle={{ borderColor: 'red' }}
+
+
+                        onPress={removerEstabelecimento}
+
+                        />
+
                     )}
                 </View>
             </ScrollView>
