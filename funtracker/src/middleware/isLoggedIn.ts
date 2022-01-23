@@ -12,7 +12,7 @@ export default function (req: any, res: Response, next: NextFunction) {
         req.user = res
         next()
     } catch (e) {
-        return res.status(400).json({ success: false, errors: [e] })
+        return res.status(403).json({ success: false, errors: ["Permission Denied"] })
     }
 }
 
