@@ -179,12 +179,11 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
     }
 
   //TODO nao sei se funciona
-    static async getByFiltros(apenasAbertos: boolean| null, ordem: Ordem | null, gamaPreco: GamaPreco | null): Promise<Estabelecimento[]> {
-
+    static async getByFiltros(apenasAbertos: boolean| null, ordem: Ordem | null, gamaPreco: GamaPreco | null, coordenadas: {latitude: string, longitude: string} | null): Promise<Estabelecimento[]> {
         if (ordem === undefined)
           throw "Ordem é inválida"
         if (gamaPreco === undefined)
           throw "GamaPreco é inválida"
-      return await FunTracker.estabelecimentoDAO.getByFiltros(apenasAbertos,ordem,gamaPreco)
+      return await FunTracker.estabelecimentoDAO.getByFiltros(apenasAbertos,ordem,gamaPreco, coordenadas)
     }
 }

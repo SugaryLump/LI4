@@ -1,4 +1,5 @@
 import { PromisedDatabase  } from 'promised-sqlite3';
+import { sqrt } from 'react-native-reanimated';
 
 export class Estabelecimento {
   constructor(
@@ -243,11 +244,11 @@ export class EstabelecimentoDAO {
 
 
   //TODO testar
-  async getByFiltros(apenasAbertos: boolean | null, order: Ordem | null, gamaPreco: GamaPreco | null):
+  async getByFiltros(apenasAbertos: boolean | null, order: Ordem | null, gamaPreco: GamaPreco | null, coordenadas: {latitude: string, longitude: string} | null):
     Promise<Estabelecimento[]> {
-    // gamaPreco= GamaPreco.$$
     if (order == null && apenasAbertos == null)
       throw "Não foram dados filtros"
+    let proximidade = false
     let query = 'SELECT * FROM estabelecimentos '
     let number = 0
     if (apenasAbertos != null && apenasAbertos) {
@@ -274,7 +275,10 @@ export class EstabelecimentoDAO {
           query += 'ORDER BY pontuacao DESC'
           break;
         }
-        // TODO localizacao
+        case Ordem.Proximidade: {
+          proximidade = true;
+          break;
+        }
       }
     }
 
@@ -304,7 +308,25 @@ export class EstabelecimentoDAO {
       const categorias: string[] = await this.db.all('SELECT categoria FROM categorias WHERE estabelecimento_id = ?', c.id)
       c.setCategorias(categorias)
     }))
+
+    if (proximidade) {
+       if (coordenadas == null || coordenadas === undefined)
+         throw "Coordenadas inválidas"
+      else
+        estabelecimentos = estabelecimentos.sort( e => this.orderByProximidade(e, coordenadas))
+    }
+
     return estabelecimentos
+  }
+
+  orderByProximidade(estabelecimento: Estabelecimento, coord: { latitude: string, longitude: string },): number{
+    const eLatitude = estabelecimento.coordenadas.latitude
+    const eLongitude = estabelecimento.coordenadas.longitude
+
+    const a = +coord.latitude - +eLatitude
+    const b = +coord.longitude - +eLongitude
+
+    return Math.sqrt(a*a + b*b)
   }
 
   async getOpenEstabelecimentos(): Promise<Estabelecimento[]> {

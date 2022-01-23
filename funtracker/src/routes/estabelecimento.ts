@@ -89,6 +89,9 @@ estabelecimentoRouter.get('/',
     query('order').exists(),
     query('abertos').exists(),
     query('precos').exists(),
+    query('latitude').exists(),
+    query('longitude').exists(),
+    // checkValidation(),
     async (req: Request, res) => {
   try {
     let auxAbertos = req.query.abertos
@@ -102,6 +105,7 @@ estabelecimentoRouter.get('/',
     let abertos: boolean = false;
     let order: Ordem | null = null;
     let precos: GamaPreco | null = null;
+    let coords: {latitude:string, longitude: string} | null = null;
 
     if (auxAbertos) {
       abertos = auxAbertos == 'true' || auxAbertos == '1'
@@ -109,22 +113,23 @@ estabelecimentoRouter.get('/',
 
     if (auxOrder) {
       order = Ordem[auxOrder as keyof typeof Ordem]
-      console.log(order)
-      console.log(auxOrder)
-      console.log(auxOrder as keyof typeof Ordem)
     }
 
     if (auxPrecos) {
       precos = GamaPreco[auxPrecos as keyof typeof GamaPreco]
     }
 
-    let estabelecimentos = await FunTracker.getByFiltros(abertos, order, precos)
+    if(req.query.latitude !== undefined && req.query.longitude) {
+      coords = {latitude: req.query.latitude as string , longitude: req.query.longitude as string}
+    }
+
+    let estabelecimentos = await FunTracker.getByFiltros(abertos, order, precos, coords)
     return res.status(200).json({ success: true, estabelecimentos: estabelecimentos })
   }
   catch (e) {
     return res.status(404).json({
       success: false,
-      errors: ["Não existem estabelecimentos"],
+      errors: ["Não existem estabelecimentos ou " + e],
     });
   }
 })
