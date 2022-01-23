@@ -168,21 +168,12 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
     }
 
   //TODO nao sei se funciona
-    static async getByFiltros(apenasAbertos: boolean| null, order: keyof typeof Ordem | null, gamaPreco:keyof typeof GamaPreco | null): Promise<Estabelecimento[]> {
-      let ordem: Ordem | null = null
-      if(order != null) {
-       let aux: Ordem | undefined = Ordem[order]
-        if (aux == undefined)
+    static async getByFiltros(apenasAbertos: boolean| null, ordem: Ordem | null, gamaPreco: GamaPreco | null): Promise<Estabelecimento[]> {
+
+        if (ordem == undefined)
           throw "Ordem é inválida"
-        ordem = aux
-      }
-      let preco: GamaPreco | null = null
-      if(gamaPreco != null) {
-       let aux: GamaPreco | undefined = GamaPreco[gamaPreco]
-        if (preco == undefined)
+        if (gamaPreco == undefined)
           throw "GamaPreco é inválida"
-        preco = aux
-      }
-      return await FunTracker.estabelecimentoDAO.getByFiltros(apenasAbertos,ordem,preco)
+      return await FunTracker.estabelecimentoDAO.getByFiltros(apenasAbertos,ordem,gamaPreco)
     }
 }

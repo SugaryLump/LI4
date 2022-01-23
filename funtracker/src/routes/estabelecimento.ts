@@ -226,34 +226,33 @@ estabelecimentoRouter.get(
 estabelecimentoRouter.get(
   '/filtros',
   isLoggedIn, hasPermission,
-  //oneOf( [
+  oneOf( [
     query('order').exists(),
     query('abertos').exists(),
     query('precos').exists(),
-  //]), //.withMessage('Tem que especificar pelo menos um, ou a ordem ou se pretende os estabelecimentos abertos'),
+  ]), //.withMessage('Tem que especificar pelo menos um, ou a ordem ou se pretende os estabelecimentos abertos'),
   async (req: Request, res) => {
     try {
-      let auxAbertos = req.query.abertos//req.body.order
+      let auxAbertos = req.query.abertos
       let auxOrder = req.query.order
       let auxPrecos = req.query.precos
 
-      let abertos: boolean | null = null
-      let order: keyof typeof Ordem | null = null
-      let precos: keyof typeof GamaPreco | null = null
+     let abertos :boolean = false;
+     let order :Ordem | null = null;
+     let precos : GamaPreco | null = null;
 
       if (auxAbertos) {
         abertos = auxAbertos == 'true' || auxAbertos == '1'
       }
 
       //TODO falta este
-      //if (auxOrder) {
-      //  order = Ordem[+auxOrder]
-      //}
+      if (auxOrder) {
+        order = Ordem[auxOrder as keyof typeof Ordem]
+      }
 
-      //TODO falta este
-      //if (auxPrecos) {
-      //  order = GamaPreco[+auxPeso]
-      //}
+      if (auxPrecos) {
+        precos = GamaPreco[auxPrecos as keyof typeof GamaPreco]
+      }
 
       let estabelecimentos = await FunTracker.getByFiltros(abertos,order,precos)
         return res.status(200).json({success: true, estabelecimentos: estabelecimentos})
