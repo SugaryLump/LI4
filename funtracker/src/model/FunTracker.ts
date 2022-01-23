@@ -1,6 +1,6 @@
 import {UserDAO, User}  from './User'
 import {Classificacao, ClassificacaoDAO}  from './Classificacao'
-import {GamaPreco,Categoria, Estabelecimento, EstabelecimentoDAO}  from './Estabelecimento'
+import {Ordem,GamaPreco,Categoria, Estabelecimento, EstabelecimentoDAO}  from './Estabelecimento'
 import {Imagem, ImagensDAO} from './Imagem'
 
 import {PromisedDatabase} from 'promised-sqlite3';
@@ -167,5 +167,22 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
         return await FunTracker.estabelecimentoDAO.getByGamaPreco(preco)
     }
 
-    //nomes_categorias: (keyof typeof Categoria) [],
+  //TODO nao sei se funciona
+    static async getByFiltros(apenasAbertos: boolean| null, order: keyof typeof Ordem | null, gamaPreco:keyof typeof GamaPreco | null): Promise<Estabelecimento[]> {
+      let ordem: Ordem | null = null
+      if(order != null) {
+       let aux: Ordem | undefined = Ordem[order]
+        if (aux == undefined)
+          throw "Ordem é inválida"
+        ordem = aux
+      }
+      let preco: GamaPreco | null = null
+      if(gamaPreco != null) {
+       let aux: GamaPreco | undefined = GamaPreco[gamaPreco]
+        if (preco == undefined)
+          throw "GamaPreco é inválida"
+        preco = aux
+      }
+      return await FunTracker.estabelecimentoDAO.getByFiltros(apenasAbertos,ordem,preco)
+    }
 }
