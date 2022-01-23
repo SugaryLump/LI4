@@ -290,6 +290,9 @@ estabelecimentoRouter.get(
       //TODO falta este
       if (auxOrder) {
         order = Ordem[auxOrder as keyof typeof Ordem]
+        console.log(order)
+        console.log(auxOrder)
+        console.log(auxOrder as keyof typeof Ordem)
       }
 
       if (auxPrecos) {

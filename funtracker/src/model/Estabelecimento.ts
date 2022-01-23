@@ -182,24 +182,7 @@ export class EstabelecimentoDAO {
     return (
       await this.db.all('SELECT * FROM estabelecimentos where precos=?', gamaPreco)
     )
-      .map(c => {
-        let e = new Estabelecimento(
-          c.id,
-          c.nome,
-          c.lotacao,
-          c.pontuacao,
-          c.precos,
-          // TODO mudar
-          c.morada,
-          { latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude },
-          c.contacto
-        )
-        e.horarioAbertura = c.horario_abertura
-        e.horarioFecho = c.horario_fecho
-        e.categorias = []
-        return (e)
-      }
-      )
+      .map(c => this.convertDBtoEstabelecimento(c))
   }
 
   //TODO verificar
@@ -207,24 +190,7 @@ export class EstabelecimentoDAO {
     return (
       await this.db.all('SELECT * FROM estabelecimentos ORDER BY precos ASC')
     )
-      .map(c => {
-        let e = new Estabelecimento(
-          c.id,
-          c.nome,
-          c.lotacao,
-          c.pontuacao,
-          c.precos,
-          // TODO mudar
-          c.morada,
-          { latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude },
-          c.contacto
-        )
-        e.horarioAbertura = c.horario_abertura
-        e.horarioFecho = c.horario_fecho
-        e.categorias = []
-        return (e)
-      }
-      )
+      .map(c => this.convertDBtoEstabelecimento(c))
   }
 
   //TODO ordenado do mais perto para o mais longe
@@ -237,50 +203,14 @@ export class EstabelecimentoDAO {
   async getSortByPontuacao(): Promise<Estabelecimento[]> {
     return (
       await this.db.all('SELECT * FROM estabelecimentos ORDER BY pontuacao DESC')
-    )
-      .map(c => {
-        let e = new Estabelecimento(
-          c.id,
-          c.nome,
-          c.lotacao,
-          c.pontuacao,
-          c.precos,
-          // TODO mudar
-          c.morada,
-          { latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude },
-          c.contacto
-        )
-        e.horarioAbertura = c.horario_abertura
-        e.horarioFecho = c.horario_fecho
-        e.categorias = []
-        return (e)
-      }
-      )
+    ).map(c => this.convertDBtoEstabelecimento(c))
   }
 
   // TODO verificar
   async getSortByCategorias(): Promise<Estabelecimento[]> {
     return (
       await this.db.all('SELECT estabelecimentos.* , categorias.categoria FROM estabelecimentos LEFT JOIN categorias ON categorias.estabelecimento_id = categorias.estabelecimento_id')
-    )
-      .map(c => {
-        let e = new Estabelecimento(
-          c.id,
-          c.nome,
-          c.lotacao,
-          c.pontuacao,
-          c.precos,
-          // TODO mudar
-          c.morada,
-          { latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude },
-          c.contacto
-        )
-        e.horarioAbertura = c.horario_abertura
-        e.horarioFecho = c.horario_fecho
-        e.categorias = []
-        return (e)
-      }
-      )
+    ).map(c => this.convertDBtoEstabelecimento(c))
   }
 
   //TODO verificar
@@ -288,25 +218,7 @@ export class EstabelecimentoDAO {
     return (
       await this.db.all('SELECT estabelecimentos.* FROM estabelecimentos WHERE EXISTS (SELECT estabelecimento_id FROM categorias WHERE categorias.categoria IN ?)',
         categorias)
-    )
-      .map(c => {
-        let e = new Estabelecimento(
-          c.id,
-          c.nome,
-          c.lotacao,
-          c.pontuacao,
-          c.precos,
-          // TODO mudar
-          c.morada,
-          { latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude },
-          c.contacto
-        )
-        e.horarioAbertura = c.horario_abertura
-        e.horarioFecho = c.horario_fecho
-        e.categorias = []
-        return (e)
-      }
-      )
+    ).map(c => this.convertDBtoEstabelecimento(c))
   }
 
 
@@ -367,27 +279,7 @@ export class EstabelecimentoDAO {
       resul = await this.db.all(query)
     }
 
-    return (
-      resul
-    )
-      .map(c => {
-        let e = new Estabelecimento(
-          c.id,
-          c.nome,
-          c.lotacao,
-          c.pontuacao,
-          c.precos,
-          // TODO mudar
-          c.morada,
-          { latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude },
-          c.contacto
-        )
-        e.horarioAbertura = c.horario_abertura
-        e.horarioFecho = c.horario_fecho
-        e.categorias = []
-        return (e)
-      }
-      )
+    return resul.map(c => this.convertDBtoEstabelecimento(c))
   }
 
   async getOpenEstabelecimentos(): Promise<Estabelecimento[]> {
@@ -396,23 +288,25 @@ export class EstabelecimentoDAO {
     return (
       await this.db.all('SELECT * FROM estabelecimentos WHERE ( horario_abertura > horario_fecho AND (horario_abertura <= strftime(\'%H:%M\',?) OR horario_fecho > strftime(\'%H:%M\',?) )) OR (horario_abertura <= strftime(\'%H:%M\',?) AND horario_fecho > strftime(\'%H:%M\',?))',
         data)
-    ).map(c => {
-      let e = new Estabelecimento(
-        c.id,
-        c.nome,
-        c.lotacao,
-        c.pontuacao,
-        c.precos,
-        // TODO mudar
-        c.morada,
-        { latitude: c.coordenadas.latitude, longitude: c.coordenadas.longitude },
-        c.contacto
-      )
-      e.horarioAbertura = c.horario_abertura
-      e.horarioFecho = c.horario_fecho
-      e.categorias = []
-      return (e);
-    }
-    )
+    ).map(c => this.convertDBtoEstabelecimento(c))
+  }
+
+  private convertDBtoEstabelecimento(c: any): Estabelecimento {
+        const coords = c.coordenadas.split(";")
+        let e = new Estabelecimento(
+          c.id,
+          c.nome,
+          c.lotacao,
+          c.pontuacao,
+          GamaPreco[c.precos],
+          c.morada,
+          // c.coordenadas
+          { latitude: coords[0], longitude: coords[1] },
+          c.contacto
+        )
+        e.horarioAbertura = c.horario_abertura
+        e.horarioFecho = c.horario_fecho
+        e.categorias = []
+        return (e)
   }
 }
