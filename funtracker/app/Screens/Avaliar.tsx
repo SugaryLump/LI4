@@ -22,7 +22,7 @@ export const AvaliarMenu = ({ navigation, route }: NativeStackScreenProps<AppPar
         let result = await authContext.fetchWithJwt('/estabelecimento/:id/classificacoes', 'POST', {
             valor: rating,
             comentario: texto
-        })
+        }, { id: route.params.id })
 
         if (result.success) {
             navigation.goBack()
