@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useLayoutEffect, useContext } from 'react'
+import React, { useState, useEffect, useLayoutEffect } from 'react'
 import { View, FlatList, TouchableOpacity, Dimensions } from 'react-native'
 import { AirbnbRating, Image, Text, Button } from 'react-native-elements'
+import { useFocusEffect } from '@react-navigation/native'
 import * as Location from 'expo-location'
 import * as Popup from 'react-native-popup-menu'
 import { Divider } from 'react-native-elements/dist/divider/Divider'
@@ -44,12 +45,15 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
     const [location, setLocation] = useState({} as Location.LocationObject)
     const [locationMessage, setLocationMessage] = useState('A obter localização')
     const [estabelecimentos, setEstabelecimentos] = useState<LocalNoturno[] | undefined>(undefined)
+    const [debug, setDebug] = useState(0)
 
     const authContext = useAuthContext()
+    
 
     //Search
     useEffect(() => {
         if (!route.params?.searched) {
+            setDebug(debug+1)
             updateLocation()
             navigation.setParams({
                 searched: true
@@ -217,6 +221,7 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
 
                 <Button title='Atualizar Localização' onPress={() => updateLocation()} />
                 <Text>{locationMessage}</Text>
+                <Text>{debug}</Text>
             </View>
         </View>
     )

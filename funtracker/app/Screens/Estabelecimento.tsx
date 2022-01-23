@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useLayoutEffect } from 'react'
 import { ScrollView, View, FlatList, useWindowDimensions, Dimensions, Linking } from 'react-native'
 import { useAuthContext } from '../hooks'
 import { serverUrl } from '../lib/constants'
@@ -6,6 +6,7 @@ import { AirbnbRating, LinearProgress, Image, Text, Button } from 'react-native-
 import MapView from 'react-native-maps'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { AppParamList } from '../routeTypes'
+import { HeaderBackButton } from '@react-navigation/elements'
 
 class LocalNoturno {
     constructor(
@@ -30,7 +31,7 @@ class LocalNoturno {
 export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProps<AppParamList, 'Estabelecimento'>) => {
     const [estabelecimento, setEstabelecimento] = useState<LocalNoturno|undefined>(undefined)
 
-const authContext = useAuthContext()
+    const authContext = useAuthContext()
 
     //Pedir ao server o local pelo seu id
     async function fetchLocalNoturno(id: number): Promise<LocalNoturno> {
@@ -78,6 +79,13 @@ const authContext = useAuthContext()
         )
     }
 
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerLeft: () => (
+                <HeaderBackButton onPress={() => navigation.navigate({ name: 'Estabelecimentos', params: { searched:false } })}/>
+            )
+        })
+    })
     /*const AdminButton = () => {
         let admin = true; //Temos de verificar se é admin para mostrar isto ou não
         if (admin) {
@@ -179,6 +187,9 @@ const authContext = useAuthContext()
                 </View>
                 <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
                     <Button title='Avaliar' onPress={() => navigation.navigate({ name: 'Avaliar', params: { id: estabelecimento.id } })} />
+                    {authContext.isAdmin && (
+                            <Button title='Eliminar Estabelecimento'  containerStyle={{marginTop:10}} titleStyle={{ color: 'red' }} buttonStyle={{ borderColor: 'red' }}/>
+                    )}
                 </View>
             </ScrollView>
         }

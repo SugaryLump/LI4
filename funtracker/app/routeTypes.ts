@@ -3,11 +3,11 @@ export type AppParamList = {
     Signup: undefined,
     Loading: undefined,
     Estabelecimentos: {
-        bar: boolean,
-        disco: boolean,
-        aberto: boolean,
-        ordem: number,
-        preco: number,
+        bar?: boolean,
+        disco?: boolean,
+        aberto?: boolean,
+        ordem?: number,
+        preco?: number,
         nome?: string,
         searched: boolean
     },
