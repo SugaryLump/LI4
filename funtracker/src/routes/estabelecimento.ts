@@ -98,10 +98,10 @@ estabelecimentoRouter.get('/',
     let auxOrder = req.query.order
     let auxPrecos = req.query.precos
 
-    // if(auxAbertos === undefined && auxOrder === undefined && auxPrecos === undefined){
-    //   const estab: Estabelecimento[] = await FunTracker.getEstabelecimentos()
-    //   return res.status(200).json(estab)
-    // }
+    if(auxAbertos === undefined && auxOrder === undefined && auxPrecos === undefined){
+      const estab: Estabelecimento[] = await FunTracker.getEstabelecimentos()
+      return res.status(200).json(estab)
+    }
 
     let abertos: boolean = false;
     let order: Ordem | null = null;

@@ -99,20 +99,39 @@ export class EstabelecimentoDAO {
 
 
   async getAll(): Promise<Estabelecimento[]> {
-    let estabelecimentos: Estabelecimento[] = []
-
-    let c = await this.db.each('SELECT * from estabelecimentos', [], (row: any) => {
-      const coords: string []= row.coordenadas.split(";")
-      const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, GamaPreco[row.precos], row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)
-      estabelecimentos.push(est)
+    let estabelecimentos: Estabelecimento[]  = []
+    await this.db.each(
+      `SELECT estabelecimentos.*, group_concat(filepath) AS filepath, group_concat(categoria) AS categorias
+       FROM estabelecimentos
+       LEFT JOIN imagens ON imagens.estabelecimento_id = estabelecimentos.id
+       LEFT JOIN categorias ON categorias.estabelecimento_id = estabelecimentos.id
+       GROUP BY imagens.estabelecimento_id`, [], (row: any) => {
+       const coords: string[] = row.coordenadas.split(";")
+       const imagens: string[] = row.filepath.split(",")
+       const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, GamaPreco[row.precos], row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)
+       est.imageUrls = imagens
+       est.setCategorias(row.categorias.split(","))
+       estabelecimentos.push(est)
     });
 
-    await Promise.all(estabelecimentos.map(async c => {
-      const categorias: string[] = await this.db.all('SELECT categoria FROM categorias WHERE estabelecimento_id = ?', c.id)
-      c.setCategorias(categorias)
-    }))
     return estabelecimentos
   }
+  // async getAll(): Promise<Estabelecimento[]> {
+
+  //   let estabelecimentos: Estabelecimento[] = []
+
+  //   let c = await this.db.each('SELECT * from estabelecimentos', [], (row: any) => {
+  //     const coords: string []= row.coordenadas.split(";")
+  //     const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, GamaPreco[row.precos], row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)
+  //     estabelecimentos.push(est)
+  //   });
+
+  //   await Promise.all(estabelecimentos.map(async c => {
+  //     const categorias: string[] = await this.db.all('SELECT categoria FROM categorias WHERE estabelecimento_id = ?', c.id)
+  //     c.setCategorias(categorias)
+  //   }))
+  //   return estabelecimentos
+  // }
 
   async cria(
     nome: string,
