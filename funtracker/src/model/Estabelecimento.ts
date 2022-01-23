@@ -85,7 +85,6 @@ export class EstabelecimentoDAO {
        LEFT JOIN categorias ON categorias.estabelecimento_id = estabelecimentos.id
        WHERE estabelecimentos.id = ? 
        GROUP BY imagens.estabelecimento_id`, id);
-    console.log(row)
     const coords: string[] = row.coordenadas.split(";")
     const imagens: string[] = row.filepath.split(",")
     const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, GamaPreco[row.precos], row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)

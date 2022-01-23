@@ -137,7 +137,7 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
   }
 
   static async getClassificacoesByUserID(userID: number) {
-    return FunTracker.classificacaoDAO.getClassificacoesByUserID(userID);
+    return await FunTracker.classificacaoDAO.getClassificacoesByUserID(userID);
   }
 
   static async getClassificacoesByEstabelecimentoID(estabelecimentoId: number) {

@@ -1,7 +1,9 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import React, { useEffect, useState } from 'react'
-import { View, FlatList, Dimensions } from 'react-native'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
+import { View, FlatList, Dimensions, TouchableOpacity } from 'react-native'
 import { Card, AirbnbRating, Text, Image } from 'react-native-elements'
+import { useAuthContext } from '../hooks'
+import { serverUrl } from '../lib/constants'
 import { AppParamList } from '../routeTypes'
 import { LoadingMenu } from './LoadingMenu'
 
@@ -17,53 +19,60 @@ class Critica {
 }
 
 export default function HistoricoMenu({ navigation, route }: NativeStackScreenProps<AppParamList, 'Historico'>) {
-    const [isLoading, setIsLoading] = useState(false)
-    const[criticas, setCriticas] = useState(fetchCriticas())
+    const [isLoading, setIsLoading] = useState(true)
+    const [criticas, setCriticas] = useState<Critica[] | undefined>(undefined)
 
-    function fetchCriticas () {
-        //Temos de ir buscar as críticas do user autenticado
-        let criticas = [new Critica(1, 'Rick Universal', 1,4, 'épico', 'https://smallpetsite.com/wp-content/uploads/2020/08/bathing-hedgehog-2-1.jpg'),
-                         new Critica(1, 'Rick Universal', 2,3, 'meh, seen better', 'https://smallpetsite.com/wp-content/uploads/2020/08/bathing-hedgehog-2-1.jpg'),
-                         new Critica(1, 'Rick Universal', 3,5, '30 CARAMBAS!!!', 'https://smallpetsite.com/wp-content/uploads/2020/08/bathing-hedgehog-2-1.jpg'),
-                         new Critica(1, 'Rick Universal', 4,4, 'épico', 'https://smallpetsite.com/wp-content/uploads/2020/08/bathing-hedgehog-2-1.jpg'),
-                         new Critica(1, 'Rick Universal', 5,3, 'meh, seen better', 'https://smallpetsite.com/wp-content/uploads/2020/08/bathing-hedgehog-2-1.jpg'),
-                         new Critica(1, 'Rick Universal', 6,5, '30 CARAMBAS!!!', 'https://smallpetsite.com/wp-content/uploads/2020/08/bathing-hedgehog-2-1.jpg'),
-                         new Critica(1, 'Rick Universal', 7,4, 'épico', 'https://smallpetsite.com/wp-content/uploads/2020/08/bathing-hedgehog-2-1.jpg'),
-                         new Critica(1, 'Rick Universal', 8,3, 'meh, seen better', 'https://smallpetsite.com/wp-content/uploads/2020/08/bathing-hedgehog-2-1.jpg'),
-                         new Critica(1, 'Rick Universal', 9,5, '30 CARAMBAS!!!', 'https://smallpetsite.com/wp-content/uploads/2020/08/bathing-hedgehog-2-1.jpg')]
-        return criticas
+    const authContext = useAuthContext()
+
+    async function fetchCriticas () {
+        try {
+            let r = await authContext.fetchWithJwt('/user/:id/historico', 'GET', {}, { id: authContext.userId! })
+            if (r.success) {
+                setCriticas(r.historico.map(c => new Critica(c.estabelecimentoNoturnoId, c.estabelecimentoNoturnoNome, c.estabelecimentoNoturnoId, c.valor, c.comentario, c.estabelecimentoNoturnoImagem)))
+                setIsLoading(false)
+            }
+        } catch(e) {
+            setIsLoading(true)
+            setCriticas([])
+        }
     }
+
+    useLayoutEffect(() => {
+        fetchCriticas()
+    }, [])
 
     const renderCritica = ({ item, index }:{item:Critica, index:number}) => {
         return (
-            <View
-                key={index}
-                style={{
-                    height: 130,
-                    marginVertical: 5,
-                    flexDirection: 'row',
-                }}
-            >
-                <Image
-                    source={{uri:item.imagem}}
-                    containerStyle={{ aspectRatio: 1 / 1, alignSelf: 'stretch' }}
-                />
-                <View style={{ alignItems: 'flex-start', paddingHorizontal: 10 }}>
-                    <Text style={{ fontSize: 16 }}>{item.estabelecimento_nome}</Text>
-                    <AirbnbRating 
-                        defaultRating={item.rating}
-                        isDisabled={true}
-                        showRating={false}
-                        size={10}
-                        selectedColor='#ffd500'
+            <TouchableOpacity key={index} onPress={() => navigation.navigate('Estabelecimento', { id: item.estabelecimento_id })}>
+                <View
+                    key={index}
+                    style={{
+                        height: 130,
+                        marginVertical: 5,
+                        flexDirection: 'row',
+                    }}
+                >
+                    <Image
+                        source={{ uri: serverUrl + "/" + item.imagem }}
+                        containerStyle={{ aspectRatio: 1 / 1, alignSelf: 'stretch' }}
                     />
-                    <Text style={{fontSize:13, marginTop:10}}>{item.texto}</Text>
+                    <View style={{ alignItems: 'flex-start', paddingHorizontal: 10 }}>
+                        <Text style={{ fontSize: 16 }}>{item.estabelecimento_nome}</Text>
+                        <AirbnbRating
+                            defaultRating={item.rating}
+                            isDisabled={true}
+                            showRating={false}
+                            size={10}
+                            selectedColor='#ffd500'
+                        />
+                        <Text style={{ fontSize: 13, marginTop: 10 }}>{item.texto}</Text>
+                    </View>
                 </View>
-            </View>
+            </TouchableOpacity>
         )
     }
 
-    if (isLoading) {
+    if (isLoading || criticas === undefined) {
         return <LoadingMenu />
     }
     return (

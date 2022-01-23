@@ -169,7 +169,10 @@ usersRouter.get('/:id', isLoggedIn, hasPermission, async (req, res) => {
 
 usersRouter.get('/:id/historico', isLoggedIn, hasPermission, async (req, res) => {
   try {
-    return res.status(200).json(FunTracker.getClassificacoesByUserID(+req.params.id));
+    return res.status(200).json({
+      success: true,
+      historico: await FunTracker.getClassificacoesByUserID(+req.params.id)
+    });
   } catch {
     return res.status(404).json({
       success: false,

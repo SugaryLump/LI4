@@ -328,7 +328,6 @@ estabelecimentoRouter.get('/:id',
   param('id').isNumeric(),
   checkValidation,
   async (req, res) => {
-      console.log("maria")
     try {
       const number = +req.params.id
       let infoLocal = await FunTracker.getEstabelecimentoByID(number)

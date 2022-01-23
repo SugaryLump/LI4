@@ -1,3 +1,5 @@
+import { AndroidManifest } from "expo-constants"
+
 // Tipos para a API
 export type APIResponse<T> = ({
     success: true
@@ -59,6 +61,23 @@ export interface API extends APIDef {
                 username: string
             },
             res: APIResponse<{}>
+        }
+    },
+    '/user/:id/historico': {
+        GET: {
+            req: {},
+            res: APIResponse<{
+                historico: {
+                    id: number,
+                    comentario: string,
+                    estabelecimentoNoturnoId: number,
+                    estabelecimentoNoturnoNome: string,
+                    estabelecimentoNoturnoImagem: string,
+                    username: string,
+                    utilizadorId: number,
+                    valor: number
+                }[]
+            }>
         }
     },
 
