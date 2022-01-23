@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react'
+import { serverUrl } from '../lib/constants'
 import { View, FlatList, TouchableOpacity, Dimensions } from 'react-native'
 import { AirbnbRating, Image, Text, Button } from 'react-native-elements'
 import { useFocusEffect } from '@react-navigation/native'
@@ -36,7 +37,13 @@ async function fetchEstabelecimentos(aberto: boolean, disco: boolean, bar: boole
         let r = await authContext.fetchWithJwt('/estabelecimento', 'GET', filtros)
             if (r.success) {
                 // TODO: Incluir o total de ratings
-                return r.estabelecimentos.map(e => new LocalNoturno(e.id, e.nome, e.rating, e.gamaPreco, 0, e.categorias, e.imageUrls[0]))
+                return r.estabelecimentos.map(e => {
+
+                    console.log("imagem: " +  e.imageUrls[0])
+                    console.log("rating: " +  e.rating)
+                return new LocalNoturno(e.id, e.nome, e.rating, e.gamaPreco, 0, e.categorias, serverUrl + "/"+ e.imageUrls[0])
+                }
+                )
             }
             else {
                 throw "Erro obter locais"
