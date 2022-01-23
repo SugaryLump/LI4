@@ -78,6 +78,7 @@ export class EstabelecimentoDAO {
     return await this.db.get('SELECT * from estabelecimentos where id = ?', id);
   }
 
+
   async getAll(): Promise<Estabelecimento[]> {
     let estabelecimentos: Estabelecimento[] = []
 
@@ -279,7 +280,12 @@ export class EstabelecimentoDAO {
       resul = await this.db.all(query)
     }
 
-    return resul.map(c => this.convertDBtoEstabelecimento(c))
+    let estabelecimentos: Estabelecimento[] =  resul.map(c => this.convertDBtoEstabelecimento(c))
+    await Promise.all(estabelecimentos.map(async c => {
+      const categorias: string[] = await this.db.all('SELECT categoria FROM categorias WHERE estabelecimento_id = ?', c.id)
+      c.setCategorias(categorias)
+    }))
+    return estabelecimentos
   }
 
   async getOpenEstabelecimentos(): Promise<Estabelecimento[]> {
