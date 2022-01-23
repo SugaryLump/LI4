@@ -60,6 +60,8 @@ estabelecimentoRouter.post('/',
       let fileName = await getDestination(req.body.fileMime)
       await writeFile(fileName, req.body.image, 'base64')
 
+      await FunTracker.adicionarImagen(estab.id, fileName)
+
       return res.status(200).json({
         success: true,
         estabelecimento: estab
@@ -126,43 +128,12 @@ estabelecimentoRouter.get('/',
     });
   }
 })
+
 estabelecimentoRouter.get('/',
     isLoggedIn,
-    hasPermission,
-    query('order').exists(),
-    query('abertos').exists(),
-    query('precos').exists(),
     async (req: Request, res) => {
   try {
-    let auxAbertos = req.query.abertos
-    let auxOrder = req.query.order
-    let auxPrecos = req.query.precos
-    if(auxAbertos===undefined && auxOrder===undefined && auxPrecos===undefined){
-      const estab: Estabelecimento[] = await FunTracker.getEstabelecimentos()
-      return res.status(200).json(estab)
-    }
-
-    let abertos: boolean = false;
-    let order: Ordem | null = null;
-    let precos: GamaPreco | null = null;
-
-    if (auxAbertos) {
-      abertos = auxAbertos == 'true' || auxAbertos == '1'
-    }
-
-    //TODO falta este
-    if (auxOrder) {
-      order = Ordem[auxOrder as keyof typeof Ordem]
-      console.log(order)
-      console.log(auxOrder)
-      console.log(auxOrder as keyof typeof Ordem)
-    }
-
-    if (auxPrecos) {
-      precos = GamaPreco[auxPrecos as keyof typeof GamaPreco]
-    }
-
-    let estabelecimentos = await FunTracker.getByFiltros(abertos, order, precos)
+    let estabelecimentos = await FunTracker.getEstabelecimentos()
     return res.status(200).json({ success: true, estabelecimentos: estabelecimentos })
   }
   catch (e) {
@@ -264,90 +235,90 @@ estabelecimentoRouter.post(
 );
 
 // FILTROS
-estabelecimentoRouter.get(
-  '/sort/categorias',
-  isLoggedIn, hasPermission,
-  async (req, res) => {
-    try {
-      //TODO Retirar os repetidos
-      let estabelecimentos = await FunTracker.getEstabelecimentosBySortedCategorias()
-      return res.status(200).json({ success: true, estabelecimentos: estabelecimentos })
-    } catch (e: any) {
-      return res.status(400).json({
-        success: false,
-        errors: [e],
-      });
-    }
-  },
-);
+// estabelecimentoRouter.get(
+//   '/sort/categorias',
+//   isLoggedIn, hasPermission,
+//   async (req, res) => {
+//     try {
+//       //TODO Retirar os repetidos
+//       let estabelecimentos = await FunTracker.getEstabelecimentosBySortedCategorias()
+//       return res.status(200).json({ success: true, estabelecimentos: estabelecimentos })
+//     } catch (e: any) {
+//       return res.status(400).json({
+//         success: false,
+//         errors: [e],
+//       });
+//     }
+//   },
+// );
 
-// do mais pequeno para o maior
-estabelecimentoRouter.get(
-  '/sort/preco',
-  isLoggedIn, hasPermission,
-  async (req, res) => {
-    try {
-      let estabelecimentos = await FunTracker.getEstabelecimentosBySortedPreco()
-      return res.status(200).json({ success: true, estabelecimentos: estabelecimentos })
-    } catch (e: any) {
-      return res.status(400).json({
-        success: false,
-        errors: [e],
-      });
-    }
-  },
-);
+// // do mais pequeno para o maior
+// estabelecimentoRouter.get(
+//   '/sort/preco',
+//   isLoggedIn, hasPermission,
+//   async (req, res) => {
+//     try {
+//       let estabelecimentos = await FunTracker.getEstabelecimentosBySortedPreco()
+//       return res.status(200).json({ success: true, estabelecimentos: estabelecimentos })
+//     } catch (e: any) {
+//       return res.status(400).json({
+//         success: false,
+//         errors: [e],
+//       });
+//     }
+//   },
+// );
 
-// Do melhor para o pior
-estabelecimentoRouter.get(
-  '/sort/pontuacao',
-  isLoggedIn, hasPermission,
-  async (req, res) => {
-    try {
-      let estabelecimentos = await FunTracker.getEstabelecimentosBySortedPontuacao()
-      return res.status(200).json({ success: true, estabelecimentos: estabelecimentos })
-    } catch (e: any) {
-      return res.status(400).json({
-        success: false,
-        errors: [e],
-      });
-    }
-  },
-);
+// // Do melhor para o pior
+// estabelecimentoRouter.get(
+//   '/sort/pontuacao',
+//   isLoggedIn, hasPermission,
+//   async (req, res) => {
+//     try {
+//       let estabelecimentos = await FunTracker.getEstabelecimentosBySortedPontuacao()
+//       return res.status(200).json({ success: true, estabelecimentos: estabelecimentos })
+//     } catch (e: any) {
+//       return res.status(400).json({
+//         success: false,
+//         errors: [e],
+//       });
+//     }
+//   },
+// );
 
-estabelecimentoRouter.get(
-  '/filtro/gamaPreco',
-  isLoggedIn, hasPermission,
-  query('preco').exists(),
-  async (req, res) => {
-    try {
-      let estabelecimentos = await FunTracker.getEstabelecimentosByGamaPreco(req.body.preco)
-      return res.status(200).json({ success: true, estabelecimentos: estabelecimentos })
-    } catch (e: any) {
-      return res.status(400).json({
-        success: false,
-        errors: [e],
-      });
-    }
-  },
-);
+// estabelecimentoRouter.get(
+//   '/filtro/gamaPreco',
+//   isLoggedIn, hasPermission,
+//   query('preco').exists(),
+//   async (req, res) => {
+//     try {
+//       let estabelecimentos = await FunTracker.getEstabelecimentosByGamaPreco(req.body.preco)
+//       return res.status(200).json({ success: true, estabelecimentos: estabelecimentos })
+//     } catch (e: any) {
+//       return res.status(400).json({
+//         success: false,
+//         errors: [e],
+//       });
+//     }
+//   },
+// );
 
 
-estabelecimentoRouter.get(
-  '/aberto',
-  isLoggedIn, hasPermission,
-  async (req, res) => {
-    try {
-      let estabelecimentos = await FunTracker.getEstabelecimentosAbertos()
-      return res.status(200).json({ success: true, estabelecimentos: estabelecimentos })
-    } catch (e: any) {
-      return res.status(400).json({
-        success: false,
-        errors: [e],
-      });
-    }
-  },
-);
+// estabelecimentoRouter.get(
+//   '/aberto',
+//   isLoggedIn, hasPermission,
+//   async (req, res) => {
+//     try {
+//       let estabelecimentos = await FunTracker.getEstabelecimentosAbertos()
+//       return res.status(200).json({ success: true, estabelecimentos: estabelecimentos })
+//     } catch (e: any) {
+//       return res.status(400).json({
+//         success: false,
+//         errors: [e],
+//       });
+//     }
+//   },
+// );
 
 estabelecimentoRouter.get(
   '/:id',
