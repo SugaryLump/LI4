@@ -331,7 +331,8 @@ estabelecimentoRouter.get('/:id',
         success: true,
         estabelecimento: infoLocal
       })
-    } catch {
+    } catch (e) {
+      console.log(e)
       return res.status(404).json({
         success: false,
         errors: ["Não Existe Nenhum Estabelecimento com esse ID"],

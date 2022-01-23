@@ -21,7 +21,7 @@ export default async function (): Promise<Application> {
 
   app.set('db', db)
   app.set('secret', 'TODO gerar segredo random mas isto serve por agora')
-  app.use(express.static('images'))
+  app.use('/images', express.static('images'))
 
   // Permite suportar requests com JSON
   app.use(express.json({ limit: '50mb' }))

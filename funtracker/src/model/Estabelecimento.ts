@@ -9,12 +9,13 @@ export class Estabelecimento {
     public gamaPreco: string,
     public morada: string,
     public coordenadas: { latitude: string, longitude: string },
-    public contacto: string
+    public contacto: string,
   ) { } // caller must increment numberRatings
 
   public categorias: string[] = []
   public horarioAbertura: Date = new Date()
   public horarioFecho: Date = new Date()
+  public imageUrls: string[] = []
   // caller must increment numberRatings
   updateRating(newRating: number, numberRatings: number): number {
     const sum: number = this.rating * numberRatings;
@@ -76,12 +77,20 @@ export class EstabelecimentoDAO {
   }
 
   async getByID(id: number): Promise<Estabelecimento> {
-    let row = await this.db.get('SELECT * from estabelecimentos where id = ?', id);
-    const coords: string []= row.coordenadas.split(";")
+    let row = await this.db.get(
+      `SELECT estabelecimentos.*, group_concat(filepath) AS filepath, group_concat(categoria) AS categorias
+       FROM estabelecimentos
+       INNER JOIN imagens ON imagens.estabelecimento_id = estabelecimentos.id
+       INNER JOIN categorias ON categorias.estabelecimento_id = estabelecimentos.id
+       WHERE estabelecimentos.id = ? 
+       GROUP BY imagens.estabelecimento_id`, id);
+    console.log(row)
+    const coords: string[] = row.coordenadas.split(";")
+    const imagens: string[] = row.filepath.split(",")
     const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, GamaPreco[row.precos], row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)
-    const categorias: string[] = await this.db.all('SELECT categoria FROM categorias WHERE estabelecimento_id = ?', id)
-      est.setCategorias(categorias)
-      return  est
+    est.imageUrls = imagens
+    est.setCategorias(row.categorias.split(","))
+    return est
   }
 
   async removeByID(id: number): Promise<boolean> {
