@@ -210,7 +210,7 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
                 </View>
                 <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
                     <Button title='Avaliar' onPress={() => navigation.navigate({ name: 'Avaliar', params: { id: estabelecimento.id } })} />
-                    {authContext.isAdmin && (
+                    {authContext.isAdmin ? (
                             <Button title='Eliminar Estabelecimento'  containerStyle={{marginTop:10}} titleStyle={{ color: 'red' }} buttonStyle={{ borderColor: 'red' }}
 
 
@@ -218,7 +218,7 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
 
                         />
 
-                    )}
+                    ) : null}
                 </View>
             </ScrollView>
         }

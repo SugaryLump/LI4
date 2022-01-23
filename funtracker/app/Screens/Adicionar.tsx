@@ -219,7 +219,7 @@ export default function AdicionarMenu({ navigation, route }: NativeStackScreenPr
                     {/* Hacky, mas o marginBottom não está a funcionar no submeter for some reason, por isso serve para espaçar o fundo */}
                 </View>
             </ScrollView>
-            {showTimePicker && (
+            {showTimePicker ? (
                 <DateTimePicker
                     value={new Date(0)}
                     mode={'time'}
@@ -227,7 +227,7 @@ export default function AdicionarMenu({ navigation, route }: NativeStackScreenPr
                     display="default"
                     onChange={onTimeChange}
                 />
-            )}
+            ) : null}
         </View>
     )
 }
