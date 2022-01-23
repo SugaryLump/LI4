@@ -18,6 +18,8 @@ export default function AdicionarMenu({ navigation, route }: NativeStackScreenPr
 
     const [contacto, setContacto] = useState('')
 
+    const [lotacao, setLotacao] = useState('')
+
     const [disco, setDisco] = useState(false)
     const [bar, setBar] = useState(false)
 
@@ -33,6 +35,7 @@ export default function AdicionarMenu({ navigation, route }: NativeStackScreenPr
     const [morada, setMorada] = useState('')
 
     const telefoneRef = createRef<TextInput>()
+    const lotacaoRef = createRef<TextInput>()
 
     const pickImage = async () => {
         let newImage = await ImagePicker.launchImageLibraryAsync({
@@ -82,6 +85,10 @@ export default function AdicionarMenu({ navigation, route }: NativeStackScreenPr
         }
     }
 
+    const submeter = () => {
+        // TODO
+    }
+
     return (
         <View style={{ flex: 1, alignItems: 'center' }}>
             <ScrollView style={{
@@ -90,7 +97,7 @@ export default function AdicionarMenu({ navigation, route }: NativeStackScreenPr
             }}>
                 <Image
                     source={{ uri: imagem }}
-                    containerStyle={{ height: 200, aspectRatio: 1 / 1, alignSelf: 'center' }}
+                    containerStyle={{ height: 200, aspectRatio: 1 / 1, alignSelf: 'center', marginBottom: 15 }}
                 />
                 <Button title="Adicionar Imagem" onPress={pickImage} />
                 <Divider style={{ marginVertical: 15 }} />
@@ -108,12 +115,21 @@ export default function AdicionarMenu({ navigation, route }: NativeStackScreenPr
                     onChangeText={(tlm) => setContacto(tlm)}
                     keyboardType='phone-pad'
                     ref={telefoneRef}
+                    returnKeyType='next'
+                    blurOnSubmit={false}
+                    onSubmitEditing={() => lotacaoRef.current?.focus()}
+                />
+                <Input
+                    placeholder="Lotação máxima"
+                    onChangeText={setLotacao}
+                    keyboardType='numeric'
+                    ref={lotacaoRef}
                 />
                 <CheckBox title='Bar' checked={bar} onPress={() => setBar(!bar)} />
                 <CheckBox title='Discoteca' checked={disco} onPress={() => setDisco(!disco)} />
                 <Text style={{ fontSize: 15, padding: 15, }}>Selecione uma gama de preço</Text>
                 <ButtonGroup
-                    buttons={['Nenhuma', '€', '€€', '€€€']}
+                    buttons={['€', '€€', '€€€']}
                     selectedIndex={preco}
                     onPress={(preco) => setPreco(preco)}
                 />
@@ -139,7 +155,7 @@ export default function AdicionarMenu({ navigation, route }: NativeStackScreenPr
                     onBlur={atualizaCoordenadas}
                 />
                 <MapView
-                    style={{ height: Dimensions.get('window').height / 3 }}
+                    style={{ height: Dimensions.get('window').height / 3, marginBottom: 15 }}
                     region={{ latitude: latitude ?? 0, longitude: longitude ?? 0, latitudeDelta: 0.005, longitudeDelta: 0.005 }}
                     showsCompass={false}
                     scrollEnabled={false}
@@ -153,7 +169,10 @@ export default function AdicionarMenu({ navigation, route }: NativeStackScreenPr
                         />
                     }
                 </MapView>
-                <Button title='Submeter' />
+                <Button title='Adicionar' onPress={submeter} disabled={imagem === 'placeholder' || nome === '' || contacto === '' || lotacao === '' || (!bar && !disco) || morada == '' || latitude === undefined || longitude === undefined}/>
+                <View style={{ height: 25 }}>
+                    {/* Hacky, mas o marginBottom não está a funcionar no submeter for some reason, por isso serve para espaçar o fundo */}
+                </View>
             </ScrollView>
             {showTimePicker && (
                 <DateTimePicker
