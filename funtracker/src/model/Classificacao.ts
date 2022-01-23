@@ -21,6 +21,9 @@ export class ClassificacaoDAO {
     estabelecimentoNoturnoId: number,
     utilizadorId: number,
   ): Promise<Classificacao> {
+    if ( await this.db.exists("avaliacoes", "estabelecimento_id = ? AND user_id = ?", estabelecimentoNoturnoId,utilizadorId) ) {
+            throw "Avaliação já existe"
+    }
     let id = await this.db.run(
       'INSERT INTO avaliacoes (valor, comentarios, estabelecimento_id, user_id) VALUES (?, ?, ?, ?)',
       valor,

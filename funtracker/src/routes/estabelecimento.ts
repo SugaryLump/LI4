@@ -258,10 +258,10 @@ estabelecimentoRouter.post(
       const user: UserJwt = getUser(req);
       let newClassificacao = await FunTracker.avaliar(+req.body.valor, req.body.comentario, +req.params?.id, user.id)
       return res.status(200).json({success: true,classificacao:newClassificacao})
-    } catch {
+    } catch(e) {
       return res.status(500).json({
         success: false,
-        errors: ["Não foi possível classificar o estabelecimento"],
+        errors: [e]
       });
     }
   },

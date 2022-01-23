@@ -64,9 +64,10 @@ export class EstabelecimentoDAO {
   async avaliar(valor: number, estabelecimentoId: number): Promise<number> {
     let estabelecimento: Estabelecimento = await this.getByID(estabelecimentoId);
     if (estabelecimento == null) throw 'Local Não Encontrado';
-    let numberRatings = await this.countClassificacoes(estabelecimentoId);
-    const rating = estabelecimento.updateRating(valor, numberRatings);
-    await this.db.run("UPDATE estabelecimento SET `pontuacao` = ? WHERE `id` = ?", estabelecimento)
+    let numberRatings: number = await this.countClassificacoes(estabelecimentoId);
+    const sum: number = estabelecimento.rating * numberRatings;
+    const rating  =  (sum + valor) / (numberRatings + 1);
+    await this.db.run("UPDATE estabelecimentos SET `pontuacao` = ? WHERE `id` = ?", estabelecimentoId)
     return rating;
   }
 
