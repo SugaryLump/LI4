@@ -262,7 +262,7 @@ export class EstabelecimentoDAO {
     const dataAgora = new Date()
     const data = dataAgora.getHours() + ':' + dataAgora.getMinutes()
 
-    console.log(query)
+    // console.log(query)
     let resul;
     if (apenasAbertos != null && gamaPreco != null && apenasAbertos) {
       // console.log("1")
