@@ -16,7 +16,7 @@ class LocalNoturno {
         public imagem: string,
         public percentRatingsByGrade: number[], //[0.07,0.13,0.20,0.45,0.15] por exemplo
         public contacto: string, //telemóvel
-        public criticas: { nome: string, text: string, rating: number }[],
+        public criticas: { id:number, nome: string, text: string, rating: number }[],
         public abertura: string,
         public fecho: string,
         public latitude: number,
@@ -36,7 +36,7 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
             0, 'Taberna Linda', 4, '€', 32, ['Bar'],
             'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg',
             [0.07, 0.13, 0.20, 0.45, 0.15], '934669512',
-            [{ nome: "Joberto", text: "épico", rating: 4 }, { nome: "Mauricio", text: "gostoso", rating: 3 }, { nome: "Josefina", text: "não poggers", rating: 5 }],
+            [{ id:0, nome: "Joberto", text: "épico", rating: 4 }, { id:1, nome: "Mauricio", text: "gostoso", rating: 3 }, { id:2, nome: "Josefina", text: "não poggers", rating: 5 }],
             "14:00", "23h00", 41.6889, -8.8366);
         return local;
     }
@@ -129,9 +129,9 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
                 <View style={{ marginVertical: 50, marginHorizontal: 20 }}>
                     <View style={{ flexDirection: "row", marginBottom: 20, justifyContent: 'space-between' }}>
                         <View>
-                            {estabelecimento.categorias.map((categoria) => {
+                            {estabelecimento.categorias.map((categoria, index) => {
                                 return (
-                                    <View style={{ paddingBottom: 5 }}>
+                                    <View style={{ paddingBottom: 5 }} key={index}>
                                         <Text style={{ fontSize: 15 }}>✓  {categoria}</Text>
                                     </View>
                                 )
