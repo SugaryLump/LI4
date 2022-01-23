@@ -3,6 +3,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useState, useEffect } from 'react'
 import { View, Text } from 'react-native'
 import { AirbnbRating, Input, Button } from 'react-native-elements'
+import { useAuthContext } from '../hooks'
 import { AppParamList } from '../routeTypes'
 
 const submeterAvaliacao = () => {
@@ -14,34 +15,36 @@ export const AvaliarMenu = ({ navigation, route }: NativeStackScreenProps<AppPar
     const [rating, setRating] = useState(1)
     const [texto, setTexto] = useState('')
 
-    const submeterAvaliacao = () => {
-        //sumbeter a avaliação e lidar com a resposta
+    const authContext = useAuthContext()
+
+    const submeterAvaliacao = async () => {
+        let result = authContext.fetchWithJwt('/estabelecimento/:id/classificacoes', 'POST', {
+            valor: rating,
+            comentario: texto
+        })
         navigation.goBack()
     }
 
     return (
-        <View style={{flex:1, marginVertical:50, marginHorizontal:10}}>
-            <Text style={{fontSize:16}}>Classifique o estabelecimento:</Text> 
-            <AirbnbRating
-                defaultRating={1}
-                onFinishRating={(score) => setRating(score)}
-                selectedColor='#ffd500'
-                showRating={false}
-                starContainerStyle={{marginVertical:30}}
-            />
-            <View style={{flex:0.5}}>
-                <Input
-                    placeholder='Comentário'
-                    onChangeText={(comentario) => setTexto(comentario)}
-                    label='Dê a sua opinião:'
-                    maxLength={500}
-                    multiline
-                    containerStyle={{flex:1}}
-                    inputContainerStyle={{borderWidth:1, borderColor:'#dddddd'}}
+        <View style={{ flex: 1, alignItems: 'center' }}>
+            <View style={{ width: '100%', maxWidth: 800, padding: 15 }}>
+                <Text style={{ alignSelf: 'center', fontSize: 16 }}>Classifique o estabelecimento:</Text>
+                <AirbnbRating
+                    defaultRating={1}
+                    onFinishRating={(score) => setRating(score)}
+                    selectedColor='#ffd500'
+                    showRating={false}
+                    starContainerStyle={{ marginVertical: 15 }}
                 />
-            </View>
-            <View style={{flex:0.5, marginTop:50}}>
-                <Button title='Submeter' onPress={submeterAvaliacao}/>
+                <Input
+                    placeholder='Dê a sua opinião'
+                    onChangeText={(comentario) => setTexto(comentario)}
+                    maxLength={500}
+                    numberOfLines={5}
+                    textAlignVertical='top'
+                    multiline
+                />
+                <Button title='Submeter' onPress={submeterAvaliacao} />
             </View>
         </View>
     )

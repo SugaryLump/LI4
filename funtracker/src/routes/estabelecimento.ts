@@ -67,6 +67,7 @@ estabelecimentoRouter.post('/',
         estabelecimento: estab
       });
     } catch (e) {
+      // console.log(e)
       if (typeof e == 'number') {
         return res.status(400).json({
           success: false,
@@ -148,9 +149,7 @@ estabelecimentoRouter.get(
   isLoggedIn,
   hasPermission,
   async (req, res) => {
-    let allImagens = await FunTracker.getAllImagensByEstabelecimentoID(
-      req.body.id,
-    );
+    let allImagens = await FunTracker.getAllImagensByEstabelecimentoID(+req.params?.id);
 
     if (allImagens) {
       return res.status(200).json({success: true, imagem: allImagens});
@@ -171,7 +170,7 @@ estabelecimentoRouter.post(
   isAdmin,
   body('filepath').exists(),
   async (req, res) => {
-    let newImagen = FunTracker.adicionarImagen(req.body.id, req.body.filepath)
+    let newImagen = FunTracker.adicionarImagen(+req.params?.id, req.body.filepath)
     if (newImagen) {
       return res.status(200).json({success: true,imagem: newImagen})
     }
@@ -216,16 +215,16 @@ estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, hasPermission, asyn
 estabelecimentoRouter.post(
   '/:id/classificacoes',
   isLoggedIn,
-  hasPermission,
   body('valor').exists(),
   body('comentario').exists(),
+  checkValidation,
   async (req, res) => {
     try {
       const user: UserJwt = getUser(req);
       let newClassificacao = await FunTracker.avaliar(+req.body.valor, req.body.comentario, +req.params?.id, user.id)
-      return res.status(200).json({success: true,classificacao:newClassificacao})
+      return res.status(200).json({ success: true, classificacao: newClassificacao })
     } catch(e) {
-      return res.status(500).json({
+      return res.status(400).json({
         success: false,
         errors: [e]
       });
