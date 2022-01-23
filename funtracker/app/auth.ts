@@ -101,7 +101,7 @@ export function newAuthContext(dispatch: React.Dispatch<AuthAction>, state: Auth
             }
 
             if (method == 'GET') {
-                if (body !== {})
+                if (body !== undefined && Object.keys(body).length > 0 )
                     realUrl += "?" + new URLSearchParams(body).toString()
             } else {
                 if (multipart) {

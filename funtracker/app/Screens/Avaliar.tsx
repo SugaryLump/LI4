@@ -2,7 +2,7 @@ import { NavigationHelpersContext } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useState, useEffect } from 'react'
 import { View, Text } from 'react-native'
-import { AirbnbRating, Input, Button } from 'react-native-elements'
+import { AirbnbRating, Input, Button, colors } from 'react-native-elements'
 import { useAuthContext } from '../hooks'
 import { AppParamList } from '../routeTypes'
 
@@ -14,15 +14,21 @@ const submeterAvaliacao = () => {
 export const AvaliarMenu = ({ navigation, route }: NativeStackScreenProps<AppParamList, 'Avaliar'>) => {
     const [rating, setRating] = useState(1)
     const [texto, setTexto] = useState('')
+    const [error, setError] = useState('')
 
     const authContext = useAuthContext()
 
     const submeterAvaliacao = async () => {
-        let result = authContext.fetchWithJwt('/estabelecimento/:id/classificacoes', 'POST', {
+        let result = await authContext.fetchWithJwt('/estabelecimento/:id/classificacoes', 'POST', {
             valor: rating,
             comentario: texto
         })
-        navigation.goBack()
+
+        if (result.success) {
+            navigation.goBack()
+        } else {
+            setError('Erro ao adicionar avaliação')
+        }
     }
 
     return (
@@ -44,6 +50,7 @@ export const AvaliarMenu = ({ navigation, route }: NativeStackScreenProps<AppPar
                     textAlignVertical='top'
                     multiline
                 />
+                { error !== '' && <Text style={{ color: colors.error }}>{ error }</Text>}
                 <Button title='Submeter' onPress={submeterAvaliacao} />
             </View>
         </View>
