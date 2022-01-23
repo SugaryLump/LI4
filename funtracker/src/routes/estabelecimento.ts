@@ -85,22 +85,23 @@ estabelecimentoRouter.post('/',
 
 
 estabelecimentoRouter.get('/',
-    isLoggedIn,
-    query('order').exists(),
-    query('abertos').exists(),
-    query('precos').exists(),
-    query('latitude').exists(),
-    query('longitude').exists(),
-    // checkValidation(),
-    async (req: Request, res) => {
+  isLoggedIn,
+  query('order').exists(),
+  query('abertos').exists(),
+  query('precos').exists(),
+  query('latitude').exists(),
+  query('longitude').exists(),
+  // checkValidation(),
+  async (req: Request, res) => {
   try {
     let auxAbertos = req.query.abertos
     let auxOrder = req.query.order
     let auxPrecos = req.query.precos
-    if(auxAbertos === undefined && auxOrder === undefined && auxPrecos === undefined){
-      const estab: Estabelecimento[] = await FunTracker.getEstabelecimentos()
-      return res.status(200).json(estab)
-    }
+
+    // if(auxAbertos === undefined && auxOrder === undefined && auxPrecos === undefined){
+    //   const estab: Estabelecimento[] = await FunTracker.getEstabelecimentos()
+    //   return res.status(200).json(estab)
+    // }
 
     let abertos: boolean = false;
     let order: Ordem | null = null;
@@ -134,20 +135,20 @@ estabelecimentoRouter.get('/',
   }
 })
 
-estabelecimentoRouter.get('/',
-    isLoggedIn,
-    async (req: Request, res) => {
-  try {
-    let estabelecimentos = await FunTracker.getEstabelecimentos()
-    return res.status(200).json({ success: true, estabelecimentos: estabelecimentos })
-  }
-  catch (e) {
-    return res.status(404).json({
-      success: false,
-      errors: ["Não existem estabelecimentos"],
-    });
-  }
-})
+// estabelecimentoRouter.get('/',
+//     isLoggedIn,
+//     async (req: Request, res) => {
+//   try {
+//     let estabelecimentos = await FunTracker.getEstabelecimentos()
+//     return res.status(200).json({ success: true, estabelecimentos: estabelecimentos })
+//   }
+//   catch (e) {
+//     return res.status(404).json({
+//       success: false,
+//       errors: ["Não existem estabelecimentos"],
+//     });
+//   }
+// })
 
 estabelecimentoRouter.get(
   '/:id/allImagens',

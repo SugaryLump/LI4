@@ -6,6 +6,7 @@ import * as Popup from 'react-native-popup-menu'
 import { Divider } from 'react-native-elements/dist/divider/Divider'
 import { Coordinate } from 'react-native-maps'
 import { useAuthContext } from '../hooks'
+import { LoadingMenu } from './LoadingMenu'
 
 class LocalNoturno {
     constructor(
@@ -42,7 +43,7 @@ export function fetchEstabelecimentos(aberto: boolean, disco: boolean, bar: bool
 export const EstabelecimentosMenu = ({ navigation, route }: any) => {
     const [location, setLocation] = useState({} as Location.LocationObject)
     const [locationMessage, setLocationMessage] = useState('A obter localização')
-    const [estabelecimentos, setEstabelecimentos] = useState([] as LocalNoturno[])
+    const [estabelecimentos, setEstabelecimentos] = useState<LocalNoturno[] | undefined>(undefined)
 
     const authContext = useAuthContext()
 
@@ -74,6 +75,7 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
                 </Popup.MenuOption>
             )
         }
+
         const AdminOption = () => {
             if (authContext.isAdmin) {
                 return (
@@ -115,7 +117,17 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
                 </Popup.Menu>
             )
         })
-    })
+
+        // Atualizar a lista
+        let filtros = {} // TODO
+        authContext.fetchWithJwt('/estabelecimento', 'GET', filtros).then(r => {
+            if (r.success) {
+                // TODO: Incluir o total de ratings
+                let locais = r.estabelecimentos.map(e => new LocalNoturno(e.id, e.nome, e.rating, e.gamaPreco, 0, e.categorias, e.imageUrls[0]))
+                setEstabelecimentos(locais)
+            }
+        })
+    }, [])
 
     const updateLocation = async () => {
         let permission = await Location.requestForegroundPermissionsAsync();
@@ -176,6 +188,9 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
             </TouchableOpacity>
         )
     }
+
+    if (estabelecimentos === undefined)
+        return <LoadingMenu />
 
     return (
         <View style={{

@@ -118,6 +118,30 @@ export interface API extends APIDef {
                     horarioFecho: string
                 }
             }>
+        },
+        'GET': {
+            req: {
+                // TODO
+            },
+            res: APIResponse<{
+                estabelecimentos: {
+                    categorias: string[],
+                    contacto: string,
+                    coordenadas: {
+                        latitude: string,
+                        longitude: string
+                    },
+                    gamaPreco: string,
+                    horarioAbertura: string,
+                    horarioFecho: string,
+                    id: number,
+                    imageUrls: string[],
+                    lotacao: number,
+                    morada: string,
+                    nome: string,
+                    rating: number
+                }[]
+            }>
         }
     },
     '/estabelecimento/:id/classificacoes': {

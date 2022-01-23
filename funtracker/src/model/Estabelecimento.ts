@@ -304,8 +304,8 @@ export class EstabelecimentoDAO {
 
     let estabelecimentos: Estabelecimento[] =  resul.map(c => this.convertDBtoEstabelecimento(c))
     await Promise.all(estabelecimentos.map(async c => {
-      const categorias: string[] = await this.db.all('SELECT categoria FROM categorias WHERE estabelecimento_id = ?', c.id)
-      c.setCategorias(categorias)
+      const categorias = await this.db.all('SELECT categoria FROM categorias WHERE estabelecimento_id = ?', c.id)
+      c.setCategorias(categorias.map(c => c.categoria))
     }))
 
     if (proximidade) {
