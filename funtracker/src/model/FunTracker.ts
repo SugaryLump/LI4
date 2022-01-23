@@ -161,7 +161,7 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
 
     static async getEstabelecimentosByGamaPreco(gamaPreco: keyof typeof GamaPreco): Promise<Estabelecimento[]> {
       const preco: GamaPreco = GamaPreco[gamaPreco]
-      if(preco == undefined ) {
+      if(preco === undefined ) {
           throw "Gama de Preco inválida"
       }
         return await FunTracker.estabelecimentoDAO.getByGamaPreco(preco)
@@ -170,9 +170,9 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
   //TODO nao sei se funciona
     static async getByFiltros(apenasAbertos: boolean| null, ordem: Ordem | null, gamaPreco: GamaPreco | null): Promise<Estabelecimento[]> {
 
-        if (ordem == undefined)
+        if (ordem === undefined)
           throw "Ordem é inválida"
-        if (gamaPreco == undefined)
+        if (gamaPreco === undefined)
           throw "GamaPreco é inválida"
       return await FunTracker.estabelecimentoDAO.getByFiltros(apenasAbertos,ordem,gamaPreco)
     }
