@@ -319,7 +319,7 @@ estabelecimentoRouter.post(
 // );
 
 estabelecimentoRouter.get('/:id',
-  //isLoggedIn,
+  isLoggedIn,
   param('id').isNumeric(),
   checkValidation,
   async (req, res) => {
