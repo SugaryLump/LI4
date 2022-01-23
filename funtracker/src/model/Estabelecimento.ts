@@ -84,7 +84,7 @@ export class EstabelecimentoDAO {
 
     let c = await this.db.each('SELECT * from estabelecimentos', [], (row: any) => {
       const coords: string = row.coordenadas.split(";")
-      const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, row.precos, row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)
+      const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, GamaPreco[row.precos], row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)
       estabelecimentos.push(est)
     });
 
