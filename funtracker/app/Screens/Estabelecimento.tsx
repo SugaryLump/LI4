@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { ScrollView, View, FlatList, useWindowDimensions, Dimensions, Linking } from 'react-native'
 import { useAuthContext } from '../hooks'
+import { serverUrl } from '../lib/constants'
 import { AirbnbRating, LinearProgress, Image, Text, Button } from 'react-native-elements'
 import MapView from 'react-native-maps'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
@@ -35,7 +36,6 @@ const authContext = useAuthContext()
     async function fetchLocalNoturno(id: number): Promise<LocalNoturno> {
          let e = await authContext.fetchWithJwt('/estabelecimento/:id/', "GET", {},{id: id})
         if(e.success) {
-        console.log("e is" + e.estabelecimento)
            return new LocalNoturno(
                     e.estabelecimento.id,
                     e.estabelecimento.nome,
@@ -43,7 +43,7 @@ const authContext = useAuthContext()
                     e.estabelecimento.gamaPreco,
                     30, //total ratings
                     e.estabelecimento.categorias,
-                    'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg',
+                    serverUrl + e.estabelecimento.imagem,
                     [0.07, 0.13, 0.20, 0.45, 0.15],
                     e.estabelecimento.contacto,
                     [{ id: 1, nome: "Joberto", text: "épico", rating: 4 }, { id: 2 , nome: "Mauricio", text: "gostoso", rating: 3 }, {id: 3, nome: "Josefina", text: "não poggers", rating: 5 }],
