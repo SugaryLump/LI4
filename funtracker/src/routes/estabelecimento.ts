@@ -85,6 +85,7 @@ estabelecimentoRouter.post('/',
     }
   });
 
+
 estabelecimentoRouter.get('/',
     isLoggedIn,
     hasPermission,
@@ -96,7 +97,7 @@ estabelecimentoRouter.get('/',
     let auxAbertos = req.query.abertos
     let auxOrder = req.query.order
     let auxPrecos = req.query.precos
-    if(auxAbertos===undefined && auxOrder===undefined && auxPrecos===undefined){
+    if(auxAbertos === undefined && auxOrder === undefined && auxPrecos === undefined){
       const estab: Estabelecimento[] = await FunTracker.getEstabelecimentos()
       return res.status(200).json(estab)
     }
@@ -374,5 +375,29 @@ estabelecimentoRouter.get(
       });
     }
   })
+
+estabelecimentoRouter.delete(
+  '/:id',
+  isLoggedIn,
+  hasPermission,
+  async (req, res) => {
+    try {
+      const n = +req.params.id
+      if (isNaN(n)) {
+        return res.status(400).json({
+          success: false,
+          errors: ["Invalid ID"],
+        });
+      }
+        await FunTracker.removeEstabelecimentoByID(n)
+        return res.status(200).json(`Estabelecimento com ID ${req.params.id} removido`)
+    } catch {
+      return res.status(404).json({
+        success: false,
+        errors: ["Não Existe Nenhum Estabelecimento com esse ID"],
+      });
+    }
+  })
+
 
 export default estabelecimentoRouter;

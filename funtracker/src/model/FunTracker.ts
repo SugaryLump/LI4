@@ -95,6 +95,11 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
   static async getEstabelecimentoByID(id: number): Promise<Estabelecimento> {
       return FunTracker.estabelecimentoDAO.getByID(id)
   }
+  static async removeEstabelecimentoByID(id: number): Promise<void> {
+       let changed: boolean = await FunTracker.estabelecimentoDAO.removeByID(id);
+       if(!changed)
+        throw "Estabelecimento Não Encontrado"
+  }
 
   static async getEstabelecimentos(): Promise<Estabelecimento[]> {
       return await FunTracker.estabelecimentoDAO.getAll();

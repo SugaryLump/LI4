@@ -1,4 +1,4 @@
-import { PromisedDatabase } from 'promised-sqlite3';
+import { PromisedDatabase  } from 'promised-sqlite3';
 
 export class Estabelecimento {
   constructor(
@@ -76,6 +76,9 @@ export class EstabelecimentoDAO {
 
   async getByID(id: number): Promise<Estabelecimento> {
     return await this.db.get('SELECT * from estabelecimentos where id = ?', id);
+  }
+  async removeByID(id: number): Promise<boolean> {
+    return (await this.db.run('DELETE from estabelecimentos where id = ?', id)).changes == 1;
   }
 
 
