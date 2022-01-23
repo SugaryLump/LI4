@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { ScrollView, View, FlatList, useWindowDimensions, Dimensions, Linking } from 'react-native'
+import { useAuthContext } from '../hooks'
 import { AirbnbRating, LinearProgress, Image, Text, Button } from 'react-native-elements'
 import MapView from 'react-native-maps'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
@@ -24,26 +25,45 @@ class LocalNoturno {
     ) { }
 }
 
+
 export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProps<AppParamList, 'Estabelecimento'>) => {
-    const [estabelecimento, setEstabelecimento] = useState(fetchLocalNoturno(route.params?.id))
+    const [estabelecimento, setEstabelecimento] = useState<LocalNoturno|undefined>(undefined)
 
+const authContext = useAuthContext()
 
-    function fetchLocalNoturno(id: number): LocalNoturno {
-        //Pedir ao server o local pelo seu id
-
-        //fake result para demo
-        let local = new LocalNoturno(
-            0, 'Taberna Linda', 4, '€', 32, ['Bar'],
-            'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg',
-            [0.07, 0.13, 0.20, 0.45, 0.15], '934669512',
-            [{ id:0, nome: "Joberto", text: "épico", rating: 4 }, { id:1, nome: "Mauricio", text: "gostoso", rating: 3 }, { id:2, nome: "Josefina", text: "não poggers", rating: 5 }],
-            "14:00", "23h00", 41.6889, -8.8366);
-        return local;
+    //Pedir ao server o local pelo seu id
+    async function fetchLocalNoturno(id: number): Promise<LocalNoturno> {
+         let e = await authContext.fetchWithJwt('/estabelecimento/:id/', "GET", {},{id: id})
+        if(e.success) {
+           return new LocalNoturno(
+                    e.estabelecimento.id,
+                    e.estabelecimento.nome,
+                    e.estabelecimento.rating,
+                    e.estabelecimento.gamaPreco,
+                    30, //total ratings
+                    e.estabelecimento.categorias,
+                    'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg',
+                    [0.07, 0.13, 0.20, 0.45, 0.15],
+                    e.estabelecimento.contacto,
+                    [{ id: 1, nome: "Joberto", text: "épico", rating: 4 }, { id: 2 , nome: "Mauricio", text: "gostoso", rating: 3 }, {id: 3, nome: "Josefina", text: "não poggers", rating: 5 }],
+                    e.estabelecimento.horarioAbertura,
+                    e.estabelecimento.horarioFecho,
+                    e.estabelecimento.coordenadas.latitude,
+                    e.estabelecimento.coordenadas.longitude
+                )
+        }
+        else {
+            throw "Local Não existe"
+        }
     }
 
     useEffect(() => {
-        navigation.setOptions({ title: estabelecimento.nome })
-    })
+        fetchLocalNoturno(route.params?.id).then((est) => {
+                setEstabelecimento(est)
+                navigation.setOptions({ title: est.nome })
+        }).catch(e => console.log(e))
+
+    }, [route.params?.id])
 
     const RatingPercentageBar = (props: any) => {
         return (
@@ -71,6 +91,7 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
 
     return (
         <View style={{ flex: 1 }}>
+        {estabelecimento === undefined ? <Text> Loading... </Text> :
             <ScrollView>
                 <View style={{ alignItems: 'center', height: 200, aspectRatio: 1 / 1, marginTop: 10, alignSelf: 'center' }}>
                     <Image
@@ -159,6 +180,7 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
                     <Button title='Avaliar' onPress={() => navigation.navigate({ name: 'Avaliar', params: { id: estabelecimento.id } })} />
                 </View>
             </ScrollView>
+        }
         </View>
     )
 }

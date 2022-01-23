@@ -31,7 +31,7 @@ async function getDestination(fileType: string): Promise<string> {
 }
 
 estabelecimentoRouter.post('/',
-  isLoggedIn, isAdmin,
+  //isLoggedIn, isAdmin,
   body('nome').isString().isLength({ min: 1 }).withMessage("Nome é obrigatório"),
   body('lotacao').isNumeric().withMessage('Lotação tem de ser um número').bail().toInt(), body('gamaPreco').matches(/^(\$|\$\$|\$\$\$)$/).withMessage("Tem de ser entre um a 3 $"),
   body('morada').isString().isLength({ min: 1 }).withMessage('Morada é obrigatória'),
@@ -85,7 +85,6 @@ estabelecimentoRouter.post('/',
 
 estabelecimentoRouter.get('/',
     isLoggedIn,
-    hasPermission,
     query('order').exists(),
     query('abertos').exists(),
     query('precos').exists(),
@@ -320,11 +319,10 @@ estabelecimentoRouter.post(
 //   },
 // );
 
-estabelecimentoRouter.get(
-  '/:id',
-  isLoggedIn,
-  hasPermission,
+estabelecimentoRouter.get('/:id',
+  //isLoggedIn,
   async (req, res) => {
+      console.log("maria")
     try {
       const number = +req.params.id
       if (isNaN(number)) {
