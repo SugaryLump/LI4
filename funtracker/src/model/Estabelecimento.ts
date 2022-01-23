@@ -76,7 +76,12 @@ export class EstabelecimentoDAO {
   }
 
   async getByID(id: number): Promise<Estabelecimento> {
-    return await this.db.get('SELECT * from estabelecimentos where id = ?', id);
+    let row = await this.db.get('SELECT * from estabelecimentos where id = ?', id);
+    const coords: string []= row.coordenadas.split(";")
+    const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, GamaPreco[row.precos], row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)
+    const categorias: string[] = await this.db.all('SELECT categoria FROM categorias WHERE estabelecimento_id = ?', id)
+      est.setCategorias(categorias)
+      return  est
   }
 
   async removeByID(id: number): Promise<boolean> {
@@ -88,7 +93,7 @@ export class EstabelecimentoDAO {
     let estabelecimentos: Estabelecimento[] = []
 
     let c = await this.db.each('SELECT * from estabelecimentos', [], (row: any) => {
-      const coords: string = row.coordenadas.split(";")
+      const coords: string []= row.coordenadas.split(";")
       const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, GamaPreco[row.precos], row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)
       estabelecimentos.push(est)
     });

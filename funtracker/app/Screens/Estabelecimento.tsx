@@ -35,6 +35,7 @@ const authContext = useAuthContext()
     async function fetchLocalNoturno(id: number): Promise<LocalNoturno> {
          let e = await authContext.fetchWithJwt('/estabelecimento/:id/', "GET", {},{id: id})
         if(e.success) {
+        console.log("e is" + e.estabelecimento)
            return new LocalNoturno(
                     e.estabelecimento.id,
                     e.estabelecimento.nome,
@@ -53,7 +54,7 @@ const authContext = useAuthContext()
                 )
         }
         else {
-            throw "Local Não existe"
+           throw "Local Não existe"
         }
     }
 
@@ -165,7 +166,7 @@ const authContext = useAuthContext()
                 <View>
                     <MapView
                         style={{ height: Dimensions.get('window').height / 3, width: Dimensions.get('window').width }}
-                        initialRegion={{ latitude: estabelecimento.latitude, longitude: estabelecimento.longitude, latitudeDelta: 0.005, longitudeDelta: 0.005 }}
+                        initialRegion={{ latitude: +estabelecimento.latitude, longitude: +estabelecimento.longitude, latitudeDelta: 0.005, longitudeDelta: 0.005 }}
                         showsCompass={false}
                         scrollEnabled={false}
                         onPress={() => {
