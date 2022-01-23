@@ -72,15 +72,36 @@ export class ClassificacaoDAO {
   }
 
   async getClassificacoesByEstabelecimentoId(estabelecimentoID: number): Promise<Classificacao[]> {
-    return (
-      await this.db.all('SELECT avaliacoes.*, username FROM avaliacoes LEFT JOIN utilizadores WHERE estabelecimento_id = ?', estabelecimentoID)
-    ).map(c => ({
-      id: c.id,
-      valor: c.valor,
-      comentario: c.comentario,
-      estabelecimentoNoturnoId: c.estabelecimento_id,
-      utilizadorId: c.user_id,
-      username: c.username
-    }));
+    let c = (
+      await this.db.all(`
+        SELECT avaliacoes.*, u.username AS username, e.nome AS estabelecimento_nome, group_concat(filepath) AS images FROM avaliacoes
+        LEFT JOIN utilizadores u on avaliacoes.user_id = u.id
+        LEFT JOIN estabelecimentos e on avaliacoes.estabelecimento_id = e.id
+        LEFT JOIN imagens i on e.id = i.estabelecimento_id
+        WHERE avaliacoes.estabelecimento_id = ?
+      `, estabelecimentoID)
+    ).map(c => {
+      return {
+        id: c.id,
+        valor: c.valor,
+        comentario: c.comentarios,
+        estabelecimentoNoturnoId: c.estabelecimento_id,
+        utilizadorId: c.user_id,
+        username: c.username,
+        estabelecimentoNoturnoImagem: (c.images as string).split(",").reverse()[0],
+        estabelecimentoNoturnoNome: c.estabelecimento_nome
+      }
+    });
+    return c
+    // return (
+    //   await this.db.all('SELECT avaliacoes.*, username FROM avaliacoes LEFT JOIN utilizadores WHERE estabelecimento_id = ?', estabelecimentoID)
+    // ).map(c => ({
+    //   id: c.id,
+    //   valor: c.valor,
+    //   comentario: c.comentario,
+    //   estabelecimentoNoturnoId: c.estabelecimento_id,
+    //   utilizadorId: c.user_id,
+    //   username: c.username
+    // }));
   }
 }
