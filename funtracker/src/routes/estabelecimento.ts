@@ -67,6 +67,7 @@ estabelecimentoRouter.post('/',
         estabelecimento: estab
       });
     } catch (e) {
+      // console.log(e)
       if (typeof e == 'number') {
         return res.status(400).json({
           success: false,
@@ -149,9 +150,7 @@ estabelecimentoRouter.get(
   isLoggedIn,
   hasPermission,
   async (req, res) => {
-    let allImagens = await FunTracker.getAllImagensByEstabelecimentoID(
-      req.body.id,
-    );
+    let allImagens = await FunTracker.getAllImagensByEstabelecimentoID(+req.params?.id);
 
     if (allImagens) {
       return res.status(200).json({success: true, imagem: allImagens});
@@ -172,7 +171,7 @@ estabelecimentoRouter.post(
   isAdmin,
   body('filepath').exists(),
   async (req, res) => {
-    let newImagen = FunTracker.adicionarImagen(req.body.id, req.body.filepath)
+    let newImagen = FunTracker.adicionarImagen(+req.params?.id, req.body.filepath)
     if (newImagen) {
       return res.status(200).json({success: true,imagem: newImagen})
     }
