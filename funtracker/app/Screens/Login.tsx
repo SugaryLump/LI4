@@ -52,7 +52,7 @@ export const LoginMenu = ({ navigation }: NativeStackScreenProps<AppParamList, '
           token: result.jwt,
           id: result.id,
           username: result.username,
-          isAdmin: result.is_admin
+          isAdmin: result.isAdmin
         })
       } else {
         setUsernameError("Combinação de utilizador/password inválida")

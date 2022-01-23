@@ -27,6 +27,7 @@ sessionRouter.post('/',
                 success: true,
                 username: user.username,
                 id: user.id,
+                isAdmin: user.isAdmin,
                 jwt: jwt.sign({
                     id: user.id,
                     username: user.username,

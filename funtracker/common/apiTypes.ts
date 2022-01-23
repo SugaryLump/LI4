@@ -29,7 +29,7 @@ export interface API extends APIDef {
                 jwt: string
                 username: string
                 id: number
-                is_admin: boolean
+                isAdmin: boolean
             }>
         }
     },
@@ -59,6 +59,45 @@ export interface API extends APIDef {
                 username: string
             },
             res: APIResponse<{}>
+        }
+    },
+
+    // Estabelecimentos
+    '/estabelecimento': {
+        POST: {
+            req: {
+                nome: string,
+                lotacao: number,
+                gamaPreco: '$' | '$$' | '$$$',
+                morada: string,
+                coordenadas: {
+                    latitude: string,
+                    longitude: string
+                },
+                horarioAbertura: string,
+                horarioFecho: string,
+                contacto: string,
+                categorias: string[],
+                image: File
+            },
+            res: APIResponse<{
+                estabelecimento: {
+                    id: number,
+                    nome: string,
+                    lotacao: number,
+                    rating: number,
+                    gamaPreco: string,
+                    morada: string,
+                    coordenadas: {
+                        latitude: string,
+                        longitude: string
+                    },
+                    contacto: string,
+                    categorias: string[],
+                    horarioAbertura: string,
+                    horarioFecho: string
+                }
+            }>
         }
     }
 }

@@ -31,7 +31,7 @@ export type AppParamList = {
         jwt: string
     },
     Adicionar: {
-        latitude?: number,
-        longitude?: number
+        latitude: number,
+        longitude: number
     }
 }

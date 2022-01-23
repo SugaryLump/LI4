@@ -7,8 +7,10 @@ import * as constants from '../lib/constants'
 import * as Location from 'expo-location'
 import { ScreenStackHeaderBackButtonImage } from 'react-native-screens'
 import MapView from 'react-native-maps'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { AppParamList } from '../routeTypes'
 
-export default function AdicionarMenu({ navigation, route} : any) {
+export default function AdicionarMenu({ navigation, route }: NativeStackScreenProps<AppParamList, 'Adicionar'>) {
     const [imagem, setImagem] = useState('placeholder')
 
     const [nome, setNome] = useState('')
