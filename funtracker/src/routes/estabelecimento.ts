@@ -268,7 +268,7 @@ estabelecimentoRouter.get(
 estabelecimentoRouter.get(
   '/filtros',
   isLoggedIn, hasPermission,
-  oneOf( [
+  oneOf([
     query('order').exists(),
     query('abertos').exists(),
     query('precos').exists(),
@@ -279,9 +279,9 @@ estabelecimentoRouter.get(
       let auxOrder = req.query.order
       let auxPrecos = req.query.precos
 
-     let abertos :boolean = false;
-     let order :Ordem | null = null;
-     let precos : GamaPreco | null = null;
+      let abertos: boolean = false;
+      let order: Ordem | null = null;
+      let precos: GamaPreco | null = null;
 
       if (auxAbertos) {
         abertos = auxAbertos == 'true' || auxAbertos == '1'
