@@ -65,6 +65,7 @@ export interface AuthContextT {
 }
 
 export function newAuthContext(dispatch: React.Dispatch<AuthAction>, state: AuthState): AuthContextT {
+    console.log(state.userToken)
     return {
         username: state.userToken?.username,
         userId: state.userToken?.id,
