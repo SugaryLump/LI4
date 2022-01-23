@@ -43,7 +43,7 @@ const authContext = useAuthContext()
                     e.estabelecimento.gamaPreco,
                     30, //total ratings
                     e.estabelecimento.categorias,
-                    serverUrl + e.estabelecimento.imagem,
+                serverUrl + '/' + e.estabelecimento.imageUrls[0],
                     [0.07, 0.13, 0.20, 0.45, 0.15],
                     e.estabelecimento.contacto,
                     [{ id: 1, nome: "Joberto", text: "épico", rating: 4 }, { id: 2 , nome: "Mauricio", text: "gostoso", rating: 3 }, {id: 3, nome: "Josefina", text: "não poggers", rating: 5 }],
