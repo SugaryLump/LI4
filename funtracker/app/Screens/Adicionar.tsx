@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { createRef, useState } from 'react'
 import { View, ScrollView, TouchableOpacity, Platform, Linking, Dimensions } from 'react-native'
 import { Button, Text, Image, Input, Divider, ButtonGroup, CheckBox } from 'react-native-elements'
 import * as ImagePicker from 'expo-image-picker'
@@ -6,9 +6,10 @@ import DateTimePicker from '@react-native-community/datetimepicker'
 import * as constants from '../lib/constants'
 import * as Location from 'expo-location'
 import { ScreenStackHeaderBackButtonImage } from 'react-native-screens'
-import MapView from 'react-native-maps'
+import MapView, { Marker } from 'react-native-maps'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { AppParamList } from '../routeTypes'
+import { TextInput } from 'react-native-gesture-handler'
 
 export default function AdicionarMenu({ navigation, route }: NativeStackScreenProps<AppParamList, 'Adicionar'>) {
     const [imagem, setImagem] = useState('placeholder')
@@ -31,12 +32,14 @@ export default function AdicionarMenu({ navigation, route }: NativeStackScreenPr
     const [longitude, setLongitude] = useState(route.params?.longitude)
     const [morada, setMorada] = useState('')
 
+    const telefoneRef = createRef<TextInput>()
+
     const pickImage = async () => {
         let newImage = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
-            aspect: [1,1],
-            quality:1
+            aspect: [1, 1],
+            quality: 1
         });
 
         if (!newImage.cancelled) {
@@ -44,7 +47,7 @@ export default function AdicionarMenu({ navigation, route }: NativeStackScreenPr
         }
     }
 
-    const onTimeChange = (event: any, selectedDate: Date|undefined) => {
+    const onTimeChange = (event: any, selectedDate: Date | undefined) => {
         var horaFunc = setAbertura
         var oldHora = abertura
         if (horaMode === 'fecho') {
@@ -63,14 +66,14 @@ export default function AdicionarMenu({ navigation, route }: NativeStackScreenPr
         setLongitude(location.longitude)
     }
 
-    function createMapURL():string {
+    function createMapURL(): string {
         return (
             'https://www.google.com/maps/search/?api=1&query=' + latitude +
-                '%2C' + longitude
+            '%2C' + longitude
         )
     }
 
-    function padTime (time: number): string {
+    function padTime(time: number): string {
         if (time < 10) {
             return '0'.concat(time.toString())
         }
@@ -79,72 +82,78 @@ export default function AdicionarMenu({ navigation, route }: NativeStackScreenPr
         }
     }
 
-    return(
-        <View style={{flex:1, maxWidth:800}}>
-            <ScrollView>
-                <View style={{alignItems:'center', height:200, aspectRatio:1/1, marginTop:10, alignSelf:'center'}}>
-                        <Image 
-                            source={{uri:imagem}}
-                            containerStyle={{flex:1, alignSelf:'stretch'}}
-                        />
-                </View>
-                <View style={{marginHorizontal:15, marginVertical:10}}>
-                    <Button title="Adicionar Imagem" onPress={pickImage}/>
-                </View>
-                <Divider/>
-                <View style={{marginHorizontal:20, marginVertical:15}}>
-                    <Input
-                        placeholder='Nome do estabelecimento'
-                        maxLength={50}
-                        onChangeText={(nome) => setNome(nome)}
-                    />
-                    <Input
-                        placeholder='Telefone'
-                        maxLength={9}
-                        onChangeText={(tlm) => setContacto(tlm)}
-                    />
-                    <View style={{marginHorizontal:15}}>
-                        <CheckBox title='Bar' checked={bar} onPress={() => setBar(!bar)} />
-                        <CheckBox title='Discoteca' checked={disco} onPress={() => setDisco(!disco)} />
-                        <Text style={{ fontSize: 15, padding: 15, }}>Selecione uma gama de preço</Text>
-                        <ButtonGroup
-                            buttons={['Nenhuma', '€', '€€', '€€€']}
-                            selectedIndex={preco}
-                            onPress={(preco) => setPreco(preco)}
-                        />
-                    </View>
-                    <View style={{flexDirection:'row', justifyContent:'center', marginVertical:20}}>
-                        <Text style={{fontSize:18}}>Aberto das </Text>
-                        <TouchableOpacity 
-                            onPress={() => {setHoraMode('abertura');setShowTimePicker(true)}}
-                            activeOpacity={0.5}
-                        >
-                            <Text style={{fontSize:18, color:constants.colors.lightBlue}}>{abertura.getHours()}:{padTime(abertura.getMinutes())}</Text>
-                        </TouchableOpacity>
-                        <Text style={{fontSize:18}}> às </Text>
-                        <TouchableOpacity
-                            onPress={() => {setHoraMode('fecho');setShowTimePicker(true)}}
-                            activeOpacity={0.5}
-                        >
-                            <Text style={{fontSize:18, color:constants.colors.lightBlue}}>{fecho.getHours()}:{padTime(fecho.getMinutes())}</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <Input
-                        placeholder='Morada'
-                        onChangeText={(morada) => setMorada(morada)}
-                        onBlur={atualizaCoordenadas}
-                    />
-                </View>
-                <MapView
-                        style={{height:Dimensions.get('window').height/3, width:Dimensions.get('window').width}}
-                        region={{latitude:latitude, longitude:longitude, latitudeDelta:0.005, longitudeDelta:0.005}}
-                        showsCompass={false}
-                        scrollEnabled={false}
-                        onPress={() => {Linking.openURL(createMapURL())}}
+    return (
+        <View style={{ flex: 1, alignItems: 'center' }}>
+            <ScrollView style={{
+                width: '100%', maxWidth: 800,
+                padding: 15
+            }}>
+                <Image
+                    source={{ uri: imagem }}
+                    containerStyle={{ height: 200, aspectRatio: 1 / 1, alignSelf: 'center' }}
                 />
-                <View style={{marginHorizontal:15, marginVertical:20}}>
-                    <Button title='Submeter'/>
+                <Button title="Adicionar Imagem" onPress={pickImage} />
+                <Divider style={{ marginVertical: 15 }} />
+                <Input
+                    placeholder='Nome do estabelecimento'
+                    maxLength={50}
+                    onChangeText={(nome) => setNome(nome)}
+                    returnKeyType='next'
+                    blurOnSubmit={false}
+                    onSubmitEditing={() => telefoneRef.current?.focus()}
+                />
+                <Input
+                    placeholder='Telefone'
+                    maxLength={9}
+                    onChangeText={(tlm) => setContacto(tlm)}
+                    keyboardType='phone-pad'
+                    ref={telefoneRef}
+                />
+                <CheckBox title='Bar' checked={bar} onPress={() => setBar(!bar)} />
+                <CheckBox title='Discoteca' checked={disco} onPress={() => setDisco(!disco)} />
+                <Text style={{ fontSize: 15, padding: 15, }}>Selecione uma gama de preço</Text>
+                <ButtonGroup
+                    buttons={['Nenhuma', '€', '€€', '€€€']}
+                    selectedIndex={preco}
+                    onPress={(preco) => setPreco(preco)}
+                />
+                <View style={{ flexDirection: 'row', justifyContent: 'center', marginVertical: 20 }}>
+                    <Text style={{ fontSize: 18 }}>Aberto das </Text>
+                    <TouchableOpacity
+                        onPress={() => { setHoraMode('abertura'); setShowTimePicker(true) }}
+                        activeOpacity={0.5}
+                    >
+                        <Text style={{ fontSize: 18, color: constants.colors.lightBlue }}>{abertura.getHours()}:{padTime(abertura.getMinutes())}</Text>
+                    </TouchableOpacity>
+                    <Text style={{ fontSize: 18 }}> às </Text>
+                    <TouchableOpacity
+                        onPress={() => { setHoraMode('fecho'); setShowTimePicker(true) }}
+                        activeOpacity={0.5}
+                    >
+                        <Text style={{ fontSize: 18, color: constants.colors.lightBlue }}>{fecho.getHours()}:{padTime(fecho.getMinutes())}</Text>
+                    </TouchableOpacity>
                 </View>
+                <Input
+                    placeholder='Morada'
+                    onChangeText={(morada) => setMorada(morada)}
+                    onBlur={atualizaCoordenadas}
+                />
+                <MapView
+                    style={{ height: Dimensions.get('window').height / 3 }}
+                    region={{ latitude: latitude ?? 0, longitude: longitude ?? 0, latitudeDelta: 0.005, longitudeDelta: 0.005 }}
+                    showsCompass={false}
+                    scrollEnabled={false}
+                    onPress={() => { Linking.openURL(createMapURL()) }}
+                >
+                    { latitude !== undefined && longitude !== undefined &&
+                        <Marker
+                            coordinate={{ latitude, longitude }}
+                            title={ nome }
+                            description={ nome }
+                        />
+                    }
+                </MapView>
+                <Button title='Submeter' />
             </ScrollView>
             {showTimePicker && (
                 <DateTimePicker
