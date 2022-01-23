@@ -234,7 +234,7 @@ estabelecimentoRouter.post(
 
 estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, hasPermission, async (req, res) => {
   try {
-    return res.status(200).json({success:true, classificacao: await FunTracker.getClassificacoesByEstabelecimentoID(req.body.id)});
+    return res.status(200).json({success:true, classificacoes: await FunTracker.getClassificacoesByEstabelecimentoID(+req.params?.id)});
   } catch {
     return res.status(404).json({
       success: false,
@@ -242,8 +242,9 @@ estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, hasPermission, asyn
     });
   }
 });
+
 estabelecimentoRouter.post(
-  '/:id/avaliar',
+  '/:id/classificacoes',
   isLoggedIn,
   hasPermission,
   body('valor').exists(),
