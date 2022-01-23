@@ -39,7 +39,7 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
     async function fetchLocalNoturno(id: number): Promise<LocalNoturno> {
         let e = await authContext.fetchWithJwt('/estabelecimento/:id/', "GET", {},{id: id})
         let c = await authContext.fetchWithJwt('/estabelecimento/:id/classificacoes', "GET", {},{id: id})
-        let comentarios : {id:number, nome: string, text: string, rating: number}[] = []
+        let comentarios : {id:number, nome: string, text: string|null, rating: number}[] = []
 
         if(c.success) {
             c.classificacoes.map(e => {

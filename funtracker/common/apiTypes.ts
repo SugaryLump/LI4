@@ -1,4 +1,5 @@
 import { AndroidManifest } from "expo-constants"
+import {Classificacao} from "../src/model/Classificacao"
 
 // Tipos para a API
 export type APIResponse<T> = ({
@@ -148,13 +149,7 @@ export interface API extends APIDef {
         GET: {
             req: {},
             res: APIResponse<{
-                classificacao: {
-                    id: number;
-                    valor: number;
-                    comentario: string | null;
-                    estabelecimentoNoturnoId: number;
-                    utilizadorId: number;
-                }
+                classificacoes:  Classificacao[]
             }>
         }
         POST: {
