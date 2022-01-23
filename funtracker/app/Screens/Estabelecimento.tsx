@@ -39,14 +39,20 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
     async function fetchLocalNoturno(id: number): Promise<LocalNoturno> {
         let e = await authContext.fetchWithJwt('/estabelecimento/:id/', "GET", {},{id: id})
         let c = await authContext.fetchWithJwt('/estabelecimento/:id/classificacoes', "GET", {},{id: id})
-        let comentarios : {id:number, nome: string, text: string|null, rating: number}[] = []
+        console.log(c)
+        let comentarios : {id:number, nome: string, text: string, rating: number}[] = []
+
+        let ratings = [0,0,0,0,0]
 
         if(c.success) {
             c.classificacoes.map(e => {
-                console.log(e.comentario)
+                ratings[e.valor-1]++
                 comentarios.push({id: e.id, nome: e.username, text: e.comentario, rating: e.valor})
             })
         }
+
+        const numberRatings =  comentarios.length
+        ratings.forEach(e => e / numberRatings)
 
         if(e.success) {
            return new LocalNoturno(
@@ -54,10 +60,11 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
                     e.estabelecimento.nome,
                     e.estabelecimento.rating,
                     e.estabelecimento.gamaPreco,
-                    30, //total ratings
+                    numberRatings,
                     e.estabelecimento.categorias,
                 serverUrl + '/' + e.estabelecimento.imageUrls[0],
-                    [0.07, 0.13, 0.20, 0.45, 0.15],
+               /* [0.07, 0.13, 0.20, 0.45, 0.15], */
+                    ratings,
                     e.estabelecimento.contacto,
                /* [{ id: 1, nome: "Joberto", text: "épico", rating: 4 }, { id: 2 , nome: "Mauricio", text: "gostoso", rating: 3 }, {id: 3, nome: "Josefina", text: "não poggers", rating: 5 }], */
                     comentarios,
