@@ -80,8 +80,8 @@ export class EstabelecimentoDAO {
     let row = await this.db.get(
       `SELECT estabelecimentos.*, group_concat(filepath) AS filepath, group_concat(categoria) AS categorias
        FROM estabelecimentos
-       INNER JOIN imagens ON imagens.estabelecimento_id = estabelecimentos.id
-       INNER JOIN categorias ON categorias.estabelecimento_id = estabelecimentos.id
+       LEFT JOIN imagens ON imagens.estabelecimento_id = estabelecimentos.id
+       LEFT JOIN categorias ON categorias.estabelecimento_id = estabelecimentos.id
        WHERE estabelecimentos.id = ? 
        GROUP BY imagens.estabelecimento_id`, id);
     console.log(row)
