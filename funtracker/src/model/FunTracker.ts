@@ -154,31 +154,6 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
   }
 
     /* Filtros */
-    static async getEstabelecimentosBySortedCategorias(): Promise<Estabelecimento[]> {
-        return await FunTracker.estabelecimentoDAO.getSortByCategorias()
-    }
-
-    static async getEstabelecimentosBySortedPontuacao(): Promise<Estabelecimento[]> {
-        return await FunTracker.estabelecimentoDAO.getSortByPontuacao()
-    }
-
-    static async getEstabelecimentosBySortedPreco(): Promise<Estabelecimento[]> {
-        return await FunTracker.estabelecimentoDAO.getSortByPrecos()
-    }
-
-    static async getEstabelecimentosAbertos(): Promise<Estabelecimento[]> {
-        return await FunTracker.estabelecimentoDAO.getOpenEstabelecimentos()
-    }
-
-    static async getEstabelecimentosByGamaPreco(gamaPreco: keyof typeof GamaPreco): Promise<Estabelecimento[]> {
-      const preco: GamaPreco = GamaPreco[gamaPreco]
-      if(preco === undefined ) {
-          throw "Gama de Preco inválida"
-      }
-        return await FunTracker.estabelecimentoDAO.getByGamaPreco(preco)
-    }
-
-  //TODO nao sei se funciona
     static async getByFiltros(apenasAbertos: boolean| null, ordem: Ordem | null, gamaPreco: GamaPreco | null, coordenadas: {latitude: string, longitude: string} | null): Promise<Estabelecimento[]> {
         if (ordem === undefined)
           throw "Ordem é inválida"
