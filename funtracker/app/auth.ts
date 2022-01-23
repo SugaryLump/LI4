@@ -65,7 +65,6 @@ export interface AuthContextT {
 }
 
 export function newAuthContext(dispatch: React.Dispatch<AuthAction>, state: AuthState): AuthContextT {
-    console.log(state.userToken)
     return {
         username: state.userToken?.username,
         userId: state.userToken?.id,
@@ -98,15 +97,14 @@ export function newAuthContext(dispatch: React.Dispatch<AuthAction>, state: Auth
                 method,
                 headers: {
                     'Authorization': 'Bearer ' + (token ?? state.userToken?.token),
-                    'Content-Type': 'application/json'
                 }
             }
 
             if (method == 'GET') {
-                realUrl += "?" + new URLSearchParams(body).toString()
+                if (body !== {})
+                    realUrl += "?" + new URLSearchParams(body).toString()
             } else {
                 if (multipart) {
-                    delete reqParams.headers['Content-Type']
                     const formData = new FormData()
 
                     if (body) {
@@ -115,6 +113,7 @@ export function newAuthContext(dispatch: React.Dispatch<AuthAction>, state: Auth
                                 formData.append(key, val.toString())
                             else {
                                 if (val instanceof Blob) {
+                                    console.log("blob")
                                     formData.append(key, val)
                                 } else {
                                     formData.append(key, JSON.stringify(val))
@@ -124,6 +123,7 @@ export function newAuthContext(dispatch: React.Dispatch<AuthAction>, state: Auth
                         reqParams.body = formData
                     }
                 } else {
+                    reqParams.headers['Content-Type'] = 'application/json'
                     reqParams.body = body === undefined ? undefined : JSON.stringify(body)
                 }
             }

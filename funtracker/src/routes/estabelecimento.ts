@@ -1,4 +1,4 @@
-import { Router, Request } from 'express';
+import express, { Router, Request } from 'express';
 import { Estabelecimento, GamaPreco, Ordem } from '../model/Estabelecimento';
 import { body, oneOf, query } from 'express-validator';
 import isLoggedIn from '../middleware/isLoggedIn';
@@ -7,50 +7,41 @@ import { FunTracker } from '../model/FunTracker';
 import { UserJwt, getUser } from '../middleware/isLoggedIn';
 import { KeyObject } from 'crypto';
 import Multer from 'multer'
-import { exists } from 'fs'
-import { mkdir } from 'fs/promises'
+import { existsSync } from 'fs'
+import { mkdir, writeFile } from 'fs/promises'
 import { checkValidation } from '../middleware/checkValidation';
 import { type } from 'os';
 
 const estabelecimentoRouter = Router();
 
-const storage = Multer.diskStorage({
-  destination: (req, file, cb) => {
-    exists('images/', exists => {
-      if (!exists) {
-        mkdir('images/').then(() => {
-          cb(null, 'images/')
-        })
-      } else {
-        cb(null, 'images/')
-      }
-    })
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9)
-    let extension = ""
-    if (file.mimetype == "image/png") {
-      extension = ".png"
-    } else if (file.mimetype == "image/jpeg") {
-      extension = ".jpg"
-    }
-
-    cb(null, file.fieldname + "-" + uniqueSuffix + extension)
+async function getDestination(fileType: string): Promise<string> {
+  if (!existsSync('images/')) {
+    await mkdir('images/')
   }
-})
 
-const upload = Multer({ storage })
+  const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1E9)
+  let extension = ""
+  if (fileType == "image/png") {
+    extension = ".png"
+  } else if (fileType == "image/jpeg") {
+    extension = ".jpg"
+  }
+
+  return "images/image-" + uniqueSuffix + extension
+}
 
 estabelecimentoRouter.post('/',
-  isLoggedIn, isAdmin, upload.single('image'),
+  isLoggedIn, isAdmin,
   body('nome').isString().isLength({ min: 1 }).withMessage("Nome é obrigatório"),
   body('lotacao').isNumeric().withMessage('Lotação tem de ser um número').bail().toInt(), body('gamaPreco').matches(/^(\$|\$\$|\$\$\$)$/).withMessage("Tem de ser entre um a 3 $"),
   body('morada').isString().isLength({ min: 1 }).withMessage('Morada é obrigatória'),
-  body('coordenadas').isJSON().withMessage("Tem de ser objeto coordenadas").bail().customSanitizer(coordenadas => JSON.parse(coordenadas)).isObject(),
+  body('coordenadas').isObject(),
   body('horarioAbertura').isString().withMessage('Horário de abrtura é obrigatório'),
   body('horarioFecho').isString().withMessage('Horário de fecho é obrigatório'),
   body('contacto').isString().withMessage('Contacto é obrigatório').isLength({ min: 9, max: 9 }),
-  body('categorias').isJSON().bail().customSanitizer((categorias: string) => JSON.parse(categorias)).isArray().withMessage('Categorias deve ser um array'),
+  body('categorias').isArray().withMessage("Categorias tem de ser um array"),
+  body('image').exists().withMessage("Imagem tem de ser um array base64"),
+  body('fileMime').isMimeType(),
   checkValidation, async (req, res) => {
     try {
       const estab: Estabelecimento = await FunTracker.criaEstabelecimento(
@@ -65,6 +56,10 @@ estabelecimentoRouter.post('/',
         req.body.horarioFecho,
         req.body.contacto,
       );
+
+      let fileName = await getDestination(req.body.fileMime)
+      await writeFile(fileName, req.body.image, 'base64')
+
       return res.status(200).json({
         success: true,
         estabelecimento: estab

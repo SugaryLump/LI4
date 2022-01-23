@@ -1,15 +1,15 @@
 import React, { createRef, useState } from 'react'
 import { View, ScrollView, TouchableOpacity, Platform, Linking, Dimensions } from 'react-native'
-import { Button, Text, Image, Input, Divider, ButtonGroup, CheckBox } from 'react-native-elements'
+import { Button, Text, Image, Input, Divider, ButtonGroup, CheckBox, colors } from 'react-native-elements'
 import * as ImagePicker from 'expo-image-picker'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import * as constants from '../lib/constants'
 import * as Location from 'expo-location'
-import { ScreenStackHeaderBackButtonImage } from 'react-native-screens'
 import MapView, { Marker } from 'react-native-maps'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { AppParamList } from '../routeTypes'
 import { TextInput } from 'react-native-gesture-handler'
+import { useAuthContext } from '../hooks'
 
 export default function AdicionarMenu({ navigation, route }: NativeStackScreenProps<AppParamList, 'Adicionar'>) {
     const [imagem, setImagem] = useState('placeholder')
@@ -34,19 +34,33 @@ export default function AdicionarMenu({ navigation, route }: NativeStackScreenPr
     const [longitude, setLongitude] = useState(route.params?.longitude)
     const [morada, setMorada] = useState('')
 
+    const [imageBase64, setImageBase64] = useState<string | null>()
+    const [imageMime, setImageMime] = useState<string | null>()
+
+    const [errorMessage, setErrorMessage] = useState('')
+
     const telefoneRef = createRef<TextInput>()
     const lotacaoRef = createRef<TextInput>()
+
+    const authContext = useAuthContext()
 
     const pickImage = async () => {
         let newImage = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [1, 1],
-            quality: 1
+            quality: 1,
+            base64: true,
         });
 
         if (!newImage.cancelled) {
             setImagem(newImage.uri);
+            setImageBase64(newImage.base64)
+            if (newImage.uri.endsWith('.png')) {
+                setImageMime('image/png')
+            } else if (newImage.uri.endsWith('.jpeg') || newImage.uri.endsWith('.jpg')) {
+                setImageMime('image/jpeg')
+            }
         }
     }
 
@@ -85,8 +99,38 @@ export default function AdicionarMenu({ navigation, route }: NativeStackScreenPr
         }
     }
 
-    const submeter = () => {
-        // TODO
+    const submeter = async () => {
+        let categorias: string[] = []
+
+        if (bar) categorias.push("Bar")
+        if (disco) categorias.push("Disco")
+
+        try {
+            let res = await authContext.fetchWithJwt('/estabelecimento', 'POST', {
+                nome,
+                lotacao: +lotacao,
+                gamaPreco: '$'.repeat(preco + 1) as '$' | '$$' | '$$$',
+                categorias,
+                horarioAbertura: abertura.getHours() + ":" + abertura.getMinutes(),
+                horarioFecho: fecho.getHours() + ":" + fecho.getMinutes(),
+                contacto,
+                image: imageBase64!,
+                coordenadas: {
+                    latitude: latitude?.toString() ?? "0",
+                    longitude: longitude?.toString() ?? "0"
+                },
+                morada,
+                fileMime: imageMime!
+            })
+
+            if (res.success) {
+                navigation.replace('Estabelecimento', { id: res.estabelecimento.id })
+            } else {
+                setErrorMessage(res.errors[0])
+            }
+        } catch (e) {
+            console.log("????")
+        }
     }
 
     return (
@@ -169,6 +213,7 @@ export default function AdicionarMenu({ navigation, route }: NativeStackScreenPr
                         />
                     }
                 </MapView>
+                { errorMessage !== '' && <Text style={{ color: colors.error }}>{ errorMessage }</Text>}
                 <Button title='Adicionar' onPress={submeter} disabled={imagem === 'placeholder' || nome === '' || contacto === '' || lotacao === '' || (!bar && !disco) || morada == '' || latitude === undefined || longitude === undefined}/>
                 <View style={{ height: 25 }}>
                     {/* Hacky, mas o marginBottom não está a funcionar no submeter for some reason, por isso serve para espaçar o fundo */}

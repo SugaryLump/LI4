@@ -24,7 +24,7 @@ export default async function (): Promise<Application> {
   app.use(express.static('imagens'))
 
   // Permite suportar requests com JSON
-  app.use(express.json())
+  app.use(express.json({ limit: '50mb' }))
 
   // Permite que os requests venham de outras origens
   app.use(cors())

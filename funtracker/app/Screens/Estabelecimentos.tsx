@@ -100,7 +100,7 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
 
         navigation.setOptions({
             headerRight: () => (
-                <Popup.Menu onSelect={onSelect}>
+                <Popup.Menu onSelect={onSelect} >
                     <Popup.MenuTrigger>
                         <View style={{ paddingVertical: 10, paddingHorizontal: 20 }}>
                             <Text style={{ fontSize: 25, fontWeight: 'bold' }}>⋮</Text>
