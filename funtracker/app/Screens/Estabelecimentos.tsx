@@ -21,25 +21,6 @@ class LocalNoturno {
     ) { }
 }
 
-export function fetchEstabelecimentos(aberto: boolean, disco: boolean, bar: boolean, ordem: number, nome: string): LocalNoturno[] {
-    //Fazer o fetch da pesquisa aqui, tendo em conta que se o nome não for null
-    //temos de fazer um get(nome) (nem é pesquisa, é mesmo só ir buscar o
-    //local com esse nome)
-
-    //Resultado false temporário
-    let locais = [(new LocalNoturno(0, 'Taberna Linda', 4, '€', 32, ['Bar'], 'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-    (new LocalNoturno(1, 'Taberna Linda', 4, '€', 32, ['Bar'], 'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-    (new LocalNoturno(2, 'Taberna Linda', 4, '€', 32, ['Bar'], 'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-    (new LocalNoturno(3, 'Taberna Linda', 4, '€', 32, ['Bar'], 'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-    (new LocalNoturno(4, 'Taberna Linda', 4, '€', 32, ['Bar'], 'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-    (new LocalNoturno(5, 'Taberna Linda', 4, '€', 32, ['Bar'], 'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-    (new LocalNoturno(6, 'Taberna Linda', 4, '€', 32, ['Bar'], 'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-    (new LocalNoturno(7, 'Taberna Linda', 4, '€', 32, ['Bar'], 'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-    (new LocalNoturno(8, 'Taberna Linda', 4, '€', 32, ['Bar'], 'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-    (new LocalNoturno(9, 'Taberna Linda', 4, '€', 32, ['Bar'], 'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg')),
-    (new LocalNoturno(10, 'Taberna Linda', 4, '€', 32, ['Bar'], 'https://i.pinimg.com/originals/98/ba/48/98ba48c230f378e064a02ec15c3b7227.jpg'))]
-    return locais;
-}
 
 export const EstabelecimentosMenu = ({ navigation, route }: any) => {
     const [location, setLocation] = useState({} as Location.LocationObject)
@@ -48,7 +29,19 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
     const [debug, setDebug] = useState(0)
 
     const authContext = useAuthContext()
-    
+
+async function fetchEstabelecimentos(aberto: boolean, disco: boolean, bar: boolean, ordem: number, nome: string): Promise<LocalNoturno[]> {
+        // Atualizar a lista
+        let filtros = {} // TODO
+        let r = await authContext.fetchWithJwt('/estabelecimento', 'GET', filtros)
+            if (r.success) {
+                // TODO: Incluir o total de ratings
+                return r.estabelecimentos.map(e => new LocalNoturno(e.id, e.nome, e.rating, e.gamaPreco, 0, e.categorias, e.imageUrls[0]))
+            }
+            else {
+                throw "Erro obter locais"
+            }
+}
 
     //Search
     useEffect(() => {
@@ -58,13 +51,13 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
             navigation.setParams({
                 searched: true
             })
-            let locais: LocalNoturno[] =
                 fetchEstabelecimentos(route.params?.aberto,
                     route.params?.boolean,
                     route.params?.bar,
                     route.params?.order,
-                    route.params?.nome);
-            setEstabelecimentos(locais);
+                    route.params?.nome).then((arr) => {
+                         setEstabelecimentos(arr);
+                    }).catch(e => console.log(e))
         }
     });
 
@@ -123,14 +116,6 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
         })
 
         // Atualizar a lista
-        let filtros = {} // TODO
-        authContext.fetchWithJwt('/estabelecimento', 'GET', filtros).then(r => {
-            if (r.success) {
-                // TODO: Incluir o total de ratings
-                let locais = r.estabelecimentos.map(e => new LocalNoturno(e.id, e.nome, e.rating, e.gamaPreco, 0, e.categorias, e.imageUrls[0]))
-                setEstabelecimentos(locais)
-            }
-        })
     }, [])
 
     const updateLocation = async () => {
