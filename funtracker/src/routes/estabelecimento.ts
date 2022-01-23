@@ -100,7 +100,7 @@ estabelecimentoRouter.get('/',
 
     if(auxAbertos === undefined && auxOrder === undefined && auxPrecos === undefined){
       const estab: Estabelecimento[] = await FunTracker.getEstabelecimentos()
-      return res.status(200).json(estab)
+      return res.status(200).json({success: true, estabelecimentos: estab})
     }
 
     let abertos: boolean = false;
@@ -230,6 +230,7 @@ estabelecimentoRouter.post(
       let newClassificacao = await FunTracker.avaliar(+req.body.valor, req.body.comentario, +req.params?.id, user.id)
       return res.status(200).json({ success: true, classificacao: newClassificacao })
     } catch(e) {
+      console.log(e)
       return res.status(400).json({
         success: false,
         errors: [e]

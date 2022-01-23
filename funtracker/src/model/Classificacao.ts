@@ -27,6 +27,7 @@ export class ClassificacaoDAO {
     if ( await this.db.exists("avaliacoes", "estabelecimento_id = ? AND user_id = ?", estabelecimentoNoturnoId,utilizadorId) ) {
             throw "Avaliação já existe"
     }
+
     let {username} = await this.db.get('SELECT username FROM utilizadores WHERE id = ?', utilizadorId)
 
     let id = await this.db.run(
