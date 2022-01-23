@@ -78,7 +78,7 @@ export interface API extends APIDef {
                 horarioFecho: string,
                 contacto: string,
                 categorias: string[],
-                image: File
+                image: Blob
             },
             res: APIResponse<{
                 estabelecimento: {

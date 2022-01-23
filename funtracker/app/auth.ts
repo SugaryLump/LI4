@@ -60,7 +60,7 @@ export interface AuthContextT {
     newUsername: (username: string) => void
 
     fetchWithJwt: <Path extends keyof API, Method extends Extract<keyof API[Path], string>, Body extends API[Path][Method]["req"], Reply extends API[Path][Method]["res"]>(
-        url: Extract<Path, string>, method: Method, body?: Body, params?: { [s: string]: number | string }, token?: string
+        url: Extract<Path, string>, method: Method, body?: Body, params?: { [s: string]: number | string }, token?: string, multipart?: boolean
     ) => Promise<Reply>
 }
 
@@ -86,21 +86,49 @@ export function newAuthContext(dispatch: React.Dispatch<AuthAction>, state: Auth
             dispatch({ type: 'NEW_USERNAME', username })
         },
 
-        fetchWithJwt: async (url, method, body, params, token) => {
+        fetchWithJwt: async (url, method, body, params, token, multipart) => {
             let realUrl = url as string
             if (params !== undefined) {
                 for (let [key, val] of Object.entries(params)) {
                     realUrl = realUrl.replace(":" + key, params[key].toString())
                 }
             }
-            let res = await fetch(serverUrl + "/api/v1" + realUrl, {
-                method: method,
-                body: body === undefined ? undefined : JSON.stringify(body),
+
+            let reqParams: any = {
+                method,
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + (token ?? state.userToken?.token)
+                    'Authorization': 'Bearer ' + (token ?? state.userToken?.token),
+                    'Content-Type': 'application/json'
                 }
-            })
+            }
+
+            if (method == 'GET') {
+                realUrl += "?" + new URLSearchParams(body).toString()
+            } else {
+                if (multipart) {
+                    delete reqParams.headers['Content-Type']
+                    const formData = new FormData()
+
+                    if (body) {
+                        for (let [key, val] of Object.entries(body)) {
+                            if (typeof val === 'string' || typeof val === 'number')
+                                formData.append(key, val.toString())
+                            else {
+                                if (val instanceof Blob) {
+                                    formData.append(key, val)
+                                } else {
+                                    formData.append(key, JSON.stringify(val))
+                                }
+                            }
+                        }
+                        reqParams.body = formData
+                    }
+                } else {
+                    reqParams.body = body === undefined ? undefined : JSON.stringify(body)
+                }
+            }
+
+            let res = await fetch(serverUrl + "/api/v1" + realUrl, reqParams)
 
             let json = await res.json()
 
