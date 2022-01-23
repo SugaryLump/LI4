@@ -379,7 +379,7 @@ estabelecimentoRouter.get(
 estabelecimentoRouter.delete(
   '/:id',
   isLoggedIn,
-  hasPermission,
+  isAdmin,
   async (req, res) => {
     try {
       const n = +req.params.id
@@ -390,7 +390,7 @@ estabelecimentoRouter.delete(
         });
       }
         await FunTracker.removeEstabelecimentoByID(n)
-        return res.status(200).json(`Estabelecimento com ID ${req.params.id} removido`)
+      return res.status(200).json({success: true, id: `Estabelecimento com ID ${req.params.id} removido`})
     } catch {
       return res.status(404).json({
         success: false,

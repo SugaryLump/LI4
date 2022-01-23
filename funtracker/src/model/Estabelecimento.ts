@@ -77,6 +77,7 @@ export class EstabelecimentoDAO {
   async getByID(id: number): Promise<Estabelecimento> {
     return await this.db.get('SELECT * from estabelecimentos where id = ?', id);
   }
+
   async removeByID(id: number): Promise<boolean> {
     return (await this.db.run('DELETE from estabelecimentos where id = ?', id)).changes == 1;
   }

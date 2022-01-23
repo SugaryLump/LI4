@@ -106,4 +106,8 @@ export class UserDAO {
             isAdmin
         }
     }
+
+    async removeByID(id: number): Promise<boolean> {
+        return (await this.db.run('DELETE from utilizadores where id = ?', id)).changes == 1;
+    }
 }

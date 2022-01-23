@@ -5,7 +5,6 @@ import { body, query, validationResult} from 'express-validator';
 import {FunTracker} from '../model/FunTracker';
 import isLoggedIn from '../middleware/isLoggedIn';
 import {hasPermission, isAdmin, isSpecial} from '../middleware/hasPermission';
-import jwt from 'jsonwebtoken'
 import { checkValidation } from '../middleware/checkValidation';
 
 const usersRouter = Router();
@@ -136,7 +135,7 @@ usersRouter.patch(
   },
 );
 
-usersRouter.get('/all', isLoggedIn, isAdmin, async (req, res) => {
+usersRouter.get('/', isLoggedIn, isAdmin, async (req, res) => {
     try {
       let users = await FunTracker.getAllUsers()
       let allSimpleUsers = users.map(c => ({
@@ -202,5 +201,28 @@ usersRouter.get('/:id/historico', isLoggedIn, hasPermission, async (req, res) =>
     });
   }
 });
+
+usersRouter.delete(
+  '/:id',
+  isLoggedIn,
+  isAdmin,
+  async (req, res) => {
+    try {
+      const n = +req.params.id
+      if (isNaN(n)) {
+        return res.status(400).json({
+          success: false,
+          errors: ["Invalid ID"],
+        });
+      }
+        await FunTracker.removeUserByID(n)
+      return res.status(200).json({success:true , id: `Utilizador com ID ${req.params.id} removido`})
+    } catch {
+      return res.status(404).json({
+        success: false,
+        errors: ["Não Existe Nenhum Utilizador com esse ID"],
+      });
+    }
+  })
 
 export default usersRouter;
