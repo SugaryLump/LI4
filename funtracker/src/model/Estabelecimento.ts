@@ -328,8 +328,14 @@ export class EstabelecimentoDAO {
 
     if(order != null) {
       switch(order) {
-          case(Ordem.Precos): query += 'ORDER BY precos ASC'
-          case(Ordem.Criticas): query += 'ORDER BY pontuacao DESC'
+          case Ordem.Precos: {
+            query += 'ORDER BY precos ASC'
+            break;
+          }
+          case Ordem.Criticas: {
+            query += 'ORDER BY pontuacao DESC'
+            break;
+          }
           // TODO localizacao
       }
     }
