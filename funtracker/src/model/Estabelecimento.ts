@@ -298,8 +298,11 @@ export class EstabelecimentoDAO implements IEstabelecimentoDAO {
     if (gamaPreco!=null) {
       if (number != 0)
         query += ' AND '
-      else
+      else{
+
         query += ' WHERE '
+        number++
+      }
 
       query += ' precos=? '
       resul.push(gamaPreco)
