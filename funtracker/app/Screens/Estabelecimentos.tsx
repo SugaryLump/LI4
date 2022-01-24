@@ -191,7 +191,7 @@ export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenPro
                             <CardText text='•' />
                             <CardText text={JSON.stringify(item.totalRatings).concat(' críticas')} />
                             <CardText text='•' />
-                            <CardText text={item.gamaPreco} />
+                            <CardText text={item.gamaPreco.split('$').join('€')} />
                         </View>
                         <CardText text={item.categorias.join('   •   ')} />
                     </View>
