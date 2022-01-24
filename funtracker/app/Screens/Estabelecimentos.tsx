@@ -46,6 +46,8 @@ export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenPro
             switch (ordem) {
                 case 1:
                     filtros.order = 'Proximidade'
+                    filtros.latitude = location.coords.latitude.toString()
+                    filtros.longitude = location.coords.longitude.toString()
                     break;
                 case 2:
                     filtros.order = 'Precos'
@@ -142,7 +144,7 @@ export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenPro
             )
         })
 
-        // Atualizar a lista
+        return () => {}
     }, [])
 
     const updateLocation = async () => {
@@ -150,9 +152,6 @@ export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenPro
         if (permission.granted) {
             let location = await Location.getCurrentPositionAsync();
             setLocation(location);
-            return;
-        }
-        else {
         }
     }
 

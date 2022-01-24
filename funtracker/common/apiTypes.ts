@@ -127,6 +127,8 @@ export interface API extends APIDef {
                 order?: 'Proximidade' | 'Precos' | 'Criticas',
                 precos?: '$' | '$$' | '$$$',
                 nome?: string
+                latitude?: string
+                longitude?: string
             },
             res: APIResponse<{
                 estabelecimentos: {
