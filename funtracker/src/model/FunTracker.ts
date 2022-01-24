@@ -144,6 +144,10 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
     return FunTracker.classificacaoDAO.getClassificacoesByEstabelecimentoId(estabelecimentoId);
   }
 
+  static async getClassificacoesNumByEstabelecimentoID(estabelecimentoId: number) {
+    return FunTracker.estabelecimentoDAO.numberClassificacoes(estabelecimentoId);
+  }
+
     /* Imagens */
   static async adicionarImagen(estabelecimentoId: number, filepath: string): Promise<Imagem> {
       return FunTracker.imagemDAO.addImagem(estabelecimentoId, filepath)

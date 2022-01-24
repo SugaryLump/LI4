@@ -16,12 +16,11 @@ export class Estabelecimento {
   public horarioAbertura: Date = new Date()
   public horarioFecho: Date = new Date()
   public imageUrls: string[] = []
+  public numberRatings: number = 0
   // caller must increment numberRatings
   updateRating(newRating: number, numberRatings: number): number {
     const sum: number = this.rating * numberRatings;
-    return (this.rating = (sum + newRating) / (numberRatings + 1));
-  }
-
+    return (this.rating = (sum + newRating) / (numberRatings + 1));}
   setCategorias(categorias: string[]) {
     this.categorias = categorias
   }
@@ -74,6 +73,10 @@ export class EstabelecimentoDAO {
     return rating;
   }
 
+  async numberClassificacoes(id: number): Promise<number> {
+    return await this.countClassificacoes(id);
+  }
+
   private async countClassificacoes(estabelecimentoId: number): Promise<number> {
       let row = await this.db.get("SELECT COUNT(*) as count FROM avaliacoes where  estabelecimento_id = ? ", estabelecimentoId)
       return row.count;
@@ -92,6 +95,9 @@ export class EstabelecimentoDAO {
     const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, GamaPreco[row.precos], row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)
     est.imageUrls = imagens
     est.setCategorias(row.categorias.split(","))
+    est.numberRatings = await this.countClassificacoes(id)
+    est.setHorarioAbertura(row.horario_abertura)
+    est.setHorarioFecho(row.horario_fecho)
     return est
   }
 
@@ -107,12 +113,16 @@ export class EstabelecimentoDAO {
        FROM estabelecimentos
        LEFT JOIN imagens ON imagens.estabelecimento_id = estabelecimentos.id
        LEFT JOIN categorias ON categorias.estabelecimento_id = estabelecimentos.id
-       GROUP BY imagens.estabelecimento_id`, [], (row: any) => {
+       GROUP BY imagens.estabelecimento_id`, [],(row: any) => {
        const coords: string[] = row.coordenadas.split(";")
        const imagens: string[] = row.filepath.split(",")
        const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, GamaPreco[row.precos], row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)
        est.imageUrls = imagens
        est.setCategorias(row.categorias.split(","))
+       est.setHorarioAbertura(row.horario_abertura)
+       est.setHorarioFecho(row.horario_fecho)
+       // TODO
+           // est.numberRatings = await this.countClassificacoes(est.id)
        estabelecimentos.push(est)
     });
 
@@ -270,6 +280,7 @@ export class EstabelecimentoDAO {
        const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, GamaPreco[row.precos], row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)
        est.imageUrls = imagens
        est.setCategorias(row.categorias.split(","))
+       //est.numberRatings = await this.countClassificacoes(est.id)
        estabelecimentos.push(est)
     });
 

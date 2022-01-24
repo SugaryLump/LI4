@@ -43,11 +43,9 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
         let comentarios : {id:number, nome: string, text: string|null, rating: number}[] = []
 
         let ratings = [0,0,0,0,0]
-        let sum = 0;
 
         if(c.success) {
             c.classificacoes.map(e => {
-                sum += e.valor
                 ratings[5 - e.valor]++
                 comentarios.push({id: e.id, nome: e.username, text: e.comentario, rating: e.valor})
             })
@@ -62,7 +60,8 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
                     e.estabelecimento.nome,
                     e.estabelecimento.rating,
                     e.estabelecimento.gamaPreco,
-                    numberRatings,
+                    e.estabelecimento.numberRatings,
+               /* numberRatings, */
                     e.estabelecimento.categorias,
                 serverUrl + '/' + e.estabelecimento.imageUrls[0],
                     ratings,

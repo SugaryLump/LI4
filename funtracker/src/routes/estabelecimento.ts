@@ -153,7 +153,7 @@ estabelecimentoRouter.get('/',
 estabelecimentoRouter.get(
   '/:id/allImagens',
   isLoggedIn,
-  hasPermission,
+  // hasPermission,
   async (req, res) => {
     let allImagens = await FunTracker.getAllImagensByEstabelecimentoID(+req.params?.id);
 
@@ -207,9 +207,22 @@ estabelecimentoRouter.post(
   },
 );
 
-estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, async (req, res) => {
+estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, // hasPermission,
+                          async (req, res) => {
   try {
     return res.status(200).json({success:true, classificacoes: await FunTracker.getClassificacoesByEstabelecimentoID(+req.params?.id)});
+  } catch {
+    return res.status(404).json({
+      success: false,
+      errors: ["Não existem classificações para este estabelecimento"],
+    });
+  }
+});
+
+estabelecimentoRouter.get('/:id/classificacoes/num', isLoggedIn, // hasPermission,
+                          async (req, res) => {
+  try {
+    return res.status(200).json({success:true, num: await FunTracker.getClassificacoesNumByEstabelecimentoID(+req.params?.id)});
   } catch {
     return res.status(404).json({
       success: false,
