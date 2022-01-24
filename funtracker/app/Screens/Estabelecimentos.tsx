@@ -46,8 +46,8 @@ export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenPro
             switch (ordem) {
                 case 1:
                     filtros.order = 'Proximidade'
-                    filtros.latitude = location.coords.latitude.toString()
-                    filtros.longitude = location.coords.longitude.toString()
+                    filtros.latitude = location.coords?.latitude.toString() ?? 0
+                    filtros.longitude = location.coords?.longitude.toString() ?? 0
                     break;
                 case 2:
                     filtros.order = 'Precos'
@@ -57,10 +57,11 @@ export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenPro
                     break;
             }
         }
-        if (route.params.searched) filtros.nome = nome
+        if (route.params.nome !== undefined && route.params.nome !== '') filtros.nome = nome
 
         let r = await authContext.fetchWithJwt('/estabelecimento', 'GET', filtros)
         if (r.success) {
+            setError('')
             return r.estabelecimentos.map(e => {
                 return new LocalNoturno(e.id, e.nome, +e.rating.toFixed(1), e.gamaPreco, e.numberRatings, e.categorias, serverUrl + "/" + e.imageUrls[0])
             })
@@ -199,12 +200,12 @@ export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenPro
         )
     }
 
+    if (error !== '')
+        return <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
+            <Text style={{ color: colors.error, textAlign: 'center' }}>{ error }</Text>
+        </View>
     if (estabelecimentos === undefined)
         return <LoadingMenu />
-    if (error !== '')
-        return <View style={{ alignItems: 'center', flex: 1}}>
-            <Text style={{ color: colors.error }}>{ error }</Text>
-        </View>
 
     return (
         <View style={{
