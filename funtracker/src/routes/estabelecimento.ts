@@ -100,7 +100,7 @@ estabelecimentoRouter.get('/',
     let auxPrecos = req.query.precos
     let auxCategorias = req.query.categorias
 
-    if(auxAbertos === undefined && auxOrder === undefined && auxPrecos === undefined){
+    if(auxAbertos === undefined && auxOrder === undefined && auxPrecos === undefined && auxCategorias===undefined){
       const estab: Estabelecimento[] = await FunTracker.getEstabelecimentos()
       return res.status(200).json({success: true, estabelecimentos: estab})
     }
@@ -128,9 +128,10 @@ estabelecimentoRouter.get('/',
     }
 
     if (auxCategorias) {
-      let categorias = []
+      categorias = []
       auxCategorias.toString().split(",").forEach(e => {
-        categorias.push(Categoria[e as keyof typeof Categoria])
+        if (categorias!= null)
+          categorias.push(Categoria[e as keyof typeof Categoria])
       })
     }
 
