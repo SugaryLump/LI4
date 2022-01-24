@@ -19,7 +19,7 @@ class LocalNoturno {
         public imagem: string,
         public percentRatingsByGrade: number[], //[0.07,0.13,0.20,0.45,0.15] por exemplo
         public contacto: string, //telemóvel
-        public criticas: { id:number, nome: string, text: string, rating: number }[],
+        public criticas: { id:number, nome: string, text: string|null, rating: number }[],
         public abertura: string,
         public fecho: string,
         public latitude: number,
@@ -40,7 +40,7 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
         let e = await authContext.fetchWithJwt('/estabelecimento/:id/', "GET", {},{id: id})
         let c = await authContext.fetchWithJwt('/estabelecimento/:id/classificacoes', "GET", {},{id: id})
         /* console.log(c) */
-        let comentarios : {id:number, nome: string, text: string, rating: number}[] = []
+        let comentarios : {id:number, nome: string, text: string|null, rating: number}[] = []
 
         let ratings = [0,0,0,0,0]
         let sum = 0;
@@ -54,18 +54,13 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
         }
 
         const numberRatings =  comentarios.length
-        let rating = sum/numberRatings
-        console.log(rating)
-        if (numberRatings == 0)
-            rating = 0
         ratings.forEach(e => e / numberRatings)
 
         if(e.success) {
            return new LocalNoturno(
                     e.estabelecimento.id,
                     e.estabelecimento.nome,
-                    rating,
-               /* e.estabelecimento.rating, */
+                    e.estabelecimento.rating,
                     e.estabelecimento.gamaPreco,
                     numberRatings,
                     e.estabelecimento.categorias,

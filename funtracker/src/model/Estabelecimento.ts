@@ -70,12 +70,13 @@ export class EstabelecimentoDAO {
     let numberRatings: number = await this.countClassificacoes(estabelecimentoId);
     const sum: number = estabelecimento.rating * numberRatings;
     const rating  =  (sum + valor) / (numberRatings + 1);
-    await this.db.run("UPDATE estabelecimentos SET `pontuacao` = ? WHERE `id` = ?", estabelecimentoId)
+    await this.db.run("UPDATE estabelecimentos SET pontuacao = ? WHERE id = ?", rating,estabelecimentoId)
     return rating;
   }
 
   private async countClassificacoes(estabelecimentoId: number): Promise<number> {
-    return await this.db.get('SELECT COUNT(*) from avaliacoes where estabelecimento_id = ?', estabelecimentoId);
+      let row = await this.db.get("SELECT COUNT(*) as count FROM avaliacoes where  estabelecimento_id = ? ", estabelecimentoId)
+      return row.count;
   }
 
   async getByID(id: number): Promise<Estabelecimento> {
@@ -84,7 +85,7 @@ export class EstabelecimentoDAO {
        FROM estabelecimentos
        LEFT JOIN imagens ON imagens.estabelecimento_id = estabelecimentos.id
        LEFT JOIN categorias ON categorias.estabelecimento_id = estabelecimentos.id
-       WHERE estabelecimentos.id = ? 
+       WHERE estabelecimentos.id = ?
        GROUP BY imagens.estabelecimento_id`, id);
     const coords: string[] = row.coordenadas.split(";")
     const imagens: string[] = row.filepath.split(",")

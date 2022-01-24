@@ -207,7 +207,7 @@ estabelecimentoRouter.post(
   },
 );
 
-estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, hasPermission, async (req, res) => {
+estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, async (req, res) => {
   try {
     return res.status(200).json({success:true, classificacoes: await FunTracker.getClassificacoesByEstabelecimentoID(+req.params?.id)});
   } catch {
@@ -228,6 +228,7 @@ estabelecimentoRouter.post(
     try {
       const user: UserJwt = getUser(req);
       let newClassificacao = await FunTracker.avaliar(+req.body.valor, req.body.comentario, +req.params?.id, user.id)
+        console.log(newClassificacao)
       return res.status(200).json({ success: true, classificacao: newClassificacao })
     } catch(e) {
       console.log(e)
