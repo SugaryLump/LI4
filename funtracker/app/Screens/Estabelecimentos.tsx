@@ -61,9 +61,8 @@ export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenPro
 
         let r = await authContext.fetchWithJwt('/estabelecimento', 'GET', filtros)
         if (r.success) {
-            // TODO: Incluir o total de ratings
             return r.estabelecimentos.map(e => {
-                return new LocalNoturno(e.id, e.nome, e.rating, e.gamaPreco, e.numberRatings, e.categorias, serverUrl + "/" + e.imageUrls[0])
+                return new LocalNoturno(e.id, e.nome, +e.rating.toFixed(1), e.gamaPreco, e.numberRatings, e.categorias, serverUrl + "/" + e.imageUrls[0])
             })
         }
         else {
