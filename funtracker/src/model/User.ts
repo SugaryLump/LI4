@@ -8,7 +8,19 @@ export type User = {
     isAdmin: boolean
 }
 
-export class UserDAO {
+export interface IUserDAO {
+    createUser(username: string, password: string): Promise<User>
+    createAdmin(username: string, password: string): Promise<User>
+    login(username: string, password: string): Promise<User>
+    changePassword(userId: number, newPassword: string): Promise<void>
+    changeUsername(userId: number, newUsername: string): Promise<void>
+    isAdmin(userId: number): Promise<boolean>
+    allUsers(): Promise<User[]>
+    getById(userId: number): Promise<User>
+    removeByID(id: number): Promise<boolean>
+}
+
+export class UserDAO implements IUserDAO {
     private readonly db: PromisedDatabase
 
     constructor(db: PromisedDatabase) {

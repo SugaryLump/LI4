@@ -8,14 +8,20 @@ export class Imagem {
     ){}
 }
 
-export class ImagensDAO {
+export interface IImagensDAO {
+    addImagem(estabelecimentoId: number, filepath: string): Promise<Imagem>
+    getAllByEstabelecimentoID(estabelecimetoId: number): Promise<Imagem[]>
+    removeByEstabelecimentoId(estabelecimentoId: number): Promise<boolean>
+}
+
+export class ImagensDAO implements IImagensDAO {
     constructor(
         private readonly db: PromisedDatabase
-    ) {}
+    ) { }
 
     // TODO Temos q verificar se o id de estabelecimento tem q ser validado antes ??
     async addImagem(estabelecimentoId: number, filepath: string): Promise<Imagem> {
-        if ( await this.db.exists("imagens", "filepath = ?", filepath) ) {
+        if (await this.db.exists("imagens", "filepath = ?", filepath)) {
             throw "Imagem já existe"
         }
         let r = await this.db.run("INSERT INTO imagens (estabelecimento_id, filepath) VALUES (?, ?)", estabelecimentoId, filepath)
@@ -36,7 +42,7 @@ export class ImagensDAO {
         }));
     }
 
-  async removeByEstabelecimentoId(estabelecimentoId: number): Promise<boolean> {
-      return (await this.db.run('DELETE from imagens where estabelecimento_id = ?', estabelecimentoId)).changes == 1
-  }
+    async removeByEstabelecimentoId(estabelecimentoId: number): Promise<boolean> {
+        return (await this.db.run('DELETE from imagens where estabelecimento_id = ?', estabelecimentoId)).changes == 1
+    }
 }
