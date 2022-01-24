@@ -106,6 +106,28 @@ export class EstabelecimentoDAO {
     return (await this.db.run('DELETE from estabelecimentos where id = ?', id)).changes == 1;
   }
 
+  async getByName(name: string): Promise<Estabelecimento[]> {
+    let estabelecimentos: Estabelecimento[] = []
+    await this.db.each(
+      `SELECT estabelecimentos.*, group_concat(filepath) AS filepath, group_concat(categoria) AS categorias, COUNT(a.user_id) AS nCriticas
+       FROM estabelecimentos
+       LEFT JOIN imagens ON imagens.estabelecimento_id = estabelecimentos.id
+       LEFT JOIN categorias ON categorias.estabelecimento_id = estabelecimentos.id
+       LEFT JOIN avaliacoes a ON estabelecimentos.id = a.estabelecimento_id
+       WHERE estabelecimentos.nome = ?
+       GROUP BY imagens.estabelecimento_id`, [name], (row: any) => {
+      const coords: string[] = row.coordenadas.split(";")
+      const imagens: string[] = row.filepath.split(",")
+      const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, GamaPreco[row.precos], row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)
+      est.imageUrls = imagens
+      est.setCategorias(row.categorias.split(","))
+      est.setHorarioAbertura(row.horario_abertura)
+      est.setHorarioFecho(row.horario_fecho)
+      est.numberRatings = row.nCriticas
+      estabelecimentos.push(est)
+       });
+    return estabelecimentos
+  }
 
   async getAll(): Promise<Estabelecimento[]> {
     let estabelecimentos: Estabelecimento[] = []
@@ -247,9 +269,7 @@ export class EstabelecimentoDAO {
       resul.push(gamaPreco)
     }
 
-    console.log("categorias + "+ categorias)
     if (categorias!=null) {
-      console.log("caralho q ta foda")
       if (number != 0)
         query += ' AND '
       else
@@ -264,7 +284,6 @@ export class EstabelecimentoDAO {
         first = false
         query += ' \"' + Categoria[e] +'\"'
       })
-      // resul.push(categorias)
       query += ')  '
     }
 

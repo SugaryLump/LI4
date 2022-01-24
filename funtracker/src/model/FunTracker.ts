@@ -97,6 +97,10 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
           }
   }
 
+  static async getEstabelecimentoByName(name: string): Promise<Estabelecimento[]> {
+      return FunTracker.estabelecimentoDAO.getByName(name)
+  }
+
   static async getEstabelecimentoByID(id: number): Promise<Estabelecimento> {
       return FunTracker.estabelecimentoDAO.getByID(id)
   }
