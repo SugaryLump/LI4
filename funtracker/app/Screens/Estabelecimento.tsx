@@ -3,7 +3,7 @@ import { ScrollView, View, FlatList, useWindowDimensions, Dimensions, Linking } 
 import { useAuthContext } from '../hooks'
 import { serverUrl } from '../lib/constants'
 import { AirbnbRating, LinearProgress, Image, Text, Button } from 'react-native-elements'
-import MapView from 'react-native-maps'
+import MapView, { Marker } from 'react-native-maps'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { AppParamList } from '../routeTypes'
 import { useFocusEffect } from '@react-navigation/native'
@@ -215,7 +215,14 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
                                 '%2C' +
                                 estabelecimento.longitude)
                         }}
+                    >
+                    <Marker
+                        coordinate={{ latitude: +estabelecimento.latitude, longitude: +estabelecimento.longitude }}
+                        title={ estabelecimento.nome }
+                        description={ estabelecimento.nome }
                     />
+
+                    </MapView>
                 </View>
                 <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
                     <Button title='Avaliar' onPress={() => navigation.navigate({ name: 'Avaliar', params: { id: estabelecimento.id } })} />
