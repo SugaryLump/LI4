@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useLayoutEffect, useCallback } from 'react'
 import { serverUrl } from '../lib/constants'
 import { View, FlatList, TouchableOpacity, Dimensions } from 'react-native'
-import { AirbnbRating, Image, Text, Button } from 'react-native-elements'
+import { AirbnbRating, Image, Text, Button, colors } from 'react-native-elements'
 import { useFocusEffect } from '@react-navigation/native'
 import * as Location from 'expo-location'
 import * as Popup from 'react-native-popup-menu'
@@ -28,13 +28,12 @@ class LocalNoturno {
 
 export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenProps<AppParamList, 'Estabelecimentos'>) => {
     const [location, setLocation] = useState({} as Location.LocationObject)
-    const [locationMessage, setLocationMessage] = useState('A obter localização')
+    const [error, setError] = useState('')
     const [estabelecimentos, setEstabelecimentos] = useState<LocalNoturno[] | undefined>(undefined)
-    const [debug, setDebug] = useState(0)
 
     const authContext = useAuthContext()
 
-    async function fetchEstabelecimentos(aberto: boolean, disco: boolean, bar: boolean, ordem: number, nome: string): Promise<LocalNoturno[]> {
+    async function fetchEstabelecimentos(aberto: boolean, disco: boolean, bar: boolean, ordem: number, nome: string): Promise<LocalNoturno[] | undefined> {
         // Atualizar a lista
         let filtros: API['/estabelecimento']['GET']['req'] = {} // TODO
         if (aberto) filtros.aberto = true
@@ -62,20 +61,17 @@ export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenPro
         if (r.success) {
             // TODO: Incluir o total de ratings
             return r.estabelecimentos.map(e => {
-                console.log("imagem: " + e.imageUrls[0])
-                console.log("rating: " + e.rating)
                 return new LocalNoturno(e.id, e.nome, e.rating, e.gamaPreco, e.numberRatings, e.categorias, serverUrl + "/" + e.imageUrls[0])
             })
         }
         else {
-            throw "Erro obter locais"
+            setError(r.errors[0])
         }
     }
 
     //Search
     useFocusEffect(useCallback(() => {
         if (!route.params?.searched) {
-            setDebug(debug + 1)
             updateLocation()
             navigation.setParams({
                 searched: true
@@ -154,11 +150,9 @@ export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenPro
         if (permission.granted) {
             let location = await Location.getCurrentPositionAsync();
             setLocation(location);
-            setLocationMessage(JSON.stringify(location.coords));
             return;
         }
         else {
-            setLocationMessage('Permissão de localização recusada');
         }
     }
 
@@ -211,6 +205,10 @@ export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenPro
 
     if (estabelecimentos === undefined)
         return <LoadingMenu />
+    if (error !== '')
+        return <View style={{ alignItems: 'center', flex: 1}}>
+            <Text style={{ color: colors.error }}>{ error }</Text>
+        </View>
 
     return (
         <View style={{
