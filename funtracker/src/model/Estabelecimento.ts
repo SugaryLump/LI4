@@ -134,12 +134,18 @@ export class EstabelecimentoDAO {
   async getAll(): Promise<Estabelecimento[]> {
     let estabelecimentos: Estabelecimento[] = []
     await this.db.each(
-      `SELECT estabelecimentos.*, group_concat(filepath) AS filepath, group_concat(categoria) AS categorias, COUNT(a.user_id) AS nCriticas
-       FROM estabelecimentos
-       LEFT JOIN imagens ON imagens.estabelecimento_id = estabelecimentos.id
-       LEFT JOIN categorias ON categorias.estabelecimento_id = estabelecimentos.id
-       LEFT JOIN avaliacoes a ON estabelecimentos.id = a.estabelecimento_id
-       GROUP BY imagens.estabelecimento_id`, [], (row: any) => {
+`SELECT estabelecimentos.*,
+        (SELECT group_concat(categoria) FROM categorias WHERE categorias.estabelecimento_id = estabelecimentos.id) AS categorias,
+        (SELECT group_concat(filepath) FROM imagens WHERE imagens.estabelecimento_id = estabelecimentos.id) AS filepath,
+        (SELECT COUNT(*) FROM categorias WHERE categorias.estabelecimento_id = estabelecimentos.id) AS nCriticas
+        FROM estabelecimentos`
+      // `SELECT estabelecimentos.*, group_concat(filepath) AS filepath, group_concat(categoria) AS categorias, COUNT(a.user_id) AS nCriticas
+      //  FROM estabelecimentos
+      //  LEFT JOIN imagens ON imagens.estabelecimento_id = estabelecimentos.id
+      //  LEFT JOIN categorias ON categorias.estabelecimento_id = estabelecimentos.id
+      //  LEFT JOIN avaliacoes a ON estabelecimentos.id = a.estabelecimento_id
+       // GROUP BY imagens.estabelecimento_id`
+, [], (row: any) => {
       const coords: string[] = row.coordenadas.split(";")
       const imagens: string[] = row.filepath.split(",")
       const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, GamaPreco[row.precos], row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)
@@ -247,6 +253,7 @@ export class EstabelecimentoDAO {
     let proximidade = false
     let resul: any[] = [];
     let query =
+
       `SELECT estabelecimentos.*, group_concat(filepath) AS filepath, group_concat(categoria) AS categorias, COUNT(a.user_id) AS nCriticas
        FROM estabelecimentos
        LEFT JOIN imagens ON imagens.estabelecimento_id = estabelecimentos.id
