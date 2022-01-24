@@ -122,7 +122,11 @@ export interface API extends APIDef {
         },
         'GET': {
             req: {
-                // TODO
+                categorias?: string, // Separada por vírgulas
+                aberto?: boolean,
+                order?: 'Proximidade' | 'Precos' | 'Criticas',
+                precos?: '$' | '$$' | '$$$',
+                nome?: string
             },
             res: APIResponse<{
                 estabelecimentos: {

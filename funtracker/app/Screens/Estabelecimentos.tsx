@@ -9,6 +9,9 @@ import { Divider } from 'react-native-elements/dist/divider/Divider'
 import { Coordinate } from 'react-native-maps'
 import { useAuthContext } from '../hooks'
 import { LoadingMenu } from './LoadingMenu'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { AppParamList } from '../routeTypes'
+import { API } from '../../common/apiTypes'
 
 class LocalNoturno {
     constructor(
@@ -23,7 +26,7 @@ class LocalNoturno {
 }
 
 
-export const EstabelecimentosMenu = ({ navigation, route }: any) => {
+export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenProps<AppParamList, 'Estabelecimentos'>) => {
     const [location, setLocation] = useState({} as Location.LocationObject)
     const [locationMessage, setLocationMessage] = useState('A obter localização')
     const [estabelecimentos, setEstabelecimentos] = useState<LocalNoturno[] | undefined>(undefined)
@@ -33,7 +36,28 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
 
     async function fetchEstabelecimentos(aberto: boolean, disco: boolean, bar: boolean, ordem: number, nome: string): Promise<LocalNoturno[]> {
         // Atualizar a lista
-        let filtros = {} // TODO
+        let filtros: API['/estabelecimento']['GET']['req'] = {} // TODO
+        if (aberto) filtros.aberto = true
+        let categorias = []
+        if (bar) categorias.push('Bar')
+        if (disco) categorias.push('Discoteca')
+        if (categorias.length > 0) filtros.categorias = categorias.join(',')
+        if (route.params.preco > 0) filtros.precos = '$'.repeat(route.params.preco) as '$' | '$$' | '$$$'
+        if (ordem > 0) {
+            switch (ordem) {
+                case 1:
+                    filtros.order = 'Proximidade'
+                    break;
+                case 2:
+                    filtros.order = 'Precos'
+                    break;
+                case 3:
+                    filtros.order = 'Criticas'
+                    break;
+            }
+        }
+        if (nome) filtros.nome = nome
+
         let r = await authContext.fetchWithJwt('/estabelecimento', 'GET', filtros)
         if (r.success) {
             // TODO: Incluir o total de ratings
@@ -57,10 +81,10 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
                 searched: true
             })
             fetchEstabelecimentos(route.params?.aberto,
-                route.params?.boolean,
-                route.params?.bar,
-                route.params?.order,
-                route.params?.nome).then((arr) => {
+                route.params.disco,
+                route.params.bar,
+                route.params.ordem,
+                route.params.nome ?? '').then((arr) => {
                     setEstabelecimentos(arr);
                 }).catch(e => console.log(e))
         }
