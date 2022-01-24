@@ -63,7 +63,8 @@ export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenPro
         if (r.success) {
             setError('')
             return r.estabelecimentos.map(e => {
-                return new LocalNoturno(e.id, e.nome, +e.rating.toFixed(1), e.gamaPreco, e.numberRatings, e.categorias, serverUrl + "/" + e.imageUrls[0])
+                let categorias = [...new Set(e.categorias)]
+                return new LocalNoturno(e.id, e.nome, +e.rating.toFixed(1), e.gamaPreco, e.numberRatings, categorias, serverUrl + "/" + e.imageUrls[0])
             })
         }
         else {

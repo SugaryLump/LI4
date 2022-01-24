@@ -277,11 +277,11 @@ export class EstabelecimentoDAO implements IEstabelecimentoDAO {
     let proximidade = false
     let resul: any[] = [];
     let query =
-      `SELECT estabelecimentos.*,
-          (SELECT group_concat(categoria) FROM categorias WHERE categorias.estabelecimento_id = estabelecimentos.id) AS categorias,
-          (SELECT group_concat(filepath) FROM imagens WHERE imagens.estabelecimento_id = estabelecimentos.id) AS filepath,
-          (SELECT COUNT(*) FROM categorias WHERE categorias.estabelecimento_id = estabelecimentos.id) AS nCriticas
-       FROM estabelecimentos `
+      `SELECT estabelecimentos.*, group_concat(filepath) AS filepath, group_concat(categoria) AS categorias, COUNT(a.user_id) AS nCriticas
+       FROM estabelecimentos
+       LEFT JOIN imagens ON imagens.estabelecimento_id = estabelecimentos.id
+       LEFT JOIN categorias ON categorias.estabelecimento_id = estabelecimentos.id
+       LEFT JOIN avaliacoes a ON estabelecimentos.id = a.estabelecimento_id `
     let number = 0
     if (apenasAbertos != null && apenasAbertos) {
       number++
