@@ -31,7 +31,7 @@ async function getDestination(fileType: string): Promise<string> {
 }
 
 estabelecimentoRouter.post('/',
-  //isLoggedIn, isAdmin,
+  isLoggedIn, isAdmin,
   body('nome').isString().isLength({ min: 1 }).withMessage("Nome é obrigatório"),
   body('lotacao').isNumeric().withMessage('Lotação tem de ser um número').bail().toInt(), body('gamaPreco').matches(/^(\$|\$\$|\$\$\$)$/).withMessage("Tem de ser entre um a 3 $"),
   body('morada').isString().isLength({ min: 1 }).withMessage('Morada é obrigatória'),
@@ -171,7 +171,6 @@ estabelecimentoRouter.get('/',
 estabelecimentoRouter.get(
   '/:id/allImagens',
   isLoggedIn,
-  // hasPermission,
   async (req, res) => {
     let allImagens = await FunTracker.getAllImagensByEstabelecimentoID(+req.params?.id);
 
@@ -225,7 +224,7 @@ estabelecimentoRouter.post(
   },
 );
 
-estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, // hasPermission,
+estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn,
                           async (req, res) => {
   try {
     return res.status(200).json({success:true, classificacoes: await FunTracker.getClassificacoesByEstabelecimentoID(+req.params?.id)});
@@ -237,7 +236,7 @@ estabelecimentoRouter.get('/:id/classificacoes', isLoggedIn, // hasPermission,
   }
 });
 
-estabelecimentoRouter.get('/:id/classificacoes/num', isLoggedIn, // hasPermission,
+estabelecimentoRouter.get('/:id/classificacoes/num', isLoggedIn,
                           async (req, res) => {
   try {
     return res.status(200).json({success:true, num: await FunTracker.getClassificacoesNumByEstabelecimentoID(+req.params?.id)});
