@@ -6,8 +6,8 @@ import { AirbnbRating, LinearProgress, Image, Text, Button } from 'react-native-
 import MapView from 'react-native-maps'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { AppParamList } from '../routeTypes'
-import { HeaderBackButton } from '@react-navigation/elements'
 import { useFocusEffect } from '@react-navigation/native'
+import { LoadingMenu } from './LoadingMenu'
 
 class LocalNoturno {
     constructor(
@@ -85,7 +85,7 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
             navigation.setOptions({ title: est.nome })
         }).catch(e => console.log(e))
 
-        return () => {}
+        return () => { }
     }, []))
 
     const RatingPercentageBar = (props: { percentage: number }) => {
@@ -129,9 +129,10 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
     }
 
 
+    if (estabelecimento === undefined)
+        return <LoadingMenu />
     return (
-    <View style={{ flex: 1 }}>
-        {estabelecimento === undefined ? <Text> Loading... </Text> :
+        <View style={{ flex: 1 }}>
             <ScrollView>
                 <View style={{ alignItems: 'center', height: 200, aspectRatio: 1 / 1, marginTop: 10, alignSelf: 'center' }}>
                     <Image
@@ -226,7 +227,6 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
                     ) : null}
                 </View>
             </ScrollView>
-        }
-    </View>
-)
+        </View>
+    )
 }
