@@ -25,7 +25,7 @@ export default async function migrate(db: PromisedDatabase) {
 
     await db.createTable('categorias', true,
         'estabelecimento_id INTEGER NOT NULL',
-        'categoria STRING NOT NULL',
+        'categoria VARCHAR(50) NOT NULL',
         'FOREIGN KEY(estabelecimento_id) REFERENCES estabelecimentos(id)',
         'PRIMARY KEY (estabelecimento_id, categoria)'
     )
