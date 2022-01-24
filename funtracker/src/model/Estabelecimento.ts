@@ -242,14 +242,6 @@ export class EstabelecimentoDAO {
       query += ' precos=? '
     }
 
-    if (gamaPreco!=null) {
-      if (number != 0)
-        query += ' AND '
-      else
-        query += ' WHERE '
-
-      query += ' precos=? '
-    }
 
     if (categorias!=null) {
       if (number != 0)
@@ -284,7 +276,7 @@ export class EstabelecimentoDAO {
 
     // console.log(query)
     let resul: any[] = [];
-    if (apenasAbertos != null && gamaPreco != null && apenasAbertos && categorias) {
+    if (apenasAbertos != null && gamaPreco != null && apenasAbertos && categorias!=null) {
       console.log("1")
       resul = [data, gamaPreco, categorias]
     } else if (apenasAbertos != null && gamaPreco != null && apenasAbertos) {
@@ -305,7 +297,7 @@ export class EstabelecimentoDAO {
     let estabelecimentos: Estabelecimento[] = []
     await this.db.each(query
       , resul, async (row: any) => {
-        console.log(row)
+        // console.log(row)
         const coords: string[] = row.coordenadas.split(";")
         const imagens: string[] = row.filepath.split(",")
         const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, GamaPreco[row.precos], row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)
