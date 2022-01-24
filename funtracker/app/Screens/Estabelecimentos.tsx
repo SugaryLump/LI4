@@ -72,19 +72,17 @@ export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenPro
 
     //Search
     useFocusEffect(useCallback(() => {
-        if (!route.params?.searched) {
-            updateLocation()
-            navigation.setParams({
-                searched: true
-            })
-            fetchEstabelecimentos(route.params?.aberto,
-                route.params.disco,
-                route.params.bar,
-                route.params.ordem,
-                route.params.nome ?? '').then((arr) => {
-                    setEstabelecimentos(arr);
-                }).catch(e => console.log(e))
-        }
+        updateLocation()
+        navigation.setParams({
+            searched: true
+        })
+        fetchEstabelecimentos(route.params?.aberto,
+            route.params.disco,
+            route.params.bar,
+            route.params.ordem,
+            route.params.nome ?? '').then((arr) => {
+                setEstabelecimentos(arr);
+            }).catch(e => console.log(e))
 
         return () => {}
     }, []));
