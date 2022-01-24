@@ -11,7 +11,14 @@ export type Classificacao = {
   username: string;
 };
 
-export class ClassificacaoDAO {
+export interface IClassificacaoDAO {
+  createClassificacao(valor: number, comentario: string | null, estabelecimentoNoturnoId: number, utilizadorId: number): Promise<Classificacao>
+  getClassificacoesByUserID(userID: number): Promise<Classificacao[]>
+  getClassificacoesByEstabelecimentoId(estabelecimentoID: number): Promise<Classificacao[]>
+  removeByEstabelecimentoId(estabelecimentoId: number): Promise<boolean>
+}
+
+export class ClassificacaoDAO implements IClassificacaoDAO {
   private readonly db: PromisedDatabase;
 
   constructor(db: PromisedDatabase) {

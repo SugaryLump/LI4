@@ -61,7 +61,37 @@ export enum Ordem {
   Precos,
 }
 
-export class EstabelecimentoDAO {
+export interface IEstabelecimentoDAO {
+  avaliar(valor: number, estabelecimentoId: number): Promise<number>
+  numberClassificacoes(id: number): Promise<number>
+  getByID(id: number): Promise<Estabelecimento>
+  removeByID(id: number): Promise<boolean>
+  getByName(name: string): Promise<Estabelecimento[]>
+  getAll(): Promise<Estabelecimento[]>
+  cria(
+    nome: string,
+    lotacao: number,
+    rating: number,
+    gamaPreco: GamaPreco,
+    categorias: Categoria[],
+    morada: string,
+    coordenadas: { latitude: string; longitude: string },
+    horarioAbertura: Date,
+    horarioFecho: Date,
+    contacto: string,
+  ): Promise<Estabelecimento>
+  adicionarCategoria(categoria: Categoria, estabelecimento_id: number): Promise<{ categoria: Categoria, estabelecimento_id: number }>
+  getByFiltros(
+      apenasAbertos: boolean | null,
+      order: Ordem | null,
+      gamaPreco: GamaPreco | null,
+      coordenadas: { latitude: string, longitude: string } | null,
+      categorias: Categoria[] | null
+  ): Promise<Estabelecimento[]>
+  orderByProximidade(estabelecimento: Estabelecimento, coord: { latitude: string, longitude: string }): number
+}
+
+export class EstabelecimentoDAO implements IEstabelecimentoDAO {
   constructor(private readonly db: PromisedDatabase) { }
 
   async avaliar(valor: number, estabelecimentoId: number): Promise<number> {
