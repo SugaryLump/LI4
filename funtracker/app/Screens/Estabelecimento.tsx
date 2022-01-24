@@ -52,7 +52,7 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
         }
 
         const numberRatings = comentarios.length
-        ratings.forEach(e => e / numberRatings)
+        ratings = ratings.map(e => e / numberRatings)
 
         if (e.success) {
             return new LocalNoturno(
@@ -61,7 +61,6 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
                 e.estabelecimento.rating,
                 e.estabelecimento.gamaPreco,
                 e.estabelecimento.numberRatings,
-                /* numberRatings, */
                 e.estabelecimento.categorias,
                 serverUrl + '/' + e.estabelecimento.imageUrls[0],
                 ratings,
@@ -86,7 +85,7 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
 
     }, [route.params?.id])
 
-    const RatingPercentageBar = (props: any) => {
+    const RatingPercentageBar = (props: { percentage: number }) => {
         return (
             <LinearProgress
                 value={props.percentage}
@@ -170,7 +169,7 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
                         {estabelecimento.criticas.map((critica, index) => {
                             return (
                                 <View style={{ marginBottom: 30 }} key={index}>
-                                    <Text style={{ marginLeft: 2, fontSize: 15, color: '#000' }}>{critica.nome}</Text>
+                                    <Text style={{ marginLeft: 2, fontSize: 16, color: '#000' }}>{critica.nome}</Text>
                                     <AirbnbRating
                                         isDisabled
                                         defaultRating={critica.rating}
@@ -218,10 +217,7 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
                     <Button title='Avaliar' onPress={() => navigation.navigate({ name: 'Avaliar', params: { id: estabelecimento.id } })} />
                     {authContext.isAdmin ? (
                         <Button title='Eliminar Estabelecimento' containerStyle={{ marginTop: 10 }} titleStyle={{ color: 'red' }} buttonStyle={{ borderColor: 'red' }}
-
-
                             onPress={removerEstabelecimento}
-
                         />
 
                     ) : null}
