@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react'
+import React, { useState, useEffect, useLayoutEffect, useCallback } from 'react'
 import { ScrollView, View, FlatList, useWindowDimensions, Dimensions, Linking } from 'react-native'
 import { useAuthContext } from '../hooks'
 import { serverUrl } from '../lib/constants'
@@ -7,6 +7,7 @@ import MapView from 'react-native-maps'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { AppParamList } from '../routeTypes'
 import { HeaderBackButton } from '@react-navigation/elements'
+import { useFocusEffect } from '@react-navigation/native'
 
 class LocalNoturno {
     constructor(
@@ -52,7 +53,8 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
         }
 
         const numberRatings = comentarios.length
-        ratings = ratings.map(e => e / numberRatings)
+        if (numberRatings > 0)
+            ratings = ratings.map(e => e / numberRatings)
 
         if (e.success) {
             return new LocalNoturno(
@@ -77,13 +79,14 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
         }
     }
 
-    useEffect(() => {
+    useFocusEffect(useCallback(() => {
         fetchLocalNoturno(route.params?.id).then((est) => {
             setEstabelecimento(est)
             navigation.setOptions({ title: est.nome })
         }).catch(e => console.log(e))
 
-    }, [route.params?.id])
+        return () => {}
+    }, []))
 
     const RatingPercentageBar = (props: { percentage: number }) => {
         return (

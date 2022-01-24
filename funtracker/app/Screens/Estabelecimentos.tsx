@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react'
+import React, { useState, useEffect, useLayoutEffect, useCallback } from 'react'
 import { serverUrl } from '../lib/constants'
 import { View, FlatList, TouchableOpacity, Dimensions } from 'react-native'
 import { AirbnbRating, Image, Text, Button } from 'react-native-elements'
@@ -49,7 +49,7 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
     }
 
     //Search
-    useEffect(() => {
+    useFocusEffect(useCallback(() => {
         if (!route.params?.searched) {
             setDebug(debug + 1)
             updateLocation()
@@ -64,7 +64,9 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
                     setEstabelecimentos(arr);
                 }).catch(e => console.log(e))
         }
-    });
+
+        return () => {}
+    }, []));
 
     useLayoutEffect(() => {
         const MyMenuOption = (props: any) => {
@@ -210,8 +212,6 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
                 <Divider style={{ marginVertical: 15 }} />
 
                 <Button title='Atualizar Localização' onPress={() => updateLocation()} />
-                <Text>{locationMessage}</Text>
-                <Text>{debug}</Text>
             </View>
         </View>
     )

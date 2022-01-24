@@ -19,18 +19,20 @@ export const FiltrosMenu = ({ navigation, route }: NativeStackScreenProps<AppPar
             <View style={{ flex: 0.1, marginHorizontal: 15, marginVertical: 10 }}>
                 <Button
                     title='Ok'
-                    onPress={() => navigation.navigate({
-                        name: 'Estabelecimentos',
-                        params: {
-                            bar,
-                            disco,
-                            aberto,
-                            ordem,
-                            nome: undefined,
-                            preco:preco,
-                            searched: false,
-                        },
-                        merge: true,
+                    onPress={() => navigation.reset({
+                        index: 0,
+                        routes: [{
+                            name: 'Estabelecimentos',
+                            params: {
+                                bar,
+                                disco,
+                                aberto,
+                                ordem,
+                                nome: undefined,
+                                preco: preco,
+                                searched: false,
+                            }
+                        }]
                     })}
                 />
             </View>
