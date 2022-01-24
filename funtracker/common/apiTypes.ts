@@ -140,7 +140,8 @@ export interface API extends APIDef {
                     lotacao: number,
                     morada: string,
                     nome: string,
-                    rating: number
+                    rating: number,
+                    numberRatings: number
                 }[]
             }>
         }

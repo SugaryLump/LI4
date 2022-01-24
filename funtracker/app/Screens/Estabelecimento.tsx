@@ -19,7 +19,7 @@ class LocalNoturno {
         public imagem: string,
         public percentRatingsByGrade: number[], //[0.07,0.13,0.20,0.45,0.15] por exemplo
         public contacto: string, //telemóvel
-        public criticas: { id:number, nome: string, text: string|null, rating: number }[],
+        public criticas: { id: number, nome: string, text: string | null, rating: number }[],
         public abertura: string,
         public fecho: string,
         public latitude: number,
@@ -29,7 +29,7 @@ class LocalNoturno {
 
 
 export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProps<AppParamList, 'Estabelecimento'>) => {
-    const [estabelecimento, setEstabelecimento] = useState<LocalNoturno|undefined>(undefined)
+    const [estabelecimento, setEstabelecimento] = useState<LocalNoturno | undefined>(undefined)
     const [error, setError] = useState('')
 
 
@@ -37,51 +37,51 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
 
     //Pedir ao server o local pelo seu id
     async function fetchLocalNoturno(id: number): Promise<LocalNoturno> {
-        let e = await authContext.fetchWithJwt('/estabelecimento/:id/', "GET", {},{id: id})
-        let c = await authContext.fetchWithJwt('/estabelecimento/:id/classificacoes', "GET", {},{id: id})
+        let e = await authContext.fetchWithJwt('/estabelecimento/:id/', "GET", {}, { id: id })
+        let c = await authContext.fetchWithJwt('/estabelecimento/:id/classificacoes', "GET", {}, { id: id })
         /* console.log(c) */
-        let comentarios : {id:number, nome: string, text: string|null, rating: number}[] = []
+        let comentarios: { id: number, nome: string, text: string | null, rating: number }[] = []
 
-        let ratings = [0,0,0,0,0]
+        let ratings = [0, 0, 0, 0, 0]
 
-        if(c.success) {
+        if (c.success) {
             c.classificacoes.map(e => {
                 ratings[5 - e.valor]++
-                comentarios.push({id: e.id, nome: e.username, text: e.comentario, rating: e.valor})
+                comentarios.push({ id: e.id, nome: e.username, text: e.comentario, rating: e.valor })
             })
         }
 
-        const numberRatings =  comentarios.length
+        const numberRatings = comentarios.length
         ratings.forEach(e => e / numberRatings)
 
-        if(e.success) {
-           return new LocalNoturno(
-                    e.estabelecimento.id,
-                    e.estabelecimento.nome,
-                    e.estabelecimento.rating,
-                    e.estabelecimento.gamaPreco,
-                    e.estabelecimento.numberRatings,
-               /* numberRatings, */
-                    e.estabelecimento.categorias,
+        if (e.success) {
+            return new LocalNoturno(
+                e.estabelecimento.id,
+                e.estabelecimento.nome,
+                e.estabelecimento.rating,
+                e.estabelecimento.gamaPreco,
+                e.estabelecimento.numberRatings,
+                /* numberRatings, */
+                e.estabelecimento.categorias,
                 serverUrl + '/' + e.estabelecimento.imageUrls[0],
-                    ratings,
-                    e.estabelecimento.contacto,
-                    comentarios,
-                    e.estabelecimento.horarioAbertura,
-                    e.estabelecimento.horarioFecho,
-                    e.estabelecimento.coordenadas.latitude,
-                    e.estabelecimento.coordenadas.longitude
-                )
+                ratings,
+                e.estabelecimento.contacto,
+                comentarios,
+                e.estabelecimento.horarioAbertura,
+                e.estabelecimento.horarioFecho,
+                e.estabelecimento.coordenadas.latitude,
+                e.estabelecimento.coordenadas.longitude
+            )
         }
         else {
-           throw "Local Não existe"
+            throw "Local Não existe"
         }
     }
 
     useEffect(() => {
         fetchLocalNoturno(route.params?.id).then((est) => {
-                setEstabelecimento(est)
-                navigation.setOptions({ title: est.nome })
+            setEstabelecimento(est)
+            navigation.setOptions({ title: est.nome })
         }).catch(e => console.log(e))
 
     }, [route.params?.id])
@@ -98,13 +98,13 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
         )
     }
 
-    useLayoutEffect(() => {
-        navigation.setOptions({
-            headerLeft: () => (
-                <HeaderBackButton onPress={() => navigation.navigate({ name: 'Estabelecimentos', params: { searched:false } })}/>
-            )
-        })
-    })
+    // useLayoutEffect(() => {
+    //     navigation.setOptions({
+    //         headerLeft: () => (
+    //             <HeaderBackButton onPress={() => navigation.navigate({ name: 'Estabelecimentos', params: { searched:false } })}/>
+    //         )
+    //     })
+    // })
     /*const AdminButton = () => {
         let admin = true; //Temos de verificar se é admin para mostrar isto ou não
         if (admin) {
@@ -116,11 +116,11 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
             return (<></>)
         }
     }*/
-        const removerEstabelecimento = async () => {
+    const removerEstabelecimento = async () => {
         let result = await authContext.fetchWithJwt('/estabelecimento/:id', 'DELETE', {}, { id: route.params.id })
 
         if (result.success) {
-            navigation.navigate({ name: 'Estabelecimentos', params: { searched:false } })
+            navigation.goBack()
         } else {
             setError('Erro ao remover estabelecimento')
         }
@@ -128,7 +128,7 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
 
 
     return (
-        <View style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
         {estabelecimento === undefined ? <Text> Loading... </Text> :
             <ScrollView>
                 <View style={{ alignItems: 'center', height: 200, aspectRatio: 1 / 1, marginTop: 10, alignSelf: 'center' }}>
@@ -217,10 +217,10 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
                 <View style={{ marginHorizontal: 10, marginVertical: 20 }}>
                     <Button title='Avaliar' onPress={() => navigation.navigate({ name: 'Avaliar', params: { id: estabelecimento.id } })} />
                     {authContext.isAdmin ? (
-                            <Button title='Eliminar Estabelecimento'  containerStyle={{marginTop:10}} titleStyle={{ color: 'red' }} buttonStyle={{ borderColor: 'red' }}
+                        <Button title='Eliminar Estabelecimento' containerStyle={{ marginTop: 10 }} titleStyle={{ color: 'red' }} buttonStyle={{ borderColor: 'red' }}
 
 
-                        onPress={removerEstabelecimento}
+                            onPress={removerEstabelecimento}
 
                         />
 
@@ -228,6 +228,6 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
                 </View>
             </ScrollView>
         }
-        </View>
-    )
+    </View>
+)
 }

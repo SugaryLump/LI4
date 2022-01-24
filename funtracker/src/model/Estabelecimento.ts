@@ -1,4 +1,4 @@
-import { PromisedDatabase  } from 'promised-sqlite3';
+import { PromisedDatabase } from 'promised-sqlite3';
 
 export class Estabelecimento {
   constructor(
@@ -20,7 +20,8 @@ export class Estabelecimento {
   // caller must increment numberRatings
   updateRating(newRating: number, numberRatings: number): number {
     const sum: number = this.rating * numberRatings;
-    return (this.rating = (sum + newRating) / (numberRatings + 1));}
+    return (this.rating = (sum + newRating) / (numberRatings + 1));
+  }
   setCategorias(categorias: string[]) {
     this.categorias = categorias
   }
@@ -68,8 +69,8 @@ export class EstabelecimentoDAO {
     if (estabelecimento == null) throw 'Local Não Encontrado';
     let numberRatings: number = await this.countClassificacoes(estabelecimentoId);
     const sum: number = estabelecimento.rating * numberRatings;
-    const rating  =  (sum + valor) / (numberRatings + 1);
-    await this.db.run("UPDATE estabelecimentos SET pontuacao = ? WHERE id = ?", rating,estabelecimentoId)
+    const rating = (sum + valor) / (numberRatings + 1);
+    await this.db.run("UPDATE estabelecimentos SET pontuacao = ? WHERE id = ?", rating, estabelecimentoId)
     return rating;
   }
 
@@ -78,8 +79,8 @@ export class EstabelecimentoDAO {
   }
 
   private async countClassificacoes(estabelecimentoId: number): Promise<number> {
-      let row = await this.db.get("SELECT COUNT(*) as count FROM avaliacoes where  estabelecimento_id = ? ", estabelecimentoId)
-      return row.count;
+    let row = await this.db.get("SELECT COUNT(*) as count FROM avaliacoes where  estabelecimento_id = ? ", estabelecimentoId)
+    return row.count;
   }
 
   async getByID(id: number): Promise<Estabelecimento> {
@@ -107,23 +108,23 @@ export class EstabelecimentoDAO {
 
 
   async getAll(): Promise<Estabelecimento[]> {
-    let estabelecimentos: Estabelecimento[]  = []
+    let estabelecimentos: Estabelecimento[] = []
     await this.db.each(
-      `SELECT estabelecimentos.*, group_concat(filepath) AS filepath, group_concat(categoria) AS categorias
+      `SELECT estabelecimentos.*, group_concat(filepath) AS filepath, group_concat(categoria) AS categorias, COUNT(a.user_id) AS nCriticas
        FROM estabelecimentos
        LEFT JOIN imagens ON imagens.estabelecimento_id = estabelecimentos.id
        LEFT JOIN categorias ON categorias.estabelecimento_id = estabelecimentos.id
-       GROUP BY imagens.estabelecimento_id`, [],(row: any) => {
-       const coords: string[] = row.coordenadas.split(";")
-       const imagens: string[] = row.filepath.split(",")
-       const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, GamaPreco[row.precos], row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)
-       est.imageUrls = imagens
-       est.setCategorias(row.categorias.split(","))
-       est.setHorarioAbertura(row.horario_abertura)
-       est.setHorarioFecho(row.horario_fecho)
-       // TODO
-           // est.numberRatings = await this.countClassificacoes(est.id)
-       estabelecimentos.push(est)
+       LEFT JOIN avaliacoes a ON estabelecimentos.id = a.estabelecimento_id
+       GROUP BY imagens.estabelecimento_id`, [], (row: any) => {
+      const coords: string[] = row.coordenadas.split(";")
+      const imagens: string[] = row.filepath.split(",")
+      const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, GamaPreco[row.precos], row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)
+      est.imageUrls = imagens
+      est.setCategorias(row.categorias.split(","))
+      est.setHorarioAbertura(row.horario_abertura)
+      est.setHorarioFecho(row.horario_fecho)
+      est.numberRatings = row.nCriticas
+      estabelecimentos.push(est)
     });
 
     return estabelecimentos
@@ -210,7 +211,7 @@ export class EstabelecimentoDAO {
     }
   }
 
-  async getByFiltros(apenasAbertos: boolean | null, order: Ordem | null, gamaPreco: GamaPreco | null, coordenadas: {latitude: string, longitude: string} | null):
+  async getByFiltros(apenasAbertos: boolean | null, order: Ordem | null, gamaPreco: GamaPreco | null, coordenadas: { latitude: string, longitude: string } | null):
     Promise<Estabelecimento[]> {
     if (order == null && apenasAbertos == null)
       throw "Não foram dados filtros"
@@ -219,7 +220,7 @@ export class EstabelecimentoDAO {
        FROM estabelecimentos
        LEFT JOIN imagens ON imagens.estabelecimento_id = estabelecimentos.id
        LEFT JOIN categorias ON categorias.estabelecimento_id = estabelecimentos.id `
-      // 'SELECT * FROM estabelecimentos '
+    // 'SELECT * FROM estabelecimentos '
     let number = 0
     if (apenasAbertos != null && apenasAbertos) {
       number++
@@ -235,7 +236,7 @@ export class EstabelecimentoDAO {
       query += 'precos=?'
     }
 
-    query +=  `GROUP BY imagens.estabelecimento_id `
+    query += `GROUP BY imagens.estabelecimento_id `
 
     if (order != null) {
       switch (order) {
@@ -261,46 +262,46 @@ export class EstabelecimentoDAO {
     let resul: any[] = [];
     if (apenasAbertos != null && gamaPreco != null && apenasAbertos) {
       // console.log("1")
-        resul = [data,gamaPreco]
+      resul = [data, gamaPreco]
     }
     else if (gamaPreco != null && (apenasAbertos == null || !apenasAbertos)) {
       // console.log("2")
-        resul = [gamaPreco]
+      resul = [gamaPreco]
     }
     else if (apenasAbertos != null && apenasAbertos && gamaPreco == null) {
       // console.log("3")
-        resul = [data]
+      resul = [data]
     }
 
-    let estabelecimentos: Estabelecimento[]  = []
-    await this.db.each( query
-      , resul , (row: any) => {
-       const coords: string[] = row.coordenadas.split(";")
-       const imagens: string[] = row.filepath.split(",")
-       const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, GamaPreco[row.precos], row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)
-       est.imageUrls = imagens
-       est.setCategorias(row.categorias.split(","))
-       //est.numberRatings = await this.countClassificacoes(est.id)
-       estabelecimentos.push(est)
-    });
+    let estabelecimentos: Estabelecimento[] = []
+    await this.db.each(query
+      , resul, async (row: any) => {
+        const coords: string[] = row.coordenadas.split(";")
+        const imagens: string[] = row.filepath.split(",")
+        const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, GamaPreco[row.precos], row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)
+        est.imageUrls = imagens
+        est.setCategorias(row.categorias.split(","))
+        est.numberRatings = await this.countClassificacoes(est.id)
+        estabelecimentos.push(est)
+      });
 
     if (proximidade) {
-       if (coordenadas == null || coordenadas === undefined)
-         throw "Coordenadas inválidas"
+      if (coordenadas == null || coordenadas === undefined)
+        throw "Coordenadas inválidas"
       else
-        estabelecimentos = estabelecimentos.sort( e => this.orderByProximidade(e, coordenadas))
+        estabelecimentos = estabelecimentos.sort(e => this.orderByProximidade(e, coordenadas))
     }
 
     return estabelecimentos
   }
 
-  orderByProximidade(estabelecimento: Estabelecimento, coord: { latitude: string, longitude: string },): number{
+  orderByProximidade(estabelecimento: Estabelecimento, coord: { latitude: string, longitude: string },): number {
     const eLatitude = estabelecimento.coordenadas.latitude
     const eLongitude = estabelecimento.coordenadas.longitude
 
     const a = +coord.latitude - +eLatitude
     const b = +coord.longitude - +eLongitude
 
-    return Math.sqrt(a*a + b*b)
+    return Math.sqrt(a * a + b * b)
   }
 }

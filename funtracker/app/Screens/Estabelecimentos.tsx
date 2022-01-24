@@ -31,40 +31,38 @@ export const EstabelecimentosMenu = ({ navigation, route }: any) => {
 
     const authContext = useAuthContext()
 
-async function fetchEstabelecimentos(aberto: boolean, disco: boolean, bar: boolean, ordem: number, nome: string): Promise<LocalNoturno[]> {
+    async function fetchEstabelecimentos(aberto: boolean, disco: boolean, bar: boolean, ordem: number, nome: string): Promise<LocalNoturno[]> {
         // Atualizar a lista
         let filtros = {} // TODO
         let r = await authContext.fetchWithJwt('/estabelecimento', 'GET', filtros)
-            if (r.success) {
-                // TODO: Incluir o total de ratings
-                return r.estabelecimentos.map(e => {
-
-                    console.log("imagem: " +  e.imageUrls[0])
-                    console.log("rating: " +  e.rating)
-                return new LocalNoturno(e.id, e.nome, e.rating, e.gamaPreco, 0, e.categorias, serverUrl + "/"+ e.imageUrls[0])
-                }
-                )
-            }
-            else {
-                throw "Erro obter locais"
-            }
-}
+        if (r.success) {
+            // TODO: Incluir o total de ratings
+            return r.estabelecimentos.map(e => {
+                console.log("imagem: " + e.imageUrls[0])
+                console.log("rating: " + e.rating)
+                return new LocalNoturno(e.id, e.nome, e.rating, e.gamaPreco, e.numberRatings, e.categorias, serverUrl + "/" + e.imageUrls[0])
+            })
+        }
+        else {
+            throw "Erro obter locais"
+        }
+    }
 
     //Search
     useEffect(() => {
         if (!route.params?.searched) {
-            setDebug(debug+1)
+            setDebug(debug + 1)
             updateLocation()
             navigation.setParams({
                 searched: true
             })
-                fetchEstabelecimentos(route.params?.aberto,
-                    route.params?.boolean,
-                    route.params?.bar,
-                    route.params?.order,
-                    route.params?.nome).then((arr) => {
-                         setEstabelecimentos(arr);
-                    }).catch(e => console.log(e))
+            fetchEstabelecimentos(route.params?.aberto,
+                route.params?.boolean,
+                route.params?.bar,
+                route.params?.order,
+                route.params?.nome).then((arr) => {
+                    setEstabelecimentos(arr);
+                }).catch(e => console.log(e))
         }
     });
 
