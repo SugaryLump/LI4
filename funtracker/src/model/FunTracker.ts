@@ -158,11 +158,23 @@ constructor(db: PromisedDatabase) {FunTracker.db = db;
   }
 
     /* Filtros */
-    static async getByFiltros(apenasAbertos: boolean| null, ordem: Ordem | null, gamaPreco: GamaPreco | null, coordenadas: {latitude: string, longitude: string} | null): Promise<Estabelecimento[]> {
+    static async getByFiltros(
+      apenasAbertos: boolean| null,
+      ordem: Ordem | null,
+      gamaPreco: GamaPreco | null,
+      coordenadas: {latitude: string, longitude: string} | null,
+      categorias: Categoria[] | null,
+  ): Promise<Estabelecimento[]> {
         if (ordem === undefined)
           throw "Ordem é inválida"
         if (gamaPreco === undefined)
           throw "GamaPreco é inválida"
-      return await FunTracker.estabelecimentoDAO.getByFiltros(apenasAbertos,ordem,gamaPreco, coordenadas)
+        if(categorias){
+          categorias.forEach(e=> {
+            if (e===undefined)
+              throw "Categoria é inválida"
+          })
+        }
+      return await FunTracker.estabelecimentoDAO.getByFiltros(apenasAbertos,ordem,gamaPreco, coordenadas, categorias)
     }
 }

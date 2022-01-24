@@ -1,5 +1,5 @@
 import express, { Router, Request } from 'express';
-import { Estabelecimento, GamaPreco, Ordem } from '../model/Estabelecimento';
+import { Categoria, Estabelecimento, GamaPreco, Ordem } from '../model/Estabelecimento';
 import { body, oneOf, param, query } from 'express-validator';
 import isLoggedIn from '../middleware/isLoggedIn';
 import { hasPermission, isAdmin } from '../middleware/hasPermission';
@@ -91,12 +91,14 @@ estabelecimentoRouter.get('/',
   query('precos').exists(),
   query('latitude').exists(),
   query('longitude').exists(),
+  query('categorias').exists(),
   // checkValidation(),
   async (req: Request, res) => {
   try {
     let auxAbertos = req.query.abertos
     let auxOrder = req.query.order
     let auxPrecos = req.query.precos
+    let auxCategorias = req.query.categorias
 
     if(auxAbertos === undefined && auxOrder === undefined && auxPrecos === undefined){
       const estab: Estabelecimento[] = await FunTracker.getEstabelecimentos()
@@ -107,6 +109,7 @@ estabelecimentoRouter.get('/',
     let order: Ordem | null = null;
     let precos: GamaPreco | null = null;
     let coords: {latitude:string, longitude: string} | null = null;
+    let categorias: Categoria[] | null = null;
 
     if (auxAbertos) {
       abertos = auxAbertos == 'true' || auxAbertos == '1'
@@ -124,7 +127,14 @@ estabelecimentoRouter.get('/',
       coords = {latitude: req.query.latitude as string , longitude: req.query.longitude as string}
     }
 
-    let estabelecimentos = await FunTracker.getByFiltros(abertos, order, precos, coords)
+    if (auxCategorias) {
+      let categorias = []
+      auxCategorias.toString().split(",").forEach(e => {
+        categorias.push(Categoria[e as keyof typeof Categoria])
+      })
+    }
+
+    let estabelecimentos = await FunTracker.getByFiltros(abertos, order, precos, coords,categorias)
     return res.status(200).json({ success: true, estabelecimentos: estabelecimentos })
   }
   catch (e) {

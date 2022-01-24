@@ -211,29 +211,53 @@ export class EstabelecimentoDAO {
     }
   }
 
-  async getByFiltros(apenasAbertos: boolean | null, order: Ordem | null, gamaPreco: GamaPreco | null, coordenadas: { latitude: string, longitude: string } | null):
+  async getByFiltros(
+      apenasAbertos: boolean | null,
+      order: Ordem | null,
+      gamaPreco: GamaPreco | null,
+      coordenadas: { latitude: string, longitude: string } | null,
+      categorias: Categoria[] | null
+    ):
     Promise<Estabelecimento[]> {
-    if (order == null && apenasAbertos == null)
-      throw "Não foram dados filtros"
+
     let proximidade = false
-    let query = `SELECT estabelecimentos.*, group_concat(filepath) AS filepath, group_concat(categoria) AS categorias
+    let query =
+      `SELECT estabelecimentos.*, group_concat(filepath) AS filepath, group_concat(categoria) AS categorias, COUNT(a.user_id) AS nCriticas
        FROM estabelecimentos
        LEFT JOIN imagens ON imagens.estabelecimento_id = estabelecimentos.id
-       LEFT JOIN categorias ON categorias.estabelecimento_id = estabelecimentos.id `
-    // 'SELECT * FROM estabelecimentos '
+       LEFT JOIN categorias ON categorias.estabelecimento_id = estabelecimentos.id
+       LEFT JOIN avaliacoes a ON estabelecimentos.id = a.estabelecimento_id `
     let number = 0
     if (apenasAbertos != null && apenasAbertos) {
       number++
       query = query + 'WHERE ( horario_abertura > horario_fecho AND (horario_abertura <= strftime(\'%H:%M\',?) OR horario_fecho > strftime(\'%H:%M\',?) )) OR (horario_abertura <= strftime(\'%H:%M\',?) AND horario_fecho > strftime(\'%H:%M\',?))'
     }
 
-    if (gamaPreco) {
+    if (gamaPreco!=null) {
       if (number != 0)
         query += ' AND '
       else
         query += ' WHERE '
 
-      query += 'precos=?'
+      query += ' precos=? '
+    }
+
+    if (gamaPreco!=null) {
+      if (number != 0)
+        query += ' AND '
+      else
+        query += ' WHERE '
+
+      query += ' precos=? '
+    }
+
+    if (categorias!=null) {
+      if (number != 0)
+        query += ' AND '
+      else
+        query += ' WHERE '
+
+      query += ' categorias.categoria in ? '
     }
 
     query += `GROUP BY imagens.estabelecimento_id `
@@ -260,28 +284,36 @@ export class EstabelecimentoDAO {
 
     // console.log(query)
     let resul: any[] = [];
-    if (apenasAbertos != null && gamaPreco != null && apenasAbertos) {
-      // console.log("1")
+    if (apenasAbertos != null && gamaPreco != null && apenasAbertos && categorias) {
+      console.log("1")
+      resul = [data, gamaPreco, categorias]
+    } else if (apenasAbertos != null && gamaPreco != null && apenasAbertos) {
+      console.log("1")
       resul = [data, gamaPreco]
     }
-    else if (gamaPreco != null && (apenasAbertos == null || !apenasAbertos)) {
-      // console.log("2")
+    else if (gamaPreco !=null && (apenasAbertos == null || !apenasAbertos)) {
+      console.log("2")
       resul = [gamaPreco]
     }
     else if (apenasAbertos != null && apenasAbertos && gamaPreco == null) {
-      // console.log("3")
+      console.log("3")
       resul = [data]
     }
+
+    console.log("QUERY::\n\n\n" + query + "\n\n")
 
     let estabelecimentos: Estabelecimento[] = []
     await this.db.each(query
       , resul, async (row: any) => {
+        console.log(row)
         const coords: string[] = row.coordenadas.split(";")
         const imagens: string[] = row.filepath.split(",")
         const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, GamaPreco[row.precos], row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)
         est.imageUrls = imagens
         est.setCategorias(row.categorias.split(","))
-        est.numberRatings = await this.countClassificacoes(est.id)
+        est.setHorarioAbertura(row.horario_abertura)
+        est.setHorarioFecho(row.horario_fecho)
+        est.numberRatings = row.nCriticas
         estabelecimentos.push(est)
       });
 
