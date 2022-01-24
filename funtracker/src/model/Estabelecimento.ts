@@ -255,6 +255,10 @@ export class EstabelecimentoDAO {
       number++
       const dataAgora = new Date()
       const data = dataAgora.getHours() + ':' + dataAgora.getMinutes()
+      console.log( data)
+      resul.push(data)
+      resul.push(data)
+      resul.push(data)
       resul.push(data)
       query = query + 'WHERE ( horario_abertura > horario_fecho AND (horario_abertura <= strftime(\'%H:%M\',?) OR horario_fecho > strftime(\'%H:%M\',?) )) OR (horario_abertura <= strftime(\'%H:%M\',?) AND horario_fecho > strftime(\'%H:%M\',?))'
     }
@@ -306,12 +310,9 @@ export class EstabelecimentoDAO {
       }
     }
 
-    console.log("QUERY::\n\n\n" + query + "\n\n")
-
     let estabelecimentos: Estabelecimento[] = []
     await this.db.each(query
       , resul, async (row: any) => {
-        // console.log(row)
         const coords: string[] = row.coordenadas.split(";")
         const imagens: string[] = row.filepath.split(",")
         const est: Estabelecimento = new Estabelecimento(row.id, row.nome, row.lotacao, row.pontuacao, GamaPreco[row.precos], row.morada, { latitude: coords[0], longitude: coords[1] }, row.contacto)

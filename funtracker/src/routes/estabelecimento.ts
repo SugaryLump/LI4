@@ -87,7 +87,7 @@ estabelecimentoRouter.post('/',
 estabelecimentoRouter.get('/',
   isLoggedIn,
   query('order').exists(),
-  query('abertos').exists(),
+  query('aberto').exists(),
   query('precos').exists(),
   query('latitude').exists(),
   query('longitude').exists(),
@@ -96,7 +96,7 @@ estabelecimentoRouter.get('/',
   // checkValidation(),
   async (req: Request, res) => {
   try {
-    let auxAbertos = req.query.abertos
+    let auxAbertos = req.query.aberto
     let auxOrder = req.query.order
     let auxPrecos = req.query.precos
     let auxCategorias = req.query.categorias
