@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { View } from 'react-native'
-import { Divider, Text, CheckBox, Button, ButtonGroup } from 'react-native-elements'
-import { Input } from 'react-native-elements/dist/input/Input'
+import { Divider, Text, CheckBox, Button, ButtonGroup, Input } from 'react-native-elements'
 import { LocationEventEmitter } from 'expo-location/build/LocationEventEmitter'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { AppParamList } from '../routeTypes'
@@ -15,8 +14,8 @@ export const FiltrosMenu = ({ navigation, route }: NativeStackScreenProps<AppPar
     const [nome, setNome] = useState(route.params.nome)
 
     return (
-        <View style={{ flex: 1 }}>
-            <View style={{ flex: 0.1, marginHorizontal: 15, marginVertical: 10 }}>
+        <View style={{ flex: 1, alignItems: 'center' }}>
+            <View style={{ maxWidth: 800, width: '100%', padding: 15 }}>
                 <Button
                     title='Ok'
                     onPress={() => navigation.reset({
@@ -35,15 +34,11 @@ export const FiltrosMenu = ({ navigation, route }: NativeStackScreenProps<AppPar
                         }]
                     })}
                 />
-            </View>
-            <Divider />
-            <View style={{ flex: 0.25, marginHorizontal: 15 }}>
+                <Divider style={{ marginVertical: 15 }} />
                 <CheckBox title='Abertos de momento' checked={aberto} onPress={() => setAberto(!aberto)} />
                 <CheckBox title='Bar' checked={bar} onPress={() => setBar(!bar)} />
                 <CheckBox title='Discoteca' checked={disco} onPress={() => setDisco(!disco)} />
-            </View>
-            <Divider />
-            <View style={{ flex: 0.3 }}>
+                <Divider style={{ marginVertical: 15 }} />
                 <Text style={{ fontSize: 15, padding: 15, }}>Selecione uma ordem</Text>
                 <ButtonGroup
                     buttons={['Nenhuma', 'Proximidade', 'Custo', 'Críticas']}
@@ -56,38 +51,29 @@ export const FiltrosMenu = ({ navigation, route }: NativeStackScreenProps<AppPar
                     selectedIndex={preco}
                     onPress={(preco) => setPreco(preco)}
                 />
-            </View>
-            <Divider />
-            <View style={{ flex: 0.35 }}>
+
+                <Divider style={{ marginVertical: 15 }} />
                 <Input
                     placeholder='Nome'
                     onChangeText={(nome) => { setNome(nome) }}
-                    inputContainerStyle={{
-                        borderWidth: 1,
-                        borderColor: '#c5cad4',
-                        padding: 5
-                    }}
-                    containerStyle={{
-                        paddingHorizontal: 50,
-                        paddingTop: 40,
-                    }}
                 />
                 <Button
                     title='Pesquisar por nome'
-                    onPress={() => navigation.navigate({
-                        name: 'Estabelecimentos',
-                        params: {
-                            bar: bar,
-                            disco: disco,
-                            aberto: aberto,
-                            ordem: ordem,
-                            nome: nome,
-                            preco:preco,
-                            searched: true
-                        },
-                        merge: true
-                    })
-                    }
+                    onPress={() => navigation.reset({
+                        index: 0,
+                        routes: [{
+                            name: 'Estabelecimentos',
+                            params: {
+                                bar: bar,
+                                disco: disco,
+                                aberto: aberto,
+                                ordem: ordem,
+                                nome: nome,
+                                preco: preco,
+                                searched: true
+                            },
+                        }]
+                    })}
                 />
             </View>
         </View>

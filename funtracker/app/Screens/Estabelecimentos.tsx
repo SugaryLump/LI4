@@ -57,7 +57,7 @@ export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenPro
                     break;
             }
         }
-        if (nome) filtros.nome = nome
+        if (route.params.searched) filtros.nome = nome
 
         let r = await authContext.fetchWithJwt('/estabelecimento', 'GET', filtros)
         if (r.success) {
