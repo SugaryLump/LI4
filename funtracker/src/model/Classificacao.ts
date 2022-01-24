@@ -55,6 +55,7 @@ export class ClassificacaoDAO implements IClassificacaoDAO {
   }
 
   async getClassificacoesByUserID(userID: number): Promise<Classificacao[]> {
+    let vazio = false
     let c = (
       await this.db.all(`
         SELECT avaliacoes.*, u.username AS username, e.nome AS estabelecimento_nome, group_concat(filepath) AS images FROM avaliacoes
@@ -64,6 +65,16 @@ export class ClassificacaoDAO implements IClassificacaoDAO {
         WHERE user_id = ?
       `, userID)
     ).map(c => {
+      if (c.id == null || c.id ===undefined)
+        vazio = true
+
+      let imagensString = c.images as string
+      let imagens = ""
+      if (imagensString) {
+          let aux = imagensString.split(",")
+        if(aux)
+          imagens = aux.reverse()[0]
+      }
       return {
         id: c.id,
         valor: c.valor,
@@ -71,10 +82,13 @@ export class ClassificacaoDAO implements IClassificacaoDAO {
         estabelecimentoNoturnoId: c.estabelecimento_id,
         utilizadorId: c.user_id,
         username: c.username,
-        estabelecimentoNoturnoImagem: (c.images as string).split(",").reverse()[0],
+        // estabelecimentoNoturnoImagem: (c.images as string).split(",").reverse()[0],
+        estabelecimentoNoturnoImagem: imagens,
         estabelecimentoNoturnoNome: c.estabelecimento_nome
       }
     });
+    if (vazio)
+      return []
     return c
   }
 
