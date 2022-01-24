@@ -87,21 +87,28 @@ estabelecimentoRouter.post('/',
 estabelecimentoRouter.get('/',
   isLoggedIn,
   query('order').exists(),
-  query('abertos').exists(),
+  query('aberto').exists(),
   query('precos').exists(),
   query('latitude').exists(),
   query('longitude').exists(),
   query('categorias').exists(),
+  query('nome').exists(),
   // checkValidation(),
   async (req: Request, res) => {
   try {
-    let auxAbertos = req.query.abertos
+    let auxAbertos = req.query.aberto
     let auxOrder = req.query.order
     let auxPrecos = req.query.precos
     let auxCategorias = req.query.categorias
+    let nome = req.query.nome
 
-    if(auxAbertos === undefined && auxOrder === undefined && auxPrecos === undefined && auxCategorias===undefined){
+    if(auxAbertos === undefined && auxOrder === undefined && auxPrecos === undefined && auxCategorias===undefined && nome===undefined){
       const estab: Estabelecimento[] = await FunTracker.getEstabelecimentos()
+      return res.status(200).json({success: true, estabelecimentos: estab})
+    }
+
+    if (nome) {
+      const estab: Estabelecimento[] = await FunTracker.getEstabelecimentoByName(nome.toString())
       return res.status(200).json({success: true, estabelecimentos: estab})
     }
 
