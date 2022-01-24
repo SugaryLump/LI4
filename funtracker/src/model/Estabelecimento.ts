@@ -221,6 +221,7 @@ export class EstabelecimentoDAO {
     Promise<Estabelecimento[]> {
 
     let proximidade = false
+    let resul: any[] = [];
     let query =
       `SELECT estabelecimentos.*, group_concat(filepath) AS filepath, group_concat(categoria) AS categorias, COUNT(a.user_id) AS nCriticas
        FROM estabelecimentos
@@ -230,6 +231,9 @@ export class EstabelecimentoDAO {
     let number = 0
     if (apenasAbertos != null && apenasAbertos) {
       number++
+      const dataAgora = new Date()
+      const data = dataAgora.getHours() + ':' + dataAgora.getMinutes()
+      resul.push(data)
       query = query + 'WHERE ( horario_abertura > horario_fecho AND (horario_abertura <= strftime(\'%H:%M\',?) OR horario_fecho > strftime(\'%H:%M\',?) )) OR (horario_abertura <= strftime(\'%H:%M\',?) AND horario_fecho > strftime(\'%H:%M\',?))'
     }
 
@@ -240,16 +244,28 @@ export class EstabelecimentoDAO {
         query += ' WHERE '
 
       query += ' precos=? '
+      resul.push(gamaPreco)
     }
 
-
+    console.log("categorias + "+ categorias)
     if (categorias!=null) {
+      console.log("caralho q ta foda")
       if (number != 0)
         query += ' AND '
       else
         query += ' WHERE '
 
-      query += ' categorias.categoria in ? '
+      query += ' categorias.categoria in ('
+      let first = true
+      categorias.forEach(e => {
+        if(!first) {
+          query += ','
+        }
+        first = false
+        query += ' \"' + Categoria[e] +'\"'
+      })
+      // resul.push(categorias)
+      query += ')  '
     }
 
     query += `GROUP BY imagens.estabelecimento_id `
@@ -269,27 +285,6 @@ export class EstabelecimentoDAO {
           break;
         }
       }
-    }
-
-    const dataAgora = new Date()
-    const data = dataAgora.getHours() + ':' + dataAgora.getMinutes()
-
-    // console.log(query)
-    let resul: any[] = [];
-    if (apenasAbertos != null && gamaPreco != null && apenasAbertos && categorias!=null) {
-      console.log("1")
-      resul = [data, gamaPreco, categorias]
-    } else if (apenasAbertos != null && gamaPreco != null && apenasAbertos) {
-      console.log("1")
-      resul = [data, gamaPreco]
-    }
-    else if (gamaPreco !=null && (apenasAbertos == null || !apenasAbertos)) {
-      console.log("2")
-      resul = [gamaPreco]
-    }
-    else if (apenasAbertos != null && apenasAbertos && gamaPreco == null) {
-      console.log("3")
-      resul = [data]
     }
 
     console.log("QUERY::\n\n\n" + query + "\n\n")
