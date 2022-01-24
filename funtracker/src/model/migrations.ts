@@ -12,20 +12,20 @@ export default async function migrate(db: PromisedDatabase) {
 
     await db.createTable('estabelecimentos', true,
         'id INTEGER UNIQUE PRIMARY KEY AUTOINCREMENT NOT NULL',
-        'nome VARCHAR(100)',
-        'lotacao INTEGER',
-        'morada VARCHAR(100)',
-        'coordenadas VARCHAR(50)',
-        'precos INTEGER',
-        'pontuacao FLOAT',
-        'horario_abertura TIME',
-        'horario_fecho TIME',
-        'contacto CHAR(9)'
+        'nome VARCHAR(100) NOT NULL',
+        'lotacao INTEGER NOT NULL',
+        'morada VARCHAR(100) NOT NULL',
+        'coordenadas VARCHAR(50) NOT NULL',
+        'precos INTEGER NOT NULL',
+        'pontuacao FLOAT NOT NULL',
+        'horario_abertura TIME NOT NULL',
+        'horario_fecho TIME NOT NULL',
+        'contacto CHAR(9) NOT NULL'
     )
 
     await db.createTable('categorias', true,
         'estabelecimento_id INTEGER NOT NULL',
-        'categoria STRING NOT NULL',
+        'categoria VARCHAR(50) NOT NULL',
         'FOREIGN KEY(estabelecimento_id) REFERENCES estabelecimentos(id)',
         'PRIMARY KEY (estabelecimento_id, categoria)'
     )

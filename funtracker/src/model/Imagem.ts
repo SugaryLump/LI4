@@ -35,4 +35,8 @@ export class ImagensDAO {
             filepath: c.filepath,
         }));
     }
+
+  async removeByEstabelecimentoId(estabelecimentoId: number): Promise<boolean> {
+      return (await this.db.run('DELETE from imagens where estabelecimento_id = ?', estabelecimentoId)).changes == 1
+  }
 }

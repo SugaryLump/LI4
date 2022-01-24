@@ -60,7 +60,7 @@ export const EstabelecimentoMenu = ({ navigation, route }: NativeStackScreenProp
             return new LocalNoturno(
                 e.estabelecimento.id,
                 e.estabelecimento.nome,
-                e.estabelecimento.rating,
+                +e.estabelecimento.rating.toFixed(1),
                 e.estabelecimento.gamaPreco,
                 e.estabelecimento.numberRatings,
                 e.estabelecimento.categorias,

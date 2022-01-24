@@ -46,8 +46,8 @@ export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenPro
             switch (ordem) {
                 case 1:
                     filtros.order = 'Proximidade'
-                    filtros.latitude = location.coords.latitude.toString()
-                    filtros.longitude = location.coords.longitude.toString()
+                    filtros.latitude = location.coords?.latitude.toString() ?? 0
+                    filtros.longitude = location.coords?.longitude.toString() ?? 0
                     break;
                 case 2:
                     filtros.order = 'Precos'
@@ -57,13 +57,13 @@ export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenPro
                     break;
             }
         }
-        if (route.params.searched) filtros.nome = nome
+        if (route.params.nome !== undefined && route.params.nome !== '') filtros.nome = nome
 
         let r = await authContext.fetchWithJwt('/estabelecimento', 'GET', filtros)
         if (r.success) {
-            // TODO: Incluir o total de ratings
+            setError('')
             return r.estabelecimentos.map(e => {
-                return new LocalNoturno(e.id, e.nome, e.rating, e.gamaPreco, e.numberRatings, e.categorias, serverUrl + "/" + e.imageUrls[0])
+                return new LocalNoturno(e.id, e.nome, +e.rating.toFixed(1), e.gamaPreco, e.numberRatings, e.categorias, serverUrl + "/" + e.imageUrls[0])
             })
         }
         else {
@@ -73,19 +73,17 @@ export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenPro
 
     //Search
     useFocusEffect(useCallback(() => {
-        if (!route.params?.searched) {
-            updateLocation()
-            navigation.setParams({
-                searched: true
-            })
-            fetchEstabelecimentos(route.params?.aberto,
-                route.params.disco,
-                route.params.bar,
-                route.params.ordem,
-                route.params.nome ?? '').then((arr) => {
-                    setEstabelecimentos(arr);
-                }).catch(e => console.log(e))
-        }
+        updateLocation()
+        navigation.setParams({
+            searched: true
+        })
+        fetchEstabelecimentos(route.params?.aberto,
+            route.params.disco,
+            route.params.bar,
+            route.params.ordem,
+            route.params.nome ?? '').then((arr) => {
+                setEstabelecimentos(arr);
+            }).catch(e => console.log(e))
 
         return () => {}
     }, []));
@@ -193,7 +191,7 @@ export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenPro
                             <CardText text='•' />
                             <CardText text={JSON.stringify(item.totalRatings).concat(' críticas')} />
                             <CardText text='•' />
-                            <CardText text={item.gamaPreco} />
+                            <CardText text={item.gamaPreco.split('$').join('€')} />
                         </View>
                         <CardText text={item.categorias.join('   •   ')} />
                     </View>
@@ -202,12 +200,12 @@ export const EstabelecimentosMenu = ({ navigation, route }: NativeStackScreenPro
         )
     }
 
+    if (error !== '')
+        return <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
+            <Text style={{ color: colors.error, textAlign: 'center' }}>{ error }</Text>
+        </View>
     if (estabelecimentos === undefined)
         return <LoadingMenu />
-    if (error !== '')
-        return <View style={{ alignItems: 'center', flex: 1}}>
-            <Text style={{ color: colors.error }}>{ error }</Text>
-        </View>
 
     return (
         <View style={{

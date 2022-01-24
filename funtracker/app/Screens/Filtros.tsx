@@ -12,6 +12,7 @@ export const FiltrosMenu = ({ navigation, route }: NativeStackScreenProps<AppPar
     const [preco, setPreco] = useState(route.params.preco)
     const [ordem, setOrdem] = useState(route.params.ordem)
     const [nome, setNome] = useState(route.params.nome)
+    console.log(nome)
 
     return (
         <View style={{ flex: 1, alignItems: 'center' }}>
