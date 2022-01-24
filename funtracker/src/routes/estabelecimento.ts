@@ -259,7 +259,7 @@ estabelecimentoRouter.post(
     try {
       const user: UserJwt = getUser(req);
       let newClassificacao = await FunTracker.avaliar(+req.body.valor, req.body.comentario, +req.params?.id, user.id)
-        console.log(newClassificacao)
+        // console.log(newClassificacao)
       return res.status(200).json({ success: true, classificacao: newClassificacao })
     } catch(e) {
       console.log(e)

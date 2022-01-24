@@ -103,7 +103,9 @@ export class EstabelecimentoDAO {
   }
 
   async removeByID(id: number): Promise<boolean> {
-    return (await this.db.run('DELETE from estabelecimentos where id = ?', id)).changes == 1;
+    let resul = (await this.db.run('DELETE from estabelecimentos where id = ?', id)).changes == 1;
+    (await this.db.run('DELETE from categorias where estabelecimento_id = ?', id))
+    return resul
   }
 
   async getByName(name: string): Promise<Estabelecimento[]> {

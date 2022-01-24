@@ -89,15 +89,9 @@ export class ClassificacaoDAO {
       }
     });
     return c
-    // return (
-    //   await this.db.all('SELECT avaliacoes.*, username FROM avaliacoes LEFT JOIN utilizadores WHERE estabelecimento_id = ?', estabelecimentoID)
-    // ).map(c => ({
-    //   id: c.id,
-    //   valor: c.valor,
-    //   comentario: c.comentario,
-    //   estabelecimentoNoturnoId: c.estabelecimento_id,
-    //   utilizadorId: c.user_id,
-    //   username: c.username
-    // }));
+  }
+
+  async removeByEstabelecimentoId(estabelecimentoId: number): Promise<boolean> {
+      return (await this.db.run('DELETE from avaliacoes where estabelecimento_id = ?', estabelecimentoId)).changes == 1
   }
 }
