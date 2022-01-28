@@ -292,7 +292,7 @@ export class EstabelecimentoDAO implements IEstabelecimentoDAO {
       resul.push(data)
       resul.push(data)
       resul.push(data)
-      query = query + 'WHERE ( horario_abertura > horario_fecho AND (horario_abertura <= strftime(\'%H:%M\',?) OR horario_fecho > strftime(\'%H:%M\',?) )) OR (horario_abertura <= strftime(\'%H:%M\',?) AND horario_fecho > strftime(\'%H:%M\',?))'
+      query = query + 'WHERE (( horario_abertura > horario_fecho AND (horario_abertura <= strftime(\'%H:%M\',?) OR horario_fecho > strftime(\'%H:%M\',?) )) OR (horario_abertura <= strftime(\'%H:%M\',?) AND horario_fecho > strftime(\'%H:%M\',?)))'
     }
 
     if (gamaPreco!=null) {
