@@ -65,8 +65,6 @@ export class ClassificacaoDAO implements IClassificacaoDAO {
         WHERE user_id = ? GROUP BY e.id
       `, userID)
     ).map(c => {
-      if (c.id == null || c.id ===undefined)
-        vazio = true
 
       let imagensString = c.images as string
       let imagens = ""
@@ -76,7 +74,7 @@ export class ClassificacaoDAO implements IClassificacaoDAO {
           imagens = aux.reverse()[0]
       }
       return {
-        id: c.id,
+        id: 0,
         valor: c.valor,
         comentario: c.comentarios,
         estabelecimentoNoturnoId: c.estabelecimento_id,
@@ -87,8 +85,6 @@ export class ClassificacaoDAO implements IClassificacaoDAO {
         estabelecimentoNoturnoNome: c.estabelecimento_nome
       }
     });
-    if (vazio)
-      return []
     return c
   }
 
