@@ -167,7 +167,7 @@ export class EstabelecimentoDAO implements IEstabelecimentoDAO {
       `SELECT estabelecimentos.*,
         (SELECT group_concat(categoria) FROM categorias WHERE categorias.estabelecimento_id = estabelecimentos.id) AS categorias,
         (SELECT group_concat(filepath) FROM imagens WHERE imagens.estabelecimento_id = estabelecimentos.id) AS filepath,
-        (SELECT COUNT(*) FROM categorias WHERE categorias.estabelecimento_id = estabelecimentos.id) AS nCriticas
+        (SELECT COUNT(*) FROM avaliacoes WHERE avaliacoes.estabelecimento_id = estabelecimentos.id) AS nCriticas
        FROM estabelecimentos
       `, [], (row: any) => {
       const coords: string[] = row.coordenadas.split(";")
