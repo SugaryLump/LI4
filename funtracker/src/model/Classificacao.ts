@@ -62,7 +62,7 @@ export class ClassificacaoDAO implements IClassificacaoDAO {
         LEFT JOIN utilizadores u on avaliacoes.user_id = u.id
         LEFT JOIN estabelecimentos e on avaliacoes.estabelecimento_id = e.id
         LEFT JOIN imagens i on e.id = i.estabelecimento_id
-        WHERE user_id = ?
+        WHERE user_id = ? GROUP BY e.id
       `, userID)
     ).map(c => {
       if (c.id == null || c.id ===undefined)
