@@ -4,9 +4,9 @@ import { ExpoConfig, ConfigContext } from '@expo/config'
 import { address } from 'ip'
 
 export default ({}: ConfigContext): ExpoConfig => ({
-  name: "LI4 Grupo 3",
-  slug: "li4-grupo3",
-  version: "0.1.0",
+  name: "FunTracker",
+  slug: "funtracker",
+  version: "1.0.0",
   orientation: "portrait",
   icon: "./app/assets/icon.png",
   entryPoint: "./app/App.tsx",
@@ -34,6 +34,10 @@ export default ({}: ConfigContext): ExpoConfig => ({
     favicon: "./app/assets/favicon.png"
   },
   extra: {
-    serverUrl: 'http://' + address() + ":3000"
+    // serverUrl: 'http://' + address() + ":3000"
+    serverUrl: 'https://funtracker.pta2002.com'
+  },
+  android: {
+    package: "com.funtracker.app"
   }
 })
