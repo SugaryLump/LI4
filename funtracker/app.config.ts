@@ -28,7 +28,13 @@ export default ({}: ConfigContext): ExpoConfig => ({
     adaptiveIcon: {
       foregroundImage: "./app/assets/adaptive-icon.png",
       backgroundColor: "#FFFFFF"
-    }
+    },
+    config: {
+      googleMaps: {
+        apiKey: "AIzaSyDNgTAqcBYFw6C4Cv4EBr0qu1AsLNgLRx0"
+      }
+    },
+    package: "com.funtracker.app"
   },
   web: {
     favicon: "./app/assets/favicon.png"
@@ -37,7 +43,4 @@ export default ({}: ConfigContext): ExpoConfig => ({
     // serverUrl: 'http://' + address() + ":3000"
     serverUrl: 'https://funtracker.pta2002.com'
   },
-  android: {
-    package: "com.funtracker.app"
-  }
 })
