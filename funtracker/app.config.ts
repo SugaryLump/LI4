@@ -40,7 +40,7 @@ export default ({}: ConfigContext): ExpoConfig => ({
     favicon: "./app/assets/favicon.png"
   },
   extra: {
-    // serverUrl: 'http://' + address() + ":3000"
-    serverUrl: 'https://funtracker.pta2002.com'
+     serverUrl: 'http://' + address() + ":3000"
+    //serverUrl: 'https://funtracker.pta2002.com'
   },
 })
